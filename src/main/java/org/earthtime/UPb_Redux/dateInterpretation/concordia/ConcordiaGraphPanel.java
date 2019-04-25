@@ -36,6 +36,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -88,6 +90,7 @@ import org.earthtime.plots.PlotInterface;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
+import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -99,12 +102,16 @@ public class ConcordiaGraphPanel extends JLayeredPane
         implements
         MouseListener,
         MouseMotionListener,
+        MouseWheelListener,
         PlotInterface,
         AliquotDetailsDisplayInterface,
         ConcordiaPlotDisplayInterface,
         PlottingDetailsDisplayInterface {
 
     // Class Variables
+    protected static final double ZOOM_FACTOR = 10.0;
+    // <0 = zoom out, 0 = original, >0 = zoom in
+    protected int zoomCount;
     // Instance Variables
     private SampleInterface sample;
     private ValueModel lambda235;
@@ -222,6 +229,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         addMouseListener(this);
         addMouseMotionListener(this);
+//        addMouseWheelListener(this);
 
     }
 
@@ -2723,6 +2731,76 @@ public class ConcordiaGraphPanel extends JLayeredPane
         }
 
         //System.out.println("mouse " + evt.getX());
+    }
+    
+    // april 2019 - borrowed the next two methods from EvolutionPlotPanel as an experiment
+    protected boolean mouseInHouse(MouseEvent evt) {
+        return ((evt.getX() >= getLeftMargin())
+                && (evt.getY() >= getTopMargin())
+                && (evt.getY() < getGraphHeight() + getTopMargin() - 2)
+                && (evt.getX() < (getGraphWidth() + getLeftMargin() - 2)));
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (mouseInHouse(e)) {
+
+            setZoomMaxX(e.getX());
+            setZoomMaxY(e.getY());
+
+            // https://java.com/en/download/faq/release_changes.xml
+            double notches = e.getPreciseWheelRotation();
+            if (true) {
+                if (notches < 0) {// zoom in
+                    setMinX(getMinX() + getRangeX_Display() / ZOOM_FACTOR);
+                    setMaxX(getMaxX() - getRangeX_Display() / ZOOM_FACTOR);
+                    setMinY(getMinY() + getRangeY_Display() / ZOOM_FACTOR);
+                    setMaxY(getMaxY() - getRangeY_Display() / ZOOM_FACTOR);
+
+                    zoomCount++;
+
+                } else {// zoom out
+                    setMinX(getMinX() - getRangeX_Display() / ZOOM_FACTOR);
+                    setMaxX(getMaxX() + getRangeX_Display() / ZOOM_FACTOR);
+                    setMinX(Math.max(getMinX(), 0.0));
+
+                    setMinY(getMinY() - getRangeY_Display() / ZOOM_FACTOR);
+                    setMaxY(getMaxY() + getRangeY_Display() / ZOOM_FACTOR);
+                    setMinY(Math.max(getMinY(), 0.0));
+
+                    zoomCount--;
+//                    // stop zoom out
+//                    if (getMinX() * getMinY() > 0.0) {
+//                        setMaxX(getMaxX() + getRangeX_Display() / ZOOM_FACTOR);
+//                        setMaxY(getMaxY() + getRangeY_Display() / ZOOM_FACTOR);
+//
+//                    } else {
+//                        setMinX(0.0);
+//                        setMaxX(getMaxX_Display());
+//                        setMinY(0.0);
+//                        setMaxY(getMaxY_Display());
+//                        zoomCount = 0;
+//                    }
+                }
+
+                if (getMinX() <= 0.0) {
+                    setMinX(0.0);
+                    setDisplayOffsetX (0.0);
+                }
+                if (getMinY() <= 0.0) {
+                    setMinY(0.0);
+                    setDisplayOffsetY (0.0);
+                }
+
+//                setZoomMinX(getZoomMaxX());
+//                setZoomMinY(getZoomMaxY());
+
+//                ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+//                ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+
+                repaint();
+            }
+        }
     }
 
     private boolean mouseInBestAgeHandleArea(int x, int y) {

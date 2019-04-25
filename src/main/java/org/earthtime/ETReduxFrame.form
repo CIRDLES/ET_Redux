@@ -552,12 +552,12 @@
                 <Property name="text" type="java.lang.String" value="UTh"/>
               </Properties>
               <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="editDetrritalUraniumthoriumModels">
+                <MenuItem class="javax.swing.JMenuItem" name="editPhysicalConstantsModelsUTh">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Physical Constants Models"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editDetrritalUraniumthoriumModelsActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPhysicalConstantsModelsUThActionPerformed"/>
                   </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="editDetritalUraniumThoriumModels">
@@ -566,6 +566,14 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editDetritalUraniumThoriumModelsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Sea Water Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
                   </Events>
                 </MenuItem>
               </SubComponents>

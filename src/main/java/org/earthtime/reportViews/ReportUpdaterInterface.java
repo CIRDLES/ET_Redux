@@ -31,4 +31,6 @@ public interface ReportUpdaterInterface {
      * @param fractionIdToFocus the value of fractionIdToFocus
      */
     public void updateReportTable( boolean performReduction, boolean inLiveMode, String fractionIdToFocus);
+    
+    public void updateEvolutionPlot();
 }

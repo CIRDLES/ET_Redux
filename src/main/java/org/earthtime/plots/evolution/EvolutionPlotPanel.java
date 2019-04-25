@@ -23,8 +23,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,12 +38,16 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import org.apache.batik.apps.rasterizer.SVGConverter;
 import org.apache.batik.apps.rasterizer.SVGConverterException;
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -49,11 +56,14 @@ import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
 import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.isochrons.IsochronModel;
+import org.earthtime.projects.ProjectSample;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
@@ -73,16 +83,22 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
     private double[] annumIsochrons;
     private double[] ar48icntrs;
+    private boolean ar48icntrsDsplayAsDeltaUnits;
+    private boolean yAxisDisplayAsDeltaUnits;
 
     private double[][] xEndPointsD;
     private double[][] yEndPointsD;
 
-    double[][] tv;
+    private double[][] tv;
     private double[][][] xy;
     private double[][][] dardt;
 
-    double[][] tvLabels;
+    private double[][] tvLabels;
     private double[][][] xyLabels;
+
+    private int[] seaWaterDateIsochronIndexArray;
+    private int[] seaWaterDeltaContourIndexArray;
+    private boolean showSeaWaterModel;
 
     public EvolutionPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
@@ -94,7 +110,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         this.xLocation = 0;
 
         this.showMe = true;
-        
+
         this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
 
         setOpaque(true);
@@ -130,6 +146,10 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
         this.showCenters = true;
         this.showLabels = false;
+
+        this.yAxisDisplayAsDeltaUnits = false;
+
+        this.showSeaWaterModel = false;
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -217,12 +237,16 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                     g2d.draw(curvedP);
 
                     for (int j = 1; j < tvLabels[i].length; j++) {
-                        DecimalFormat myFormatter = new DecimalFormat("#.##");
+                        String displayString = "";
+                        if (ar48icntrsDsplayAsDeltaUnits) {
+                            displayString = new BigDecimal((Math.abs(ar48icntrs[i]) - 1.0) * 1000.0).setScale(1, RoundingMode.HALF_UP).toPlainString();
+                        } else {
+                            displayString = new BigDecimal(Math.abs(ar48icntrs[i])).setScale(3, RoundingMode.HALF_UP).toPlainString();
+                        }
                         if (!labelPrinted && (xyLabels[i][0][j - 1] > getMinX_Display()) && (ar48icntrs[i] > 0.0)) {
                             double angleOfText = (Math.atan(xyLabels[i][1][j - 1] - xyLabels[i][1][j]) / (xyLabels[i][0][j - 1] - xyLabels[i][0][j]));
-//                    System.out.println(ar48icntrs[i] + "  >  " + angleOfText);
                             g2d.rotate(-angleOfText, leftMargin + 20, mapY(xyLabels[i][1][j - 1]));
-                            g2d.drawString(myFormatter.format(ar48icntrs[i]), leftMargin + 10, (float) mapY(xyLabels[i][1][j - 1]) - 5);
+                            g2d.drawString(displayString, leftMargin + 10, (float) mapY(xyLabels[i][1][j - 1]) - 5);
                             g2d.rotate(angleOfText, leftMargin + 20, mapY(xyLabels[i][1][j - 1]));
                             labelPrinted = true;
                         }
@@ -246,12 +270,16 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                             f.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName()),
                             2.0f);
                     if (f.getErrorEllipsePath() != null) {
+                        boolean included
+                                = ((ProjectSample) sample).calculateIfEllipseIncluded(
+                                        f.getRadiogenicIsotopeDateByName(RadDates.date.getName()).getValue().movePointLeft(3).doubleValue(),
+                                        f.getAnalysisMeasure(UThAnalysisMeasures.delta234Ui.getName()).getValue().doubleValue());
                         plotAFraction(g2d,
                                 svgStyle,
                                 f,
                                 includedBorderColor,
                                 0.5f,
-                                includedCenterColor,
+                                included ? includedCenterColor : new Color(211, 211, 211),
                                 includedCenterSize,
                                 ellipseLabelFont,
                                 ellipseLabelFontSize,
@@ -264,8 +292,111 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
             double rangeX = (getMaxX_Display() - getMinX_Display());
             double rangeY = (getMaxY_Display() - getMinY_Display());
 
+            // label axes
+            String xAxisLabel = "[230Th/238U]t";
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+            double xAxisLabelLength = calculateLengthOfStringPlot(g2d, xAxisLabel);
+
+            String yAxisLabel = "[234U/238U]t";//axes[1].getAxisLabel();
+            double yAxisLabelLength = calculateLengthOfStringPlot(g2d, yAxisLabel);
+
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+            g2d.drawString("230",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 10,
+                    topMargin + (int) graphHeight + 30);
+            g2d.drawString("238",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 65,
+                    topMargin + (int) graphHeight + 30);
+            g2d.drawString("t",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 105,
+                    topMargin + (int) graphHeight + 40);
+
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+            g2d.drawString("[",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0),
+                    topMargin + (int) graphHeight + 35);
+            g2d.drawString("Th/",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 30,
+                    topMargin + (int) graphHeight + 35);
+            g2d.drawString("U]",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 85,
+                    topMargin + (int) graphHeight + 35);
+
+            // y axis
+            g2d.rotate(-Math.PI / 2.0);
+
+            if (yAxisDisplayAsDeltaUnits) {
+                g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+                g2d.drawString("\u03B4234U \u2030",
+                        -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
+                        leftMargin - 20);
+            } else {
+                g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+                g2d.drawString("234",
+                        -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
+                        leftMargin - 25);
+                g2d.drawString("238",
+                        -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 55),
+                        leftMargin - 25);
+                g2d.drawString("t",
+                        -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 95),
+                        leftMargin - 15);
+
+                g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+                g2d.drawString("[",
+                        -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0)),
+                        leftMargin - 20);
+                g2d.drawString("U/",
+                        -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 30),
+                        leftMargin - 20);
+                g2d.drawString("U]",
+                        -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 75),
+                        leftMargin - 20);
+            }
+
+            g2d.rotate(Math.PI / 2.0);
+
+            // draw zoom box if in use
+            if (isInImageModeZoom()
+                    && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
+                g2d.setStroke(new BasicStroke(2.0f));
+                g2d.setColor(Color.red);
+                g2d.drawRect(//
+                        Math.min(zoomMinX, zoomMaxX),
+                        Math.min(zoomMaxY, zoomMinY),
+                        Math.abs(zoomMaxX - zoomMinX),
+                        Math.abs(zoomMinY - zoomMaxY));
+            }
+
+            // experiment
+            // spring green
+            g2d.setPaint(new Color(0, 255, 127));
+
+            if (showSeaWaterModel) {
+                for (int i = 0; i < seaWaterDateIsochronIndexArray.length; i++) {
+                    Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
+                            mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]) - 5,
+                            mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]) - 5, 10, 10);
+
+                    g2d.draw(rawRatioPoint);
+                    g2d.fill(rawRatioPoint);
+
+                    if (i > 0) {
+                        // draw line
+                        Line2D line = new Line2D.Double(
+                                mapX(xy[seaWaterDeltaContourIndexArray[i - 1]][0][seaWaterDateIsochronIndexArray[i - 1]]),
+                                mapY(xy[seaWaterDeltaContourIndexArray[i - 1]][1][seaWaterDateIsochronIndexArray[i - 1]]),
+                                mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]),
+                                mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]));
+                        g2d.setStroke(new BasicStroke(2.0f));
+                        g2d.draw(line);
+                    }
+                }
+            }
+
+            // resets clipping
             try {
-                drawAxesAndTicks(g2d, rangeX, rangeY);
+                drawAxesAndTics(g2d, yAxisDisplayAsDeltaUnits);
             } catch (Exception e) {
             }
             // draw and label isochron axes - top and right
@@ -301,74 +432,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 }
             }
 
-            // label axes
-            String xAxisLabel = "[230Th/238U]t";//axes[0].getAxisLabel();
-            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-            double xAxisLabelLength = calculateLengthOfStringPlot(g2d, xAxisLabel);
-
-            String yAxisLabel = "[234U/238U]t";//axes[1].getAxisLabel();
-            double yAxisLabelLength = calculateLengthOfStringPlot(g2d, yAxisLabel);
-
-            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
-            g2d.drawString("230",
-                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 10,
-                    topMargin + (int) graphHeight + 30);
-            g2d.drawString("238",
-                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 65,
-                    topMargin + (int) graphHeight + 30);
-            g2d.drawString("t",
-                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 105,
-                    topMargin + (int) graphHeight + 40);
-
-            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-            g2d.drawString("[",
-                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0),
-                    topMargin + (int) graphHeight + 35);
-            g2d.drawString("Th/",
-                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 30,
-                    topMargin + (int) graphHeight + 35);
-            g2d.drawString("U]",
-                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 85,
-                    topMargin + (int) graphHeight + 35);
-
-            // y axis
-            g2d.rotate(-Math.PI / 2.0);
-            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
-            g2d.drawString("234",
-                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
-                    leftMargin - 30);
-            g2d.drawString("238",
-                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 55),
-                    leftMargin - 30);
-            g2d.drawString("t",
-                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 95),
-                    leftMargin - 20);
-
-            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-            g2d.drawString("[",
-                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0)),
-                    leftMargin - 25);
-            g2d.drawString("U/",
-                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 30),
-                    leftMargin - 25);
-            g2d.drawString("U]",
-                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 75),
-                    leftMargin - 25);
-
-            g2d.rotate(Math.PI / 2.0);
-
-            // draw zoom box if in use
-            if (isInImageModeZoom()
-                    && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
-                g2d.setStroke(new BasicStroke(2.0f));
-                g2d.setColor(Color.red);
-                g2d.drawRect(//
-                        Math.min(zoomMinX, zoomMaxX),
-                        Math.min(zoomMaxY, zoomMinY),
-                        Math.abs(zoomMaxX - zoomMinX),
-                        Math.abs(zoomMinY - zoomMaxY));
-            }
         }
+
     }
 
     @Override
@@ -436,8 +501,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
         buildIsochronsAndInitDelta234UContours();
 
-        ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
-        ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+        generateCustomTics();
 
         repaint();
         validate();
@@ -466,8 +530,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
         buildIsochronsAndInitDelta234UContours();
 
-        ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
-        ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+        generateCustomTics();
 
         repaint();
         validate();
@@ -491,18 +554,63 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
             }
         }
 
+        if (showSeaWaterModel) {
+            // add in sea water dates        
+            double[] arrayOfSeaWaterModelDates = ReduxLabData.getInstance()
+                    .getDefaultSeaWaterInitialDelta234UTableModel().getArrayOfDates();
+            seaWaterDateIsochronIndexArray = new int[arrayOfSeaWaterModelDates.length];
+
+            for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
+                if ((!annumList.contains(arrayOfSeaWaterModelDates[i] * 1000.0)) && (arrayOfSeaWaterModelDates[i] > 0.0)) {
+                    annumList.add(arrayOfSeaWaterModelDates[i] * 1000.0);
+                }
+            }
+
+            // need sort to get indices correctly
+            Collections.sort(annumList);
+            for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
+                // offset by 1 because of array start
+                seaWaterDateIsochronIndexArray[i] = annumList.indexOf(arrayOfSeaWaterModelDates[i] * 1000.0) + 1;
+            }
+        }
+        Collections.sort(annumList);
+
         annumIsochrons = annumList.stream().mapToDouble(Double::doubleValue).toArray();
 
         if (((SampleDateModel) sampleDateModel).isAutomaticInitDelta234USelection()) {
-            ((SampleDateModel) sampleDateModel).setAr48icntrs(IsochronModel.generateDefaultEvolutionAr48icntrs());
+            ((SampleDateModel) sampleDateModel).setAr48icntrs(IsochronModel.generateDefaultEvolutionAr48icntrs(((SampleDateModel) sampleDateModel).getAr48icntrs()));
         }
-        ar48icntrs = ((SampleDateModel) sampleDateModel).getAr48icntrs();
 
-//        int init48Density = (int) Math.pow(2, (2 + zoomCount / 10));
-//        ar48icntrs = new double[(int) maxY * init48Density + init48Density + 1];
-//        for (int i = 0; i < ar48icntrs.length; i++) {
-//            ar48icntrs[i] = i * (double) (1.0 / (double) init48Density);
-//        }
+        double[] ar48icntrsBase = ((SampleDateModel) sampleDateModel).getAr48icntrs();
+        List<Double> ar48icntrsList = new ArrayList<>();
+        for (int i = 0; i < ar48icntrsBase.length; i++) {
+            ar48icntrsList.add(ar48icntrsBase[i]);
+        }
+
+        if (showSeaWaterModel) {
+            // add in sea water deltas  as ratios      
+            double[] arrayOfSeaWaterModelDeltasAsRatios = ReduxLabData.getInstance()
+                    .getDefaultSeaWaterInitialDelta234UTableModel().getArrayOfDeltasAsRatios();
+            seaWaterDeltaContourIndexArray = new int[arrayOfSeaWaterModelDeltasAsRatios.length];
+
+            for (int i = 0; i < arrayOfSeaWaterModelDeltasAsRatios.length; i++) {
+                if (!ar48icntrsList.contains(arrayOfSeaWaterModelDeltasAsRatios[i])) {
+                    ar48icntrsList.add(arrayOfSeaWaterModelDeltasAsRatios[i]);
+                }
+            }
+
+            // need sort to get indices correctly
+            Collections.sort(ar48icntrsList);
+            for (int i = 0; i < arrayOfSeaWaterModelDeltasAsRatios.length; i++) {
+                seaWaterDeltaContourIndexArray[i] = ar48icntrsList.indexOf(arrayOfSeaWaterModelDeltasAsRatios[i]);
+            }
+        }
+
+        Collections.sort(ar48icntrsList);
+
+        ar48icntrs = ar48icntrsList.stream().mapToDouble(Double::doubleValue).toArray();
+        ar48icntrsDsplayAsDeltaUnits = ((SampleDateModel) sampleDateModel).isAr48icntrsDsplayAsDeltaUnits();
+
         Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY * 1}});
         Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX * 1}});
 
@@ -574,18 +682,32 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         }
 
         // calculate ar48i contours
-        int nts = 10;
+        // new technique - use both evenly spaced and isochrons so we can get intersections for sea water
+        List<Double> arList = DoubleStream.of(annumIsochrons).boxed().collect(Collectors.toList());
+        for (int i = 0; i < 10; i++) {
+            double age = (double) (i * 1.0e5);
+            if (!arList.contains(age) && age < 10e10) {
+                arList.add(age);
+            }
+            arList.add(2e6);
+        }
+
+        Collections.sort(arList);
+
+        int nts = arList.size();  //nisochrons + 1;//  10;
         // build array of vectors of evenly spaced values with last value = 2e6
         tv = new double[ar48icntrs.length][nts];
-        for (int i = 0; i < (nts - 1); i++) {
-            double colVal = (double) (i * 1.0e6 / (double) (nts - 2));
+        for (int i = 0; i < (nts - 0); i++) {
+            double colVal = arList.get(i);//  annumIsochrons[i];//          (double) (i * 1.0e5);// / (double) (nts - 2));
             for (double[] tv1 : tv) {
                 tv1[i] = colVal;
             }
         }
-        for (double[] tv1 : tv) {
-            tv1[nts - 1] = 2e6;
-        }
+//        for (double[] tv1 : tv) {
+//            tv1[nts - 2] = 1e6;
+//            tv1[nts - 1] = 2e6;
+//            tv1[0] = 0.0;
+//        }
 
         xy = new double[ar48icntrs.length][2][nts];
         dardt = new double[ar48icntrs.length][2][nts];
@@ -724,6 +846,51 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         this.yAxisMax = yAxisMax;
     }
 
+    @Override
+    public void mousePressed(MouseEvent evt) {
+        super.mousePressed(evt);
+        if ((evt.getX() >= leftMargin)
+                && (evt.getX() <= graphWidth + leftMargin)
+                && (evt.getY() >= topMargin)
+                && (evt.getY() <= graphHeight + topMargin)) {
+
+            if (evt.isPopupTrigger() || evt.getButton() == MouseEvent.BUTTON3) {
+
+                putInImageModePan();
+
+                //Create the popup menu.
+                JPopupMenu popup = new JPopupMenu();
+
+                // Jan 2011 show coordinates fyi
+                double x = convertMouseXToValue(evt.getX());
+                double y = convertMouseYToValue(evt.getY());
+
+                JMenuItem menuItem = new JMenuItem("Toggle Y-axis units");
+                menuItem.addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent arg0) {
+                        yAxisDisplayAsDeltaUnits = !yAxisDisplayAsDeltaUnits;
+                        repaint();
+                    }
+                });
+                popup.add(menuItem);
+
+                menuItem = new JMenuItem("Toggle Show Sea Water Model");
+                menuItem.addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent arg0) {
+                        showSeaWaterModel = !showSeaWaterModel;
+                        buildIsochronsAndInitDelta234UContours();
+                        repaint();
+                    }
+                });
+                popup.add(menuItem);
+
+                popup.show(evt.getComponent(), evt.getX(), evt.getY());
+            }
+        }
+    }
+
     /**
      *
      * @param evt
@@ -811,12 +978,15 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 zoomMinY = zoomMaxY;
 
                 buildIsochronsAndInitDelta234UContours();
-                ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
-                ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
-
+                generateCustomTics();
                 repaint();
             }
         }
+    }
+
+    private void generateCustomTics() {
+        ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+        ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
     }
 
     /**

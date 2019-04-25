@@ -33,7 +33,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -58,6 +57,8 @@ import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+import org.earthtime.projects.ProjectSample;
+
 /**
  *
  * @author James F. Bowring
@@ -66,19 +67,23 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
     protected transient ReportUpdaterInterface reportUpdater;
 
+    SampleInterface mySample;
+
     // maps age to delta
-    private Map<Double, Double> upperPartition;
-    private Map<Double, Double> lowerPartition;
+    private Map<Double, Double> upperBoundary;
+    private Map<Double, Double> lowerBoundary;
 
     public AgeByDelta234UPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
+
+        this.mySample = mySample;
 
         this.leftMargin = 40;
         this.topMargin = 40;
         this.graphWidth = 500;
         this.graphHeight = 500;
         this.xLocation = 600;
-        
+
         this.showMe = true;
 
         this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
@@ -107,33 +112,8 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         this.showCenters = true;
         this.showLabels = false;
 
-        this.upperPartition = new TreeMap<Double, Double>(new Comparator<Double>() {
-            @Override
-            public int compare(Double age1, Double age2) {
-                int retVal = 0;
-
-                // allow some slop
-                if (Math.abs(age1 - age2) > 5.0) {
-                    retVal = Double.compare(age1, age2);
-                }
-
-                return retVal;
-            }
-        });
-
-        this.lowerPartition = new TreeMap<Double, Double>(new Comparator<Double>() {
-            @Override
-            public int compare(Double age1, Double age2) {
-                int retVal = 0;
-
-                // allow some slop
-                if (Math.abs(age1 - age2) > 5.0) {
-                    retVal = Double.compare(age1, age2);
-                }
-
-                return retVal;
-            }
-        });
+        this.upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
+        this.lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -173,6 +153,10 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                 ageInKa.setValue(ageInKa.getValue().movePointLeft(3));
                 ageInKa.setOneSigma(ageInKa.getOneSigmaAbs().movePointLeft(3));
                 if (!f.isRejected()) {
+                    boolean included
+                            = ((ProjectSample) mySample).calculateIfEllipseIncluded(
+                                    ageInKa.getValue().doubleValue(),
+                                    f.getAnalysisMeasure(UThAnalysisMeasures.delta234Ui.getName()).getValue().doubleValue());
                     generateEllipsePathIII(//
                             f,
                             ageInKa,
@@ -184,7 +168,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                                 f,
                                 includedBorderColor,
                                 0.5f,
-                                includedCenterColor,
+                                included ? includedCenterColor : new Color(222, 222, 222),
                                 includedCenterSize,
                                 ellipseLabelFont,
                                 ellipseLabelFontSize,
@@ -197,19 +181,14 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
             double rangeX = (getMaxX_Display() - getMinX_Display());
             double rangeY = (getMaxY_Display() - getMinY_Display());
 
-            try {
-                drawAxesAndTicks(g2d, rangeX, rangeY);
-            } catch (Exception e) {
-            }
-
             // paint partitions
-            if (upperPartition.size() > 0) {
-                Iterator<Double> upperKeys = upperPartition.keySet().iterator();
-                double saveAge = (double) upperPartition.keySet().toArray()[0];
-                double saveInitDelta = upperPartition.get(saveAge);
+            if (upperBoundary.size() > 0) {
+                Iterator<Double> upperKeys = upperBoundary.keySet().iterator();
+                double saveAge = (double) upperBoundary.keySet().toArray()[0];
+                double saveInitDelta = upperBoundary.get(saveAge);
                 while (upperKeys.hasNext()) {
                     double age = upperKeys.next();
-                    double initDelta = upperPartition.get(age);
+                    double initDelta = upperBoundary.get(age);
                     g2d.setStroke(new BasicStroke(1.5f));
                     g2d.setColor(Color.blue);
                     g2d.drawRect(//
@@ -228,15 +207,15 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                 }
             }
 
-            if (lowerPartition.size() > 0) {
-                Iterator<Double> upperKeys = lowerPartition.keySet().iterator();
-                double saveAge = (double) lowerPartition.keySet().toArray()[0];
-                double saveInitDelta = lowerPartition.get(saveAge);
-                while (upperKeys.hasNext()) {
-                    double age = upperKeys.next();
-                    double initDelta = lowerPartition.get(age);
+            if (lowerBoundary.size() > 0) {
+                Iterator<Double> lowerKeys = lowerBoundary.keySet().iterator();
+                double saveAge = (double) lowerBoundary.keySet().toArray()[0];
+                double saveInitDelta = lowerBoundary.get(saveAge);
+                while (lowerKeys.hasNext()) {
+                    double age = lowerKeys.next();
+                    double initDelta = lowerBoundary.get(age);
                     g2d.setStroke(new BasicStroke(1.5f));
-                    g2d.setColor(Color.blue);
+                    g2d.setColor(Color.CYAN);
                     g2d.drawRect(//
                             (int) mapX(age) - 2,
                             (int) mapY(initDelta) - 2,
@@ -265,6 +244,15 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                         Math.abs(zoomMinY - zoomMaxY));
             }
         }
+
+        // this resets clip bounds
+        try {
+            drawAxesAndTics(g2d, false);
+        } catch (Exception e) {
+        }
+
+        reportUpdater.updateEvolutionPlot();
+
     }
 
     @Override
@@ -479,12 +467,12 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                 double x = convertMouseXToValue(evt.getX());
                 double y = convertMouseYToValue(evt.getY());
 
-                if (upperPartition.containsKey(x)) {
+                if (upperBoundary.containsKey(x)) {
                     JMenuItem menuItem = new JMenuItem("UPPER: Remove Boundary Point for initDelta234U at age = " + Math.round((float) y));
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
-                            upperPartition.remove(x);
+                            upperBoundary.remove(x);
                             repaint();
                         }
                     });
@@ -494,8 +482,8 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
-                            upperPartition.remove(x);
-                            upperPartition.put(x, y);
+                            upperBoundary.remove(x);
+                            upperBoundary.put(x, y);
                             repaint();
                         }
                     });
@@ -506,19 +494,30 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
-                            upperPartition.put(x, y);
+                            upperBoundary.put(x, y);
+                            repaint();
+                        }
+                    });
+                    popup.add(menuItem);
+                }
+                if (upperBoundary.size() > 0) {
+                    JMenuItem menuItem = new JMenuItem("UPPER: Remove Boundary");
+                    menuItem.addActionListener(new ActionListener() {
+
+                        public void actionPerformed(ActionEvent arg0) {
+                            upperBoundary.clear();
                             repaint();
                         }
                     });
                     popup.add(menuItem);
                 }
 
-                if (lowerPartition.containsKey(x)) {
+                if (lowerBoundary.containsKey(x)) {
                     JMenuItem menuItem = new JMenuItem("LOWER: Remove Boundary Point for initDelta234U at age = " + Math.round((float) y));
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
-                            lowerPartition.remove(x);
+                            lowerBoundary.remove(x);
                             repaint();
                         }
                     });
@@ -528,8 +527,8 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
-                            lowerPartition.remove(x);
-                            lowerPartition.put(x, y);
+                            lowerBoundary.remove(x);
+                            lowerBoundary.put(x, y);
                             repaint();
                         }
                     });
@@ -540,7 +539,19 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
-                            lowerPartition.put(x, y);
+                            lowerBoundary.put(x, y);
+                            repaint();
+                        }
+                    });
+                    popup.add(menuItem);
+                }
+
+                if (lowerBoundary.size() > 0) {
+                    JMenuItem menuItem = new JMenuItem("LOWER: Remove Boundary");
+                    menuItem.addActionListener(new ActionListener() {
+
+                        public void actionPerformed(ActionEvent arg0) {
+                            lowerBoundary.clear();
                             repaint();
                         }
                     });
@@ -553,6 +564,33 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         }
     }
 
+//    private boolean calculateIfEllipseIncluded(double x, double y) {
+//        boolean retVal = true;
+//
+//        if (upperBoundary.size() > 1 && lowerBoundary.size() > 1) {
+//            // build polygon
+//            List<Point2D> polygon = new ArrayList<>();
+//
+//            Iterator<Double> upperKeys = upperBoundary.keySet().iterator();
+//            while (upperKeys.hasNext()) {
+//                double age = upperKeys.next();
+//                double initDelta = upperBoundary.get(age);
+//                Point2D point = new Point2D(age, initDelta);
+//                polygon.add(point);
+//            }
+//
+//            Iterator<Double> lowerKeys = lowerBoundary.keySet().iterator();
+//            while (lowerKeys.hasNext()) {
+//                double age = lowerKeys.next();
+//                double initDelta = lowerBoundary.get(age);
+//                Point2D point = new Point2D(age, initDelta);
+//                polygon.add(point);
+//            }
+//
+//            retVal = (math.geom2d.polygon.Polygons2D.windingNumber(polygon, new Point2D(x, y)) != 0);
+//        }
+//        return retVal;
+//    }
     /**
      *
      * @param file
@@ -647,6 +685,19 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         super.setxLocation(xLocation);
         this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
     }
-    
-    
+
+    /**
+     * @param upperBoundary the upperBoundary to set
+     */
+    public void setUpperBoundary(Map<Double, Double> upperBoundary) {
+        this.upperBoundary = upperBoundary;
+    }
+
+    /**
+     * @param lowerBoundary the lowerBoundary to set
+     */
+    public void setLowerBoundary(Map<Double, Double> lowerBoundary) {
+        this.lowerBoundary = lowerBoundary;
+    }
+
 }

@@ -28,11 +28,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -675,7 +676,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             if (theProject.isChanged()) {
                 // Modal dialog with OK/cancel and a text field
-                int response = JOptionPane.showConfirmDialog(null,
+                int response = JOptionPane.showConfirmDialog(this,
                         new String[]{"The current Project " + theProject.getProjectName() + " has been changed.",
                             "Do you want to Save it before proceeding ?"
                         },
@@ -1043,7 +1044,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             if (theSample.isChanged()) {
                 // Modal dialog with OK/cancel and a text field
-                int response = JOptionPane.showConfirmDialog(null,
+                int response = JOptionPane.showConfirmDialog(this,
                         new String[]{"The current Sample " + theSample.getSampleName() + " has been changed.",
                             "Do you want to Save it before proceeding ?"
                         },
@@ -1931,7 +1932,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 File pbcCorrReportFile = new File("LAICPMS_Pbc_Correction_Report_for_" + theProject.getProjectName() + ".txt");
                 PrintWriter outputWriter = null;
                 try {
-                    outputWriter = new PrintWriter(new FileWriter(pbcCorrReportFile));
+                    outputWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(pbcCorrReportFile), StandardCharsets.UTF_8));//new FileWriter(pbcCorrReportFile));
                     for (AliquotInterface activeAliquot : theProject.getSuperSample().getActiveAliquots()) {
                         outputWriter.println("Fractions from " + activeAliquot.getAliquotName() + "\n");
                         outputWriter.println(PbcCorrectionDetails.headerString() + "\n");
@@ -2104,8 +2105,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         manageTIMSLabDefaults = new javax.swing.JMenuItem();
         manageLAICPMSLabDefaults = new javax.swing.JMenuItem();
         labDataUTh = new javax.swing.JMenu();
-        editDetrritalUraniumthoriumModels = new javax.swing.JMenuItem();
+        editPhysicalConstantsModelsUTh = new javax.swing.JMenuItem();
         editDetritalUraniumThoriumModels = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         reportMenu = new javax.swing.JMenu();
         editCurrentReportSettingsModel_menuItem = new javax.swing.JMenuItem();
         showReportHeadings_menuItem = new javax.swing.JMenuItem();
@@ -2161,7 +2163,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         setTitle("EARTHTIME Redux");
         setBackground(new java.awt.Color(237, 242, 250));
         setLocationByPlatform(true);
-        setPreferredSize(new java.awt.Dimension(1175, 750));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -2867,13 +2868,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         labDataUTh.setText("UTh");
 
-        editDetrritalUraniumthoriumModels.setText("Physical Constants Models");
-        editDetrritalUraniumthoriumModels.addActionListener(new java.awt.event.ActionListener() {
+        editPhysicalConstantsModelsUTh.setText("Physical Constants Models");
+        editPhysicalConstantsModelsUTh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editDetrritalUraniumthoriumModelsActionPerformed(evt);
+                editPhysicalConstantsModelsUThActionPerformed(evt);
             }
         });
-        labDataUTh.add(editDetrritalUraniumthoriumModels);
+        labDataUTh.add(editPhysicalConstantsModelsUTh);
 
         editDetritalUraniumThoriumModels.setText("Detrital Uranium Thorium Models");
         editDetritalUraniumThoriumModels.addActionListener(new java.awt.event.ActionListener() {
@@ -2882,6 +2883,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         labDataUTh.add(editDetritalUraniumThoriumModels);
+
+        jMenuItem1.setText("Sea Water Models");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        labDataUTh.add(jMenuItem1);
 
         labDataMenu.add(labDataUTh);
 
@@ -3705,6 +3714,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         }
 
     }
+    
+    public void updateEvolutionPlot(){
+        ((EvolutionPlotPanel)myEvolutionPlotPanel).repaint();
+    }
 
     /**
      *
@@ -4424,13 +4437,13 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         BrowserControl.displayURL("https://sites.google.com/site/useriesrocks/");
     }//GEN-LAST:event_visitUseriesRocksActionPerformed
 
-    private void editDetrritalUraniumthoriumModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDetrritalUraniumthoriumModelsActionPerformed
+    private void editPhysicalConstantsModelsUThActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPhysicalConstantsModelsUThActionPerformed
         try {
             editLabDataUTh(0);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-    }//GEN-LAST:event_editDetrritalUraniumthoriumModelsActionPerformed
+    }//GEN-LAST:event_editPhysicalConstantsModelsUThActionPerformed
 
     private void editDetritalUraniumThoriumModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDetritalUraniumThoriumModelsActionPerformed
         try {
@@ -4474,6 +4487,14 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         setUpNewCompiledLegacyProject(GENERIC_SQUID3_UPB.getName(), GENERIC_SQUID3_UPB.getIsotypeSystem(), GENERIC_SQUID3_UPB.getDefaultReportSpecsType());
     }//GEN-LAST:event_genericUPbSquid3DataTableCSV_menuItemActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        try {
+            editLabDataUTh(3);
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
     }
@@ -4502,13 +4523,13 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenu earthTimeWebSiteMenu;
     private javax.swing.JMenuItem editCurrentReportSettingsModel_menuItem;
     private javax.swing.JMenuItem editDetritalUraniumThoriumModels;
-    private javax.swing.JMenuItem editDetrritalUraniumthoriumModels;
     private javax.swing.JMenuItem editInitialPbModels;
     private javax.swing.JMenuItem editLabFractionationModels;
     private javax.swing.JMenuItem editLabTracers;
     private javax.swing.JMenuItem editMineralStandardsModels;
     private javax.swing.JMenuItem editPbBlanks;
     private javax.swing.JMenuItem editPhysicalConstantsModels;
+    private javax.swing.JMenuItem editPhysicalConstantsModelsUTh;
     private javax.swing.JMenuItem exitRedux;
     private javax.swing.JSeparator exitSeparator;
     private javax.swing.JMenuItem exit_menuItem;
@@ -4525,6 +4546,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JButton interpretSampleDates_button;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;

@@ -72,6 +72,7 @@ import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.filters.SVGFileFilter;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.aliquots.AliquotInterface;
@@ -215,6 +216,11 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
      */
     public String[][] getReportFractions() {
         return reportFractions;
+    }
+
+    @Override
+    public void updateEvolutionPlot() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     class TableRowObject implements Comparable<TableRowObject> {
@@ -493,7 +499,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportFractionIDs.setBackground(Color.white);
         reportFractionIDs.setOpaque(true);
         reportFractionIDs.setPreferredSize(new Dimension(//
-                fractionColumnWidth, (reportFractions.length + aliquotCount * (int)(showAliquotBars ? 1 : 0)) * lineHeight + 175));
+                fractionColumnWidth, (reportFractions.length + aliquotCount * (int) (showAliquotBars ? 1 : 0)) * lineHeight + 175));
 
         reportFractionIDsScrollPane = new JScrollPane(reportFractionIDs);
         reportFractionIDsScrollPane.setBorder(null);
@@ -525,7 +531,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportBody.setOpaque(true);
         reportBody.setPreferredSize(new Dimension(//
                 reportWidth - fractionColumnWidth + fractionButtonMargin, //
-                (reportFractions.length + aliquotCount * (int)(showAliquotBars ? 1 : 0)) * lineHeight + 175));
+                (reportFractions.length + aliquotCount * (int) (showAliquotBars ? 1 : 0)) * lineHeight + 175));
 
         reportBodyScrollPane = new JScrollPane(reportBody);
         reportBodyScrollPane.setBorder(null);
@@ -949,11 +955,11 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 12,
                                 (drawnHeight + topMargin + lineHeight));
                         g2D.drawString(
-                                 "The displayed Report Headers are used for style " + reportFractions[1][0] + ".",
+                                "The displayed Report Headers are used for style " + reportFractions[1][0] + ".",
                                 12,
                                 (drawnHeight + topMargin + 2 * lineHeight));
                         g2D.drawString(
-                                 "Use Reports menu to customize the table.",
+                                "Use Reports menu to customize the table.",
                                 12,
                                 (drawnHeight + topMargin + 3 * lineHeight));
                     } else {
@@ -965,7 +971,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             drawnWidth = leftMargin;
 
                             // april 2012 reportFractions will contain only accepted OR rejected, thus here check for printing fractions
-                            if (showFractions) {                          
+                            if (showFractions) {
                                 grayBarRowCount++;
                                 // for each aliquot                                
                                 if (!reportFractions[row][1].equalsIgnoreCase(saveAliquotName)) {
@@ -984,7 +990,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                                     leftMargin,
                                                     drawnHeight + topMargin + lineHeight);
                                         }
-                                    } 
+                                    }
 
                                     // build map of row to fraction objects and aliquot objects
                                     if ((sample != null) && paintType.equalsIgnoreCase("FRACTION")) {
@@ -1023,7 +1029,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                     g2D.setColor(new Color(240, 240, 240));
                                     g2D.fillRect(leftMargin, drawnHeight + topMargin + 2, reportWidth - 5, lineHeight + 0);
                                 }
-                                
+
                                 // fraction data
                                 // oct 2016 -1 added in to compensate for additional cell that records true/false filtering
                                 int columnCount = reportFractions[0].length - 1;
@@ -1044,7 +1050,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                                     ETFractionInterface fraction = null;
                                     try {
-                                        fraction = sample.getFractionByIDAndAliquotNumber(reportFractions[row][2].trim(), 
+                                        fraction = sample.getFractionByIDAndAliquotNumber(reportFractions[row][2].trim(),
                                                 ((ReduxAliquotInterface) aliquot).getAliquotNumber());
                                         TableRowObject currentFractionTableRowObject
                                                 = new TableRowObject( //
@@ -1226,7 +1232,9 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 ((ETFractionInterface) verticalPixelFractionMap.get(row).getRowObject()).setRejected(isRejected);
                                 // dec 2015 for tripoli fractions
                                 try {
-                                    ((UPbFractionI) verticalPixelFractionMap.get(row).getRowObject()).getTripoliFraction().setIncluded(!isRejected);
+                                    if (verticalPixelFractionMap.get(row).getRowObject() instanceof UPbLAICPMSFraction) {
+                                        ((UPbFractionI) verticalPixelFractionMap.get(row).getRowObject()).getTripoliFraction().setIncluded(!isRejected);
+                                    }
                                 } catch (Exception noTF) {
                                 }
                                 updateReportTable(false, false, "");

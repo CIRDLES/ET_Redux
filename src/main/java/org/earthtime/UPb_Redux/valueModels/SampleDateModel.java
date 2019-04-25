@@ -174,6 +174,7 @@ public class SampleDateModel extends ValueModel implements
     private boolean automaticIsochronSelection;
     private double[] ar48icntrs;
     private boolean automaticInitDelta234USelection;
+    private boolean ar48icntrsDsplayAsDeltaUnits;
 
     /**
      * creates a new instance of <code>SampleDateModel</code> with all of its
@@ -199,6 +200,7 @@ public class SampleDateModel extends ValueModel implements
         this.automaticIsochronSelection = true;
         this.ar48icntrs = new double[0];
         this.automaticInitDelta234USelection = true;
+        this.ar48icntrsDsplayAsDeltaUnits = true;
     }
 
     /**
@@ -1939,22 +1941,20 @@ public class SampleDateModel extends ValueModel implements
         }
 
         Matrix alphaAnalytical
-                =//
-                sAnalyticalXbarInverseU.//
+                = sAnalyticalXbarInverseU.
                         times(1.0 / U.transpose().times(sAnalyticalXbarInverseU).get(0, 0));
         Matrix alphaTracer = null;
         Matrix alphaLambda = null;
         if (!analyticalOnly) {
             Matrix sTracerXbarInverseU = sTracerXbar.solve(U);
             alphaTracer
-                    =//
-                    sTracerXbarInverseU.//
+                    = sTracerXbarInverseU.
                             times(1.0 / U.transpose().times(sTracerXbarInverseU).get(0, 0));
 
             sLambdaXbarInverse = sLambdaXbar.inverse();
             alphaLambda
                     =//
-                    sLambdaXbarInverse.times(U).//
+                    sLambdaXbarInverse.times(U).
                             times(1.0 / U.transpose().times(sLambdaXbarInverse).times(U).get(0, 0));
         }
         // dot products
@@ -1965,32 +1965,28 @@ public class SampleDateModel extends ValueModel implements
             analyticalWM += vectorXBar.get(f, 0) * alphaAnalytical.get(f, 0);
         }
         double analyticalOneSigma
-                = //
-                Math.sqrt(//
-                        alphaAnalytical.transpose().//
-                                times(sAnalyticalXbar).//
+                = Math.sqrt(
+                        alphaAnalytical.transpose().
+                                times(sAnalyticalXbar).
                                 times(alphaAnalytical).get(0, 0));
         Matrix analyticalR = vectorXBar.minus(new Matrix(countOfFractions, 1, analyticalWM));
         Matrix sAnalyticalXbarInvR = sAnalyticalXbar.solve(analyticalR);
         double analyticalMSWD
-                = //
-                analyticalR.transpose().//
-                        times(sAnalyticalXbarInvR).get(0, 0)//
+                = analyticalR.transpose().
+                        times(sAnalyticalXbarInvR).get(0, 0)
                 / (double) (countOfFractions - 1);
         if (!analyticalOnly) {
 
             double tracerOneSigma
-                    = //
-                    Math.sqrt(//
-                            alphaTracer.transpose().//
-                                    times(sTracerXbar).//
+                    = Math.sqrt(
+                            alphaTracer.transpose().
+                                    times(sTracerXbar).
                                     times(alphaTracer).get(0, 0));
 
             double lambdaOneSigma
-                    = //
-                    Math.sqrt(//
-                            alphaLambda.transpose().//
-                                    times(sLambdaXbar).//
+                    = Math.sqrt(
+                            alphaLambda.transpose().
+                                    times(sLambdaXbar).
                                     times(alphaLambda).get(0, 0));
 
             setInternalTwoSigmaUnctWithTracerCalibrationUnct(new BigDecimal(2.0 * tracerOneSigma));
@@ -2004,8 +2000,13 @@ public class SampleDateModel extends ValueModel implements
         setInternalTwoSigmaUnct(
                 new BigDecimal(2.0 * analyticalOneSigma));
 
-        setMeanSquaredWeightedDeviation(
-                new BigDecimal(analyticalMSWD));
+        try {
+            setMeanSquaredWeightedDeviation(
+                    new BigDecimal(analyticalMSWD));
+        } catch (Exception e) {
+            setMeanSquaredWeightedDeviation(
+                    BigDecimal.ZERO);
+        }
 
     }
 
@@ -3232,6 +3233,20 @@ public class SampleDateModel extends ValueModel implements
      */
     public void setAr48icntrs(double[] ar48icntrs) {
         this.ar48icntrs = ar48icntrs;
+    }
+
+    /**
+     * @return the ar48icntrsDsplayAsDeltaUnits
+     */
+    public boolean isAr48icntrsDsplayAsDeltaUnits() {
+        return ar48icntrsDsplayAsDeltaUnits;
+    }
+
+    /**
+     * @param ar48icntrsDsplayAsDeltaUnits the ar48icntrsDsplayAsDeltaUnits to set
+     */
+    public void setAr48icntrsDsplayAsDeltaUnits(boolean ar48icntrsDsplayAsDeltaUnits) {
+        this.ar48icntrsDsplayAsDeltaUnits = ar48icntrsDsplayAsDeltaUnits;
     }
 
 }

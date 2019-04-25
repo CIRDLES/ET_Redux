@@ -136,7 +136,7 @@ public class GeoSamplesWebServices {
         XMLDocumentInterface success = null;
         try {
             success = registerSampleMetaDataWithSesarProductionService(userName, password, mySamples);
-            if (success.getSample().size() > 0) {
+            if ((success != null) && success.getSample().size() > 0) {
                 System.out.println("REGISTERED!!!");
             } else {
                 System.out.println("FAILURE!!!");
@@ -170,7 +170,7 @@ public class GeoSamplesWebServices {
         XMLDocumentInterface success = null;
         try {
             success = registerSampleMetaDataWithSesarTestService(userName, password, mySamples);
-            if (success.getSample().size() > 0) {
+            if ((success != null) && success.getSample().size() > 0) {
                 System.out.println("REGISTERED!!!");
             } else {
                 System.out.println("FAILURE!!!");
@@ -188,9 +188,11 @@ public class GeoSamplesWebServices {
         XMLDocumentInterface downloadedSample = getSampleMetaDataFromTestGeoSamplesIGSN(igsn, false);
 
         boolean isRegistered = false;
-        try {
-            isRegistered = downloadedSample.getSample().get(0).getIgsn() != null;
-        } catch (Exception e) {
+        if (downloadedSample.getSample().size() > 0) {
+            try {
+                isRegistered = downloadedSample.getSample().get(0).getIgsn() != null;
+            } catch (Exception e) {
+            }
         }
         return isRegistered;
     }
@@ -199,9 +201,11 @@ public class GeoSamplesWebServices {
         XMLDocumentInterface downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
 
         boolean isRegistered = false;
-        try {
-            isRegistered = downloadedSample.getSample().get(0).getIgsn() != null;
-        } catch (Exception e) {
+        if (downloadedSample.getSample().size() > 0) {
+            try {
+                isRegistered = downloadedSample.getSample().get(0).getIgsn() != null;
+            } catch (Exception e) {
+            }
         }
         return isRegistered;
     }
@@ -209,12 +213,14 @@ public class GeoSamplesWebServices {
     public static boolean isSampleRegisteredToParentAtTestGeoSamples(String igsn, String parentIgsn) {
         XMLDocumentInterface downloadedSample = getSampleMetaDataFromTestGeoSamplesIGSN(igsn, false);
         boolean isRegistered = false;
-        try {
-            isRegistered = (downloadedSample.getSample().get(0).getIgsn() != null) && (downloadedSample.getSample().get(0).getParentIgsn() != null);
-        } catch (Exception e) {
-        }
-        if (isRegistered) {
-            isRegistered = isRegistered && (downloadedSample.getSample().get(0).getParentIgsn().equalsIgnoreCase(parentIgsn));
+        if (downloadedSample.getSample().size() > 0) {
+            try {
+                isRegistered = (downloadedSample.getSample().get(0).getIgsn() != null) && (downloadedSample.getSample().get(0).getParentIgsn() != null);
+            } catch (Exception e) {
+            }
+            if (isRegistered) {
+                isRegistered = isRegistered && (downloadedSample.getSample().get(0).getParentIgsn().equalsIgnoreCase(parentIgsn));
+            }
         }
 
         return isRegistered;
@@ -222,13 +228,16 @@ public class GeoSamplesWebServices {
 
     public static boolean isSampleRegisteredToParentAtGeoSamples(String igsn, String parentIgsn) {
         XMLDocumentInterface downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
+
         boolean isRegistered = false;
-        try {
-            isRegistered = (downloadedSample.getSample().get(0).getIgsn() != null) && (downloadedSample.getSample().get(0).getParentIgsn() != null);
-        } catch (Exception e) {
-        }
-        if (isRegistered) {
-            isRegistered = isRegistered && (downloadedSample.getSample().get(0).getParentIgsn().equalsIgnoreCase(parentIgsn));
+        if (downloadedSample.getSample().size() > 0) {
+            try {
+                isRegistered = (downloadedSample.getSample().get(0).getIgsn() != null) && (downloadedSample.getSample().get(0).getParentIgsn() != null);
+            } catch (Exception e) {
+            }
+            if (isRegistered) {
+                isRegistered = isRegistered && (downloadedSample.getSample().get(0).getParentIgsn().equalsIgnoreCase(parentIgsn));
+            }
         }
 
         return isRegistered;
