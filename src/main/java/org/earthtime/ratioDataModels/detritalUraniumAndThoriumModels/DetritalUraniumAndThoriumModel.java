@@ -85,7 +85,7 @@ public class DetritalUraniumAndThoriumModel extends AbstractRatiosDataModel {
                     "Placeholder model");
     private static final AbstractRatiosDataModel SecularEquilibriumDetritalUraniumThoriumInitialModel
             = createInstance(
-                    "Secular Equilibrium UTh=3.8",
+                    "Secular Equilibrium ThU=3.8",
                     1, 0,//
                     "public domain",//
                     "2017-01-01",//
@@ -208,7 +208,7 @@ public class DetritalUraniumAndThoriumModel extends AbstractRatiosDataModel {
     public static AbstractRatiosDataModel createNewInstance() {
 
         AbstractRatiosDataModel myModel = new DetritalUraniumAndThoriumModel(//
-                "New Detrital Uranium And Thorium Model", //
+                "New Detrital Thorium Uranium Model", //
                 1, 0, //
                 "No Lab", //
                 DateHelpers.defaultEarthTimeDateString(), //

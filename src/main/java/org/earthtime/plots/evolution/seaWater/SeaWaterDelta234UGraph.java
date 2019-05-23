@@ -36,7 +36,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  */
 public class SeaWaterDelta234UGraph extends AbstractDataView {
 
-    protected static SeaWaterInitialDelta234UTableModel model;
+    private static SeaWaterInitialDelta234UTableModel model;
 
     public SeaWaterDelta234UGraph(SeaWaterInitialDelta234UTableModel model) {
 
@@ -46,7 +46,7 @@ public class SeaWaterDelta234UGraph extends AbstractDataView {
 
         this.leftMargin = 50;
         this.topMargin = 30;
-        this.graphWidth = 1000;
+        this.graphWidth = 900;
         this.graphHeight = 230;
         this.xLocation = 0;
 
@@ -215,6 +215,13 @@ public class SeaWaterDelta234UGraph extends AbstractDataView {
         double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
         minY -= yMarginStretch;
         maxY += yMarginStretch;
+    }
+
+    /**
+     * @param aModel the model to set
+     */
+    public static void setModel(SeaWaterInitialDelta234UTableModel aModel) {
+        model = aModel;
     }
 
 }

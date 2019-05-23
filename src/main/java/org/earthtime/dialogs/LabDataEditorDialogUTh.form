@@ -101,7 +101,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="detritalUTh_menu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Detrital UTh Models"/>
+            <Property name="text" type="java.lang.String" value="Detrital ThU Models"/>
           </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
@@ -112,7 +112,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="importDetritalUThXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Detrital UTh Model from XML file"/>
+                <Property name="text" type="java.lang.String" value="Import Detrital ThU Model from XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importDetritalUThXML_menuItemActionPerformed"/>
@@ -120,7 +120,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveDetritalUThModelAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export current Detrital UTh Model as XML file"/>
+                <Property name="text" type="java.lang.String" value="Export current Detrital ThU Model as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveDetritalUThModelAsXML_menuItemActionPerformed"/>
@@ -130,7 +130,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeDetritalUThModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove current Detrital UTh Model from Lab Data (for editable models only)"/>
+                <Property name="text" type="java.lang.String" value="Remove current Detrital ThU Model from Lab Data (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeDetritalUThModel_menuItemActionPerformed"/>
@@ -140,7 +140,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalDetritalUThModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit current Detrital UTh Model (for editable models only)"/>
+                <Property name="text" type="java.lang.String" value="Edit current Detrital ThU Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalDetritalUThModel_menuItemActionPerformed"/>
@@ -148,7 +148,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyOfCurrentDetritalUThModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit copy of current Detrital UTh Model"/>
+                <Property name="text" type="java.lang.String" value="Edit copy of current Detrital ThU Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCopyOfCurrentDetritalUThModel_menuItemActionPerformed"/>
@@ -156,7 +156,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="newDetritalUThModelMode_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit new empty Detrital UTh Model"/>
+                <Property name="text" type="java.lang.String" value="Edit new empty Detrital ThU Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newDetritalUThModelMode_menuItemActionPerformed"/>
@@ -164,7 +164,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="cancelNewEditDetritalUThModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel Edit of Detrital UTh Model"/>
+                <Property name="text" type="java.lang.String" value="Cancel Edit of Detrital ThU Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelNewEditDetritalUThModel_menuItemActionPerformed"/>
@@ -174,7 +174,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentEditOfDetritalUThModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Detrital UTh Model"/>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Detrital ThU Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentEditOfDetritalUThModel_menuItemActionPerformed"/>
@@ -187,12 +187,20 @@
             <Property name="text" type="java.lang.String" value="SeaWater Models"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="defaultDelta234U">
+            <MenuItem class="javax.swing.JMenuItem" name="editCopyCurrentSeaWaterModel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Default delta 234U"/>
+                <Property name="text" type="java.lang.String" value="Edit copy of current Sea Water Model"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="defaultDelta234UActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCopyCurrentSeaWaterModelActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentSeaWaterModel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Sea Water Model"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentSeaWaterModelActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -372,6 +380,9 @@
               <Font name="Arial" size="10" style="1"/>
             </Property>
           </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Models"/>
+          </AccessibilityProperties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="LabDataTabChange"/>
           </Events>
@@ -464,7 +475,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="11" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="  Choose Detrital UTh Model:"/>
+                    <Property name="text" type="java.lang.String" value="  Choose Detrital ThU Model:"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="detritalUThChooser">
@@ -527,24 +538,66 @@
             <Container class="javax.swing.JLayeredPane" name="seaWaterDelta234LayeredPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="SeaWater Model">
-                    <Property name="tabTitle" type="java.lang.String" value="SeaWater Model"/>
+                  <JTabbedPaneConstraints tabName="SeaWater Models">
+                    <Property name="tabTitle" type="java.lang.String" value="SeaWater Models"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
 
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="1092" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="617" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                <Property name="useNullLayout" type="boolean" value="true"/>
               </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JLabel" name="chooseSeaWaterModel_label">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Arial" size="12" style="1"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="  Choose SeaWater Model:"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="40" y="15" width="-1" height="25"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="javax.swing.JComboBox" name="seaWaterModelChooser">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="200" y="15" width="640" height="25"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="javax.swing.JLabel" name="seaWaterModelName_label">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Arial" size="12" style="1"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="  SeaWater Model Name:"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="50" y="40" width="140" height="25"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="javax.swing.JTextField" name="seaWaterModelName_text">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Tahoma" size="12" style="1"/>
+                    </Property>
+                    <Property name="horizontalAlignment" type="int" value="2"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="200" y="40" width="260" height="25"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+              </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="labDefaults_panel">
               <Properties>
