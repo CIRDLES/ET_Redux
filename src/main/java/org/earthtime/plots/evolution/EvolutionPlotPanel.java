@@ -61,6 +61,7 @@ import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
 import org.earthtime.plots.PlotAxesSetupInterface;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.plots.isochrons.IsochronModel;
 import org.earthtime.projects.ProjectSample;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -96,7 +97,9 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
     private double[][] tvLabels;
     private double[][][] xyLabels;
 
+    private SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel;
     private int[] seaWaterDateIsochronIndexArray;
+    private double[] arrayOfSeaWaterModelDeltasAsRatios;
     private int[] seaWaterDeltaContourIndexArray;
     private boolean showSeaWaterModel;
 
@@ -149,6 +152,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
         this.yAxisDisplayAsDeltaUnits = false;
 
+        this.seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance()
+                .getSeaWaterModels().get(0);
         this.showSeaWaterModel = false;
 
         addMouseListener(this);
@@ -159,9 +164,11 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        if (showMe) {
+            super.paintComponent(g);
 
-        paint((Graphics2D) g, false);
+            paint((Graphics2D) g, false);
+        }
     }
 
     public void paint(Graphics2D g2d, boolean svgStyle) {
@@ -292,6 +299,70 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
             double rangeX = (getMaxX_Display() - getMinX_Display());
             double rangeY = (getMaxY_Display() - getMinY_Display());
 
+            // draw zoom box if in use
+            if (isInImageModeZoom()
+                    && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
+                g2d.setStroke(new BasicStroke(2.0f));
+                g2d.setColor(Color.red);
+                g2d.drawRect(//
+                        Math.min(zoomMinX, zoomMaxX),
+                        Math.min(zoomMaxY, zoomMinY),
+                        Math.abs(zoomMaxX - zoomMinX),
+                        Math.abs(zoomMinY - zoomMaxY));
+            }
+
+            // experiment
+            // spring green
+            g2d.setPaint(new Color(0, 255, 127));
+
+            if (showSeaWaterModel) {
+                for (int i = 0; i < seaWaterDateIsochronIndexArray.length; i++) {
+                    Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double(
+                            mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]) - 3,
+                            mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]) - 3, 6, 6);
+
+                    g2d.draw(rawRatioPoint);
+                    g2d.fill(rawRatioPoint);
+
+                    if (i > 0) {
+                        if (arrayOfSeaWaterModelDeltasAsRatios[i - 1] != arrayOfSeaWaterModelDeltasAsRatios[i]) {
+                            // draw line
+                            Line2D line = new Line2D.Double(
+                                    mapX(xy[seaWaterDeltaContourIndexArray[i - 1]][0][seaWaterDateIsochronIndexArray[i - 1]]),
+                                    mapY(xy[seaWaterDeltaContourIndexArray[i - 1]][1][seaWaterDateIsochronIndexArray[i - 1]]),
+                                    mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]),
+                                    mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]));
+                            g2d.setStroke(new BasicStroke(2.0f));
+                            g2d.draw(line);
+                        } else {
+                            Path2D curvedP = new Path2D.Double(Path2D.WIND_NON_ZERO);
+                            curvedP.moveTo(
+                                    (float) mapX(xy[seaWaterDeltaContourIndexArray[i - 1]][0][seaWaterDateIsochronIndexArray[i - 1]]),
+                                    (float) mapY(xy[seaWaterDeltaContourIndexArray[i - 1]][1][seaWaterDateIsochronIndexArray[i - 1]]));
+
+                            for (int j = seaWaterDateIsochronIndexArray[i - 1]; j < seaWaterDateIsochronIndexArray[i]; j++) {
+                                double deltaTOver3 = (tv[seaWaterDeltaContourIndexArray[i - 1]][j + 1] - tv[seaWaterDeltaContourIndexArray[i - 1]][j]) / 3;
+
+                                curvedP.curveTo(//
+                                        (float) mapX(xy[seaWaterDeltaContourIndexArray[i]][0][j] + deltaTOver3 * dardt[seaWaterDeltaContourIndexArray[i]][0][j]),
+                                        (float) mapY(xy[seaWaterDeltaContourIndexArray[i]][1][j] + deltaTOver3 * dardt[seaWaterDeltaContourIndexArray[i]][1][j]),
+                                        (float) mapX(xy[seaWaterDeltaContourIndexArray[i]][0][j + 1] - deltaTOver3 * dardt[seaWaterDeltaContourIndexArray[i]][0][j + 1]),
+                                        (float) mapY(xy[seaWaterDeltaContourIndexArray[i]][1][j + 1] - deltaTOver3 * dardt[seaWaterDeltaContourIndexArray[i]][1][j + 1]),
+                                        (float) mapX(xy[seaWaterDeltaContourIndexArray[i]][0][j + 1]),
+                                        (float) mapY(xy[seaWaterDeltaContourIndexArray[i]][1][j + 1]));
+                            }
+                            g2d.draw(curvedP);
+                        }
+                    }
+                }
+            }
+
+            // resets clipping
+            try {
+                drawAxesAndTics(g2d, yAxisDisplayAsDeltaUnits);
+            } catch (Exception e) {
+            }
+
             // label axes
             String xAxisLabel = "[230Th/238U]t";
             g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
@@ -356,49 +427,6 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
             g2d.rotate(Math.PI / 2.0);
 
-            // draw zoom box if in use
-            if (isInImageModeZoom()
-                    && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
-                g2d.setStroke(new BasicStroke(2.0f));
-                g2d.setColor(Color.red);
-                g2d.drawRect(//
-                        Math.min(zoomMinX, zoomMaxX),
-                        Math.min(zoomMaxY, zoomMinY),
-                        Math.abs(zoomMaxX - zoomMinX),
-                        Math.abs(zoomMinY - zoomMaxY));
-            }
-
-            // experiment
-            // spring green
-            g2d.setPaint(new Color(0, 255, 127));
-
-            if (showSeaWaterModel) {
-                for (int i = 0; i < seaWaterDateIsochronIndexArray.length; i++) {
-                    Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
-                            mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]) - 5,
-                            mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]) - 5, 10, 10);
-
-                    g2d.draw(rawRatioPoint);
-                    g2d.fill(rawRatioPoint);
-
-                    if (i > 0) {
-                        // draw line
-                        Line2D line = new Line2D.Double(
-                                mapX(xy[seaWaterDeltaContourIndexArray[i - 1]][0][seaWaterDateIsochronIndexArray[i - 1]]),
-                                mapY(xy[seaWaterDeltaContourIndexArray[i - 1]][1][seaWaterDateIsochronIndexArray[i - 1]]),
-                                mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]),
-                                mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]));
-                        g2d.setStroke(new BasicStroke(2.0f));
-                        g2d.draw(line);
-                    }
-                }
-            }
-
-            // resets clipping
-            try {
-                drawAxesAndTics(g2d, yAxisDisplayAsDeltaUnits);
-            } catch (Exception e) {
-            }
             // draw and label isochron axes - top and right
             g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
 
@@ -556,8 +584,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
         if (showSeaWaterModel) {
             // add in sea water dates        
-            double[] arrayOfSeaWaterModelDates = ReduxLabData.getInstance()
-                    .getDefaultSeaWaterInitialDelta234UTableModel().getArrayOfDates();
+            double[] arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
             seaWaterDateIsochronIndexArray = new int[arrayOfSeaWaterModelDates.length];
 
             for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
@@ -565,14 +592,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                     annumList.add(arrayOfSeaWaterModelDates[i] * 1000.0);
                 }
             }
-
-            // need sort to get indices correctly
-            Collections.sort(annumList);
-            for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
-                // offset by 1 because of array start
-                seaWaterDateIsochronIndexArray[i] = annumList.indexOf(arrayOfSeaWaterModelDates[i] * 1000.0) + 1;
-            }
         }
+        // need sort to get indices correctly
         Collections.sort(annumList);
 
         annumIsochrons = annumList.stream().mapToDouble(Double::doubleValue).toArray();
@@ -589,8 +610,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
         if (showSeaWaterModel) {
             // add in sea water deltas  as ratios      
-            double[] arrayOfSeaWaterModelDeltasAsRatios = ReduxLabData.getInstance()
-                    .getDefaultSeaWaterInitialDelta234UTableModel().getArrayOfDeltasAsRatios();
+            arrayOfSeaWaterModelDeltasAsRatios = seaWaterInitialDelta234UTableModel.getArrayOfDeltasAsRatios();
             seaWaterDeltaContourIndexArray = new int[arrayOfSeaWaterModelDeltasAsRatios.length];
 
             for (int i = 0; i < arrayOfSeaWaterModelDeltasAsRatios.length; i++) {
@@ -689,10 +709,16 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
             if (!arList.contains(age) && age < 10e10) {
                 arList.add(age);
             }
-            arList.add(2e6);
         }
+        arList.add(2e6);
 
         Collections.sort(arList);
+        if (showSeaWaterModel) {
+            double[] arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
+            for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
+                seaWaterDateIsochronIndexArray[i] = arList.indexOf(arrayOfSeaWaterModelDates[i] * 1000.0);
+            }
+        }
 
         int nts = arList.size();  //nisochrons + 1;//  10;
         // build array of vectors of evenly spaced values with last value = 2e6
@@ -1076,5 +1102,13 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
     @Override
     public PlotAxesSetupInterface getCurrentPlotAxesSetup() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @param seaWaterInitialDelta234UTableModel the
+     * seaWaterInitialDelta234UTableModel to set
+     */
+    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
+        this.seaWaterInitialDelta234UTableModel = seaWaterInitialDelta234UTableModel;
     }
 }

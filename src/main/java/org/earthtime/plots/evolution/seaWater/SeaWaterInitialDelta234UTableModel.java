@@ -97,9 +97,9 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         myModel.comment = this.comment;
 
         myModel.entryList = new ArrayList<>();
-        for (SeaWaterDelta234UModelEntry entry : this.entryList){
+        for (SeaWaterDelta234UModelEntry entry : this.entryList) {
             SeaWaterDelta234UModelEntry row = new SeaWaterDelta234UModelEntry(entry.ageInKa, entry.delta234UPerMil, entry.oneSigmaAbsUnct);
-            myModel.entryList .add(row);
+            myModel.entryList.add(row);
         }
 
         return myModel;
@@ -222,6 +222,15 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         double[] deltasArray = new double[entryList.size()];
         for (int i = 0; i < entryList.size(); i++) {
             deltasArray[i] = entryList.get(i).delta234UPerMil / 1000.0 + 1.0;
+        }
+
+        return deltasArray;
+    }
+
+    public double[] getArrayOfDeltas() {
+        double[] deltasArray = new double[entryList.size()];
+        for (int i = 0; i < entryList.size(); i++) {
+            deltasArray[i] = entryList.get(i).delta234UPerMil;
         }
 
         return deltasArray;

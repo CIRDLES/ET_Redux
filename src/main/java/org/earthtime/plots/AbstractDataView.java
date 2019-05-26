@@ -73,6 +73,8 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      *
      */
     protected double[] myOnPeakData;
+    protected double[] myOnPeakDataUpperUnct;
+    protected double[] myOnPeakDataLowerUnct;
     /**
      *
      */

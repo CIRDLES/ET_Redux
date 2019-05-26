@@ -19,12 +19,15 @@ import Jama.Matrix;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Line2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -51,6 +54,7 @@ import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
 import org.earthtime.plots.PlotAxesSetupInterface;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
@@ -67,11 +71,16 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
     protected transient ReportUpdaterInterface reportUpdater;
 
-    SampleInterface mySample;
+    private SampleInterface mySample;
 
     // maps age to delta
     private Map<Double, Double> upperBoundary;
     private Map<Double, Double> lowerBoundary;
+
+    private SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel;
+    private boolean showSeaWaterModel;
+    private double[] arrayOfSeaWaterModelDates;
+    private double[] arrayOfSeaWaterModelDeltas;
 
     public AgeByDelta234UPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
@@ -243,20 +252,70 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                         Math.abs(zoomMaxX - zoomMinX),
                         Math.abs(zoomMinY - zoomMaxY));
             }
-        }
 
-        // this resets clip bounds
-        try {
-            drawAxesAndTics(g2d, false);
-        } catch (Exception e) {
-        }
+            if (showSeaWaterModel) {
+                arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
+                arrayOfSeaWaterModelDeltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltas();
 
-        reportUpdater.updateEvolutionPlot();
+                g2d.setPaint(new Color(0, 255, 127));
+                g2d.setStroke(new BasicStroke(1.5f));
+
+                for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
+                    Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double(
+                            mapX(arrayOfSeaWaterModelDates[i]) - 3,
+                            mapY(arrayOfSeaWaterModelDeltas[i]) - 3, 6, 6);
+
+                    g2d.draw(rawRatioPoint);
+                    g2d.fill(rawRatioPoint);
+
+                    if (i > 0) {
+                        // draw line
+                        Line2D line = new Line2D.Double(
+                                mapX(arrayOfSeaWaterModelDates[i - 1]),
+                                mapY(arrayOfSeaWaterModelDeltas[i - 1]),
+                                mapX(arrayOfSeaWaterModelDates[i]),
+                                mapY(arrayOfSeaWaterModelDeltas[i]));
+                        g2d.setStroke(new BasicStroke(2.0f));
+                        g2d.draw(line);
+                    }
+                }
+            }
+
+            // this resets clip bounds
+            try {
+                drawAxesAndTics(g2d, false);
+            } catch (Exception e) {
+            }
+
+            // label axes
+            String xAxisLabel = "Age (ka)";
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+            double xAxisLabelLength = calculateLengthOfStringPlot(g2d, xAxisLabel);
+
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+            g2d.drawString(xAxisLabel,
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 10,
+                    topMargin + (int) graphHeight + 30);
+
+            g2d.rotate(-Math.PI / 2.0);
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+            String yAxisLabel = " Initial \u03B4234U \u2030";
+            double yAxisLabelLength = calculateLengthOfStringPlot(g2d, yAxisLabel);
+
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+            g2d.drawString(yAxisLabel,
+                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
+                    leftMargin - 20);
+            g2d.rotate(Math.PI / 2.0);
+
+            reportUpdater.updateEvolutionPlot();
+        }
 
     }
 
     @Override
-    public void preparePanel(boolean doReset) {
+    public void preparePanel(boolean doReset
+    ) {
         if (doReset) {
 
             removeAll();
@@ -298,6 +357,11 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
         ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
         ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+
+        if (showSeaWaterModel) {
+            arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
+            arrayOfSeaWaterModelDeltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltas();
+        }
 
         repaint();
         validate();
@@ -698,6 +762,21 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
      */
     public void setLowerBoundary(Map<Double, Double> lowerBoundary) {
         this.lowerBoundary = lowerBoundary;
+    }
+
+    /**
+     * @param seaWaterInitialDelta234UTableModel the
+     * seaWaterInitialDelta234UTableModel to set
+     */
+    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
+        this.seaWaterInitialDelta234UTableModel = seaWaterInitialDelta234UTableModel;
+    }
+
+    /**
+     * @param showSeaWaterModel the showSeaWaterModel to set
+     */
+    public void setShowSeaWaterModel(boolean showSeaWaterModel) {
+        this.showSeaWaterModel = showSeaWaterModel;
     }
 
 }

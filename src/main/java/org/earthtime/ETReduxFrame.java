@@ -3719,7 +3719,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }
 
     public void updateEvolutionPlot() {
-        ((EvolutionPlotPanel) myEvolutionPlotPanel).repaint();
+        if (((EvolutionPlotPanel) myEvolutionPlotPanel).isShowMe()) {
+            ((EvolutionPlotPanel) myEvolutionPlotPanel).repaint();
+        }
     }
 
     /**
