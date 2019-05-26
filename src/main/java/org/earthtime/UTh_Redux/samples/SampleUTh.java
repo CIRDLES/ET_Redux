@@ -34,6 +34,7 @@ import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.plots.isochrons.IsochronModel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -654,6 +655,16 @@ public class SampleUTh extends ETSample implements
             defaultReportSpecsType = "UTh_Carb";
         }
         return defaultReportSpecsType;
+    }
+
+    @Override
+    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

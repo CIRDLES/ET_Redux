@@ -81,6 +81,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
@@ -100,6 +101,7 @@ import org.earthtime.plots.anyTwo.PlotAny2Panel;
 import org.earthtime.plots.evolution.AgeByDelta234UPlotPanel;
 import org.earthtime.plots.evolution.EvolutionPlotPanel;
 import org.earthtime.plots.evolution.InitialDelta234UEvolutionSelectorDialog;
+import org.earthtime.plots.evolution.InitialDelta234USeaWaterModelSelectorDialog;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
 import org.earthtime.plots.evolution.IsochronsEvolutionSelectorDialog;
@@ -3412,13 +3414,32 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_seaDelta234U_buttonActionPerformed
 
     private void seaWater_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seaWater_toggleButtonActionPerformed
+       DialogEditor myDialog
+                = new InitialDelta234USeaWaterModelSelectorDialog(
+                        null,
+                        true,
+                        sample.getSeaWaterInitialDelta234UTableModel());
+        myDialog.setSize(370, 295);
+        myDialog.setLocationRelativeTo(this);
+        myDialog.setVisible(true);
+
+        
+        
+        sample.setSeaWaterInitialDelta234UTableModel(((InitialDelta234USeaWaterModelSelectorDialog)myDialog).getSeaWaterInitialDelta234UTableModel());
+        
+        
+        
         ((EvolutionPlotPanel) evolutionPlotPanel).setSeaWaterInitialDelta234UTableModel(
-                ReduxLabData.getInstance().getSeaWaterModels().get(1));
+                ((InitialDelta234USeaWaterModelSelectorDialog)myDialog).getSeaWaterInitialDelta234UTableModel());
+        ((EvolutionPlotPanel) evolutionPlotPanel).setShowSeaWaterModel(((InitialDelta234USeaWaterModelSelectorDialog)myDialog).isShowSeaWaterModel());
+        ((EvolutionPlotPanel) evolutionPlotPanel).repaint();
         
         ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).setSeaWaterInitialDelta234UTableModel(
-                ReduxLabData.getInstance().getSeaWaterModels().get(1));
-        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).setShowSeaWaterModel(true);
+                ((InitialDelta234USeaWaterModelSelectorDialog)myDialog).getSeaWaterInitialDelta234UTableModel());
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).setShowSeaWaterModel(((InitialDelta234USeaWaterModelSelectorDialog)myDialog).isShowSeaWaterModel());
         ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).repaint();
+        
+        myDialog.dispose();
     }//GEN-LAST:event_seaWater_toggleButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

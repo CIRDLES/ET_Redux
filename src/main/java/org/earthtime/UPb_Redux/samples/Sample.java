@@ -60,6 +60,7 @@ import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -221,6 +222,7 @@ public class Sample implements
      * @param sampleAnalysisType
      * @param defaultAnalysisPurpose
      * @param isotopeSystem the value of isotopeSystem
+     * @param defaultReportSpecsType
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
@@ -1673,5 +1675,15 @@ public class Sample implements
         for (int i = 0; i < UPbFractions.size(); i++) {
             filteredFractionIDs.add(UPbFractions.get(i).getFractionID());
         }
+    }
+
+    @Override
+    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

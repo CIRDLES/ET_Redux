@@ -901,16 +901,16 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 });
                 popup.add(menuItem);
 
-                menuItem = new JMenuItem("Toggle Show Sea Water Model");
-                menuItem.addActionListener(new ActionListener() {
-
-                    public void actionPerformed(ActionEvent arg0) {
-                        showSeaWaterModel = !showSeaWaterModel;
-                        buildIsochronsAndInitDelta234UContours();
-                        repaint();
-                    }
-                });
-                popup.add(menuItem);
+//                menuItem = new JMenuItem("Toggle Show Sea Water Model");
+//                menuItem.addActionListener(new ActionListener() {
+//
+//                    public void actionPerformed(ActionEvent arg0) {
+//                        setShowSeaWaterModel(!showSeaWaterModel);
+//                        //buildIsochronsAndInitDelta234UContours();
+//                        repaint();
+//                    }
+//                });
+//                popup.add(menuItem);
 
                 popup.show(evt.getComponent(), evt.getX(), evt.getY());
             }
@@ -1110,5 +1110,15 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
      */
     public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
         this.seaWaterInitialDelta234UTableModel = seaWaterInitialDelta234UTableModel;
+    }
+
+    /**
+     * @param showSeaWaterModel the showSeaWaterModel to set
+     */
+    public void setShowSeaWaterModel(boolean showSeaWaterModel) {
+        this.showSeaWaterModel = showSeaWaterModel;
+        if (showSeaWaterModel){
+            buildIsochronsAndInitDelta234UContours();
+        }
     }
 }

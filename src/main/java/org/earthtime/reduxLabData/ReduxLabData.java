@@ -1417,14 +1417,11 @@ public final class ReduxLabData implements Serializable {
      * @return
      */
     public ArrayList<SeaWaterInitialDelta234UTableModel> getSeaWaterModels() {
-        if (seaWaterModels == null){
-            seaWaterModels = new ReduxLabDataList<>("SeaWater Model");            
+        if (seaWaterModels == null) {
+            seaWaterModels = new ReduxLabDataList<>("SeaWater Model");
         }
-        if (seaWaterModels.isEmpty()){
-            try {
-                seaWaterModels.add(getDefaultLabSeaWaterModel());
-            } catch (BadLabDataException badLabDataException) {
-            }
+        if (seaWaterModels.isEmpty()) {
+            seaWaterModels.add(getDefaultLabSeaWaterModel());
         }
         return seaWaterModels;
     }
@@ -1435,16 +1432,15 @@ public final class ReduxLabData implements Serializable {
      */
     public SeaWaterInitialDelta234UTableModel getNoneSeaWaterModel()
             throws BadLabDataException {
-        return seaWaterModels.get(0);//(SeaWaterInitialDelta234UTableModel) ((ReduxLabDataList) seaWaterModels).getFirstElement();
+        return seaWaterModels.get(0);
     }
 
     /**
      *
      * @return @throws BadLabDataException
      */
-    public SeaWaterInitialDelta234UTableModel getFirstSeaWaterModel()
-            throws BadLabDataException {
-        return seaWaterModels.get(1);//(SeaWaterInitialDelta234UTableModel) ((ReduxLabDataList) seaWaterModels).getSecondElement();
+    public SeaWaterInitialDelta234UTableModel getFirstSeaWaterModel() {
+        return seaWaterModels.get(1);
     }
 
     /**
@@ -1456,12 +1452,12 @@ public final class ReduxLabData implements Serializable {
     public SeaWaterInitialDelta234UTableModel getASeaWaterModel(String name)
             throws BadLabDataException {
         SeaWaterInitialDelta234UTableModel retVal = seaWaterModels.get(0);
-        for (SeaWaterInitialDelta234UTableModel m : seaWaterModels){
-            if (m.getNameAndVersion().toUpperCase().compareTo(name.toUpperCase()) == 0){
+        for (SeaWaterInitialDelta234UTableModel m : seaWaterModels) {
+            if (m.getNameAndVersion().toUpperCase().compareTo(name.toUpperCase()) == 0) {
                 retVal = m;
             }
         }
-        return retVal;//(SeaWaterInitialDelta234UTableModel) ((ReduxLabDataList) seaWaterModels).getAnElement(name);
+        return retVal;
     }
 
     /**
@@ -1500,12 +1496,11 @@ public final class ReduxLabData implements Serializable {
      * @return @throws BadLabDataException
      * @throws BadLabDataException
      */
-    public SeaWaterInitialDelta234UTableModel getDefaultLabSeaWaterModel()
-            throws BadLabDataException {
+    public SeaWaterInitialDelta234UTableModel getDefaultLabSeaWaterModel() {
         if (defaultSeaWaterInitialDelta234UTableModel == null) {
             addSeaWaterModel(new SeaWaterInitialDelta234UTableModel());
             setDefaultSeaWaterInitialDelta234UTableModel(getFirstSeaWaterModel());
-        } 
+        }
 //        else // detect if legacy default is none and change if possible
 //        if (defaultSeaWaterInitialDelta234UTableModel.equals(getNoneSeaWaterModel())) {
 //            setDefaultLabSeaWaterUModel(getFirstSeaWaterModel());
@@ -1529,8 +1524,8 @@ public final class ReduxLabData implements Serializable {
     public void registerSeaWaterModel(SeaWaterInitialDelta234UTableModel seaWaterUModel, boolean isVerbose) {
         if (seaWaterUModel != null) {
             //if (((ReduxLabDataList) seaWaterModels).registerElement(seaWaterUModel, isVerbose)) {
-                addSeaWaterModel(seaWaterUModel);
-           // }
+            addSeaWaterModel(seaWaterUModel);
+            // }
         }
     }
 
@@ -2261,9 +2256,9 @@ public final class ReduxLabData implements Serializable {
      * @return the defaultSeaWaterInitialDelta234UTableModel
      */
     public SeaWaterInitialDelta234UTableModel getDefaultSeaWaterInitialDelta234UTableModel() {
-       // if (defaultSeaWaterInitialDelta234UTableModel == null) {
-            defaultSeaWaterInitialDelta234UTableModel = new SeaWaterInitialDelta234UTableModel();
-       // }
+        // if (defaultSeaWaterInitialDelta234UTableModel == null) {
+        defaultSeaWaterInitialDelta234UTableModel = new SeaWaterInitialDelta234UTableModel();
+        // }
         return defaultSeaWaterInitialDelta234UTableModel;
     }
 

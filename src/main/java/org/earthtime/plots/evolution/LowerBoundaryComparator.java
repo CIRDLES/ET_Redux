@@ -30,7 +30,7 @@ public class LowerBoundaryComparator implements Comparator<Double>, Serializable
 
         // allow some slop
         // reversed to support polygon tests
-        if (Math.abs(age1 - age2) > 5.0) {
+        if (Math.abs(age1 - age2) > 3.0) {
             retVal = Double.compare(age2, age1);
         }
 

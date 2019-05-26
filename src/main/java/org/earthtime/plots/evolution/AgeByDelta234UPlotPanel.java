@@ -82,6 +82,9 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
     private double[] arrayOfSeaWaterModelDates;
     private double[] arrayOfSeaWaterModelDeltas;
 
+    private double movingUpperBoundaryPointFromX;
+    private double movingLowerBoundaryPointFromX;
+
     public AgeByDelta234UPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
 
@@ -123,6 +126,9 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
         this.upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
         this.lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
+
+        this.movingUpperBoundaryPointFromX = -999;
+        this.movingLowerBoundaryPointFromX = -999;
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -281,6 +287,74 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                 }
             }
 
+            if (imageMode == "BOUNDARY") {
+                if (movingUpperBoundaryPointFromX > 0) {
+                    g2d.setPaint(Color.red);
+                    Line2D line = new Line2D.Double(
+                            mapX(movingUpperBoundaryPointFromX),
+                            mapY(upperBoundary.get(movingUpperBoundaryPointFromX)),
+                            mapX(minX),
+                            mapY(upperBoundary.get(movingUpperBoundaryPointFromX)));
+                    g2d.setStroke(new BasicStroke(0.5f));
+                    g2d.draw(line);
+
+                    String deltaLabel = String.valueOf(Math.round(upperBoundary.get(movingUpperBoundaryPointFromX)));
+                    g2d.setFont(new Font("Monospaced", Font.BOLD, 10));
+                    double deltaLabelLength = calculateLengthOfStringPlot(g2d, deltaLabel);
+
+                    double y = upperBoundary.get(movingUpperBoundaryPointFromX);
+                    g2d.drawString(deltaLabel,
+                            (int) mapX(Math.round(movingUpperBoundaryPointFromX)) - (int) deltaLabelLength - 10,
+                            (int) mapY(Math.round(y)) - 4);
+
+                    line = new Line2D.Double(
+                            mapX(movingUpperBoundaryPointFromX),
+                            mapY(minY),
+                            mapX(movingUpperBoundaryPointFromX),
+                            mapY(upperBoundary.get(movingUpperBoundaryPointFromX)));
+                    g2d.setStroke(new BasicStroke(0.5f));
+                    g2d.draw(line);
+
+                    String ageLabel = String.valueOf(Math.round(movingUpperBoundaryPointFromX));
+                    g2d.drawString(ageLabel,
+                            (int) mapX(Math.round(movingUpperBoundaryPointFromX)) + 10,
+                            (int) mapY(Math.round(y)) + 10);
+                }
+                
+                if (movingLowerBoundaryPointFromX > 0) {
+                    g2d.setPaint(Color.red);
+                    Line2D line = new Line2D.Double(
+                            mapX(movingLowerBoundaryPointFromX),
+                            mapY(lowerBoundary.get(movingLowerBoundaryPointFromX)),
+                            mapX(minX),
+                            mapY(lowerBoundary.get(movingLowerBoundaryPointFromX)));
+                    g2d.setStroke(new BasicStroke(0.5f));
+                    g2d.draw(line);
+
+                    String deltaLabel = String.valueOf(Math.round(lowerBoundary.get(movingLowerBoundaryPointFromX)));
+                    g2d.setFont(new Font("Monospaced", Font.BOLD, 10));
+                    double deltaLabelLength = calculateLengthOfStringPlot(g2d, deltaLabel);
+
+                    double y = lowerBoundary.get(movingLowerBoundaryPointFromX);
+                    g2d.drawString(deltaLabel,
+                            (int) mapX(Math.round(movingLowerBoundaryPointFromX)) - (int) deltaLabelLength - 10,
+                            (int) mapY(Math.round(y)) - 4);
+
+                    line = new Line2D.Double(
+                            mapX(movingLowerBoundaryPointFromX),
+                            mapY(minY),
+                            mapX(movingLowerBoundaryPointFromX),
+                            mapY(lowerBoundary.get(movingLowerBoundaryPointFromX)));
+                    g2d.setStroke(new BasicStroke(0.5f));
+                    g2d.draw(line);
+
+                    String ageLabel = String.valueOf(Math.round(movingLowerBoundaryPointFromX));
+                    g2d.drawString(ageLabel,
+                            (int) mapX(Math.round(movingLowerBoundaryPointFromX)) + 10,
+                            (int) mapY(Math.round(y)) + 10);
+                }
+            }
+
             // this resets clip bounds
             try {
                 drawAxesAndTics(g2d, false);
@@ -312,6 +386,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         }
 
     }
+    
 
     @Override
     public void preparePanel(boolean doReset
@@ -455,6 +530,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         if (eastResizing && southResizing) {
             setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
         }
+
     }
 
     private boolean isEastResize(int myX) {
@@ -520,6 +596,10 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                 && (evt.getY() >= topMargin)
                 && (evt.getY() <= graphHeight + topMargin)) {
 
+            // Jan 2011 show coordinates fyi
+            double x = convertMouseXToValue(evt.getX());
+            double y = convertMouseYToValue(evt.getY());
+
             if (evt.isPopupTrigger() || evt.getButton() == MouseEvent.BUTTON3) {
 
                 putInImageModePan();
@@ -527,12 +607,8 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                 //Create the popup menu.
                 JPopupMenu popup = new JPopupMenu();
 
-                // Jan 2011 show coordinates fyi
-                double x = convertMouseXToValue(evt.getX());
-                double y = convertMouseYToValue(evt.getY());
-
                 if (upperBoundary.containsKey(x)) {
-                    JMenuItem menuItem = new JMenuItem("UPPER: Remove Boundary Point for initDelta234U at age = " + Math.round((float) y));
+                    JMenuItem menuItem = new JMenuItem("UPPER: Remove Boundary Point for initDelta234U at age = " + Math.round((float) x));
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
@@ -542,7 +618,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     });
                     popup.add(menuItem);
 
-                    menuItem = new JMenuItem("UPPER: Replace Boundary Point for initDelta234U at age = " + Math.round((float) y));
+                    menuItem = new JMenuItem("UPPER: Replace Boundary Point for initDelta234U = " + Math.round((float) y) + " at age = " + Math.round((float) x));
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
@@ -554,7 +630,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     popup.add(menuItem);
                 } else {
 
-                    JMenuItem menuItem = new JMenuItem("UPPER: Create Boundary Point for initDelta234U at age = " + Math.round((float) y));
+                    JMenuItem menuItem = new JMenuItem("UPPER: Create Boundary Point for initDelta234U = " + Math.round((float) y) + " at age = " + Math.round((float) x));
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
@@ -577,7 +653,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                 }
 
                 if (lowerBoundary.containsKey(x)) {
-                    JMenuItem menuItem = new JMenuItem("LOWER: Remove Boundary Point for initDelta234U at age = " + Math.round((float) y));
+                    JMenuItem menuItem = new JMenuItem("LOWER: Remove Boundary Point for initDelta234U at age = " + Math.round((float) x));
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
@@ -587,7 +663,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     });
                     popup.add(menuItem);
 
-                    menuItem = new JMenuItem("LOWER: Replace Boundary Point for initDelta234U at age = " + Math.round((float) y));
+                    menuItem = new JMenuItem("LOWER: Replace Boundary Point for initDelta234U = " + Math.round((float) y) + " at age = " + Math.round((float) x));
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
@@ -599,7 +675,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     popup.add(menuItem);
                 } else {
 
-                    JMenuItem menuItem = new JMenuItem("LOWER: Create Boundary Point for initDelta234U at age = " + Math.round((float) y));
+                    JMenuItem menuItem = new JMenuItem("LOWER: Create Boundary Point for initDelta234U = " + Math.round((float) y) + " at age = " + Math.round((float) x));
                     menuItem.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent arg0) {
@@ -624,8 +700,56 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
                 popup.show(evt.getComponent(), evt.getX(), evt.getY());
 
+            } else {
+                // assume we are clicking with left mouse button
+                if ((upperBoundary.containsKey(x) && Math.abs(upperBoundary.get(x) - y) < 3.0)) {
+//                    System.out.println(">>>   " + x + "   " + y);
+                    this.movingUpperBoundaryPointFromX = x;
+                    imageMode = "BOUNDARY";
+                    repaint();
+                } else if ((lowerBoundary.containsKey(x) && Math.abs(lowerBoundary.get(x) - y) < 3.0)) {
+//                    System.out.println(">>>   " + x + "   " + y);
+                    this.movingLowerBoundaryPointFromX = x;
+                    imageMode = "BOUNDARY";
+                    repaint();
+                }
             }
         }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent evt) {
+        super.mouseDragged(evt);
+        if (imageMode == "BOUNDARY") {
+            if (movingUpperBoundaryPointFromX > 0) {
+                if (mouseInHouse(evt)) {
+                    upperBoundary.remove(movingUpperBoundaryPointFromX);
+                    double x = convertMouseXToValue(evt.getX());
+                    double y = convertMouseYToValue(evt.getY());
+                    upperBoundary.put(x, y);
+                    movingUpperBoundaryPointFromX = x;
+                }
+                repaint();
+            }
+            if (movingLowerBoundaryPointFromX > 0) {
+                if (mouseInHouse(evt)) {
+                    lowerBoundary.remove(movingLowerBoundaryPointFromX);
+                    double x = convertMouseXToValue(evt.getX());
+                    double y = convertMouseYToValue(evt.getY());
+                    lowerBoundary.put(x, y);
+                    movingLowerBoundaryPointFromX = x;
+                }
+                repaint();
+            }
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent evt) {
+        super.mouseReleased(evt); //To change body of generated methods, choose Tools | Templates.
+        this.movingUpperBoundaryPointFromX = -999;
+        this.movingLowerBoundaryPointFromX = -999;
+        putInImageModePan();
     }
 
 //    private boolean calculateIfEllipseIncluded(double x, double y) {
