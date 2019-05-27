@@ -55,7 +55,10 @@ public class SeaWaterDataView extends JFrame {
     private void initComponent() {
 
         //create the model
-        model = new SeaWaterInitialDelta234UTableModel();
+        if (model == null) {
+            model = new SeaWaterInitialDelta234UTableModel();
+        }
+
         //create the table
         table = new JTable(model);
         table.setShowGrid(true);
@@ -99,11 +102,10 @@ public class SeaWaterDataView extends JFrame {
 
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
-                
-                
+
             }
         });
-        
+
         table.getDefaultEditor(Double.class).addCellEditorListener(new CellEditorListener() {
             @Override
             public void editingStopped(ChangeEvent e) {
@@ -122,7 +124,7 @@ public class SeaWaterDataView extends JFrame {
 
         JLayeredPane displayPane = new JLayeredPane();
         getContentPane().add(displayPane);
-        
+
         displayPane.setLayout(new BorderLayout(10, 10));
 
         displayPane.add(tablePane, BorderLayout.NORTH);
@@ -141,6 +143,19 @@ public class SeaWaterDataView extends JFrame {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    /**
+     * @param model the model to set
+     */
+    public void setModel(SeaWaterInitialDelta234UTableModel model) {
+        this.model = model;
+        if (table != null){
+            table.setModel(model);
+            SeaWaterDelta234UGraph.setModel(model);
+        }
+        seaWaterDelta234UGraph.preparePanel(true);
+        seaWaterDelta234UGraph.repaint();
     }
 
 }

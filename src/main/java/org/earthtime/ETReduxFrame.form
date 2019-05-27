@@ -562,7 +562,7 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="editDetritalUraniumThoriumModels">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Detrital Uranium Thorium Models"/>
+                    <Property name="text" type="java.lang.String" value="Detrital Thorium Uranium Models"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editDetritalUraniumThoriumModelsActionPerformed"/>

@@ -26,7 +26,9 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.earthtime.plots.AbstractDataView;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
@@ -36,7 +38,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  */
 public class SeaWaterDelta234UGraph extends AbstractDataView {
 
-    protected static SeaWaterInitialDelta234UTableModel model;
+    private static SeaWaterInitialDelta234UTableModel model;
 
     public SeaWaterDelta234UGraph(SeaWaterInitialDelta234UTableModel model) {
 
@@ -46,7 +48,7 @@ public class SeaWaterDelta234UGraph extends AbstractDataView {
 
         this.leftMargin = 50;
         this.topMargin = 30;
-        this.graphWidth = 1000;
+        this.graphWidth = 900;
         this.graphHeight = 230;
         this.xLocation = 0;
 
@@ -98,21 +100,39 @@ public class SeaWaterDelta234UGraph extends AbstractDataView {
         // spring green
         g2d.setPaint(new Color(0, 255, 127));
         for (int i = 0; i < myOnPeakData.length; i++) {
+            g2d.setPaint(new Color(0, 255, 127));
             Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
-                    mapX(myOnPeakNormalizedAquireTimes[i]) - 5, mapY(myOnPeakData[i]) - 5, 10, 10);
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 3, mapY(myOnPeakData[i]) - 3, 6, 6);
 
             g2d.draw(rawRatioPoint);
             g2d.fill(rawRatioPoint);
 
             if (i > 0) {
                 // draw line
+                g2d.setPaint(new Color(0, 255, 127));
+                g2d.setStroke(new BasicStroke(1.0f));
                 Line2D line = new Line2D.Double(
                         mapX(myOnPeakNormalizedAquireTimes[i - 1]),
                         mapY(myOnPeakData[i - 1]),
                         mapX(myOnPeakNormalizedAquireTimes[i]),
                         mapY(myOnPeakData[i]));
-
                 g2d.draw(line);
+
+                g2d.setPaint(Color.black);
+                g2d.setStroke(new BasicStroke(0.5f));
+                Line2D upperEnv = new Line2D.Double(
+                        mapX(myOnPeakNormalizedAquireTimes[i - 1]),
+                        mapY(myOnPeakDataUpperUnct[i - 1]),
+                        mapX(myOnPeakNormalizedAquireTimes[i]),
+                        mapY(myOnPeakDataUpperUnct[i]));
+                g2d.draw(upperEnv);
+
+                Line2D lowerEnv = new Line2D.Double(
+                        mapX(myOnPeakNormalizedAquireTimes[i - 1]),
+                        mapY(myOnPeakDataLowerUnct[i - 1]),
+                        mapX(myOnPeakNormalizedAquireTimes[i]),
+                        mapY(myOnPeakDataLowerUnct[i]));
+                g2d.draw(lowerEnv);
             }
         }
 
@@ -139,30 +159,34 @@ public class SeaWaterDelta234UGraph extends AbstractDataView {
             }
         }
 
-        List<Double> usedTics = new ArrayList<>();
+        Set<Double> yTics = new HashSet<>();
+        yTics.add(minY);
+        yTics.add(maxY);
         for (int i = 0; i < myOnPeakData.length; i++) {
-            if (!usedTics.contains(myOnPeakData[i])) {
-                usedTics.add(myOnPeakData[i]);
-                try {
-                    Shape ticMark = new Line2D.Double(
-                            mapX(minX) - 4,
-                            mapY(myOnPeakData[i]),
-                            mapX(minX) + 2,
-                            mapY(myOnPeakData[i]));
-                    g2d.draw(ticMark);
+            yTics.add(myOnPeakData[i]);
+//            yTics.add(myOnPeakDataUpperUnct[i]);
+//            yTics.add(myOnPeakDataLowerUnct[i]);
+        }
 
-                    TextLayout mLayout
-                            = new TextLayout(
-                                    String.valueOf(myOnPeakData[i]), g2d.getFont(), g2d.getFontRenderContext());
+        for (Double tic : yTics) {
+            try {
+                Shape ticMark = new Line2D.Double(
+                        mapX(minX) - 4,
+                        mapY(tic),
+                        mapX(minX) + 2,
+                        mapY(tic));
+                g2d.draw(ticMark);
 
-                    Rectangle2D bounds = mLayout.getBounds();
+                TextLayout mLayout
+                        = new TextLayout(
+                                String.valueOf(tic), g2d.getFont(), g2d.getFontRenderContext());
 
-                    g2d.drawString(String.valueOf(myOnPeakData[i]),
-                            (float) mapX(minX) - (float) bounds.getWidth() - 5,
-                            (float) mapY(myOnPeakData[i]) + (float) (bounds.getHeight() / 2.0f));
-                } catch (Exception e) {
-                }
+                Rectangle2D bounds = mLayout.getBounds();
 
+                g2d.drawString(String.valueOf(tic),
+                        (float) mapX(minX) - (float) bounds.getWidth() - 5,
+                        (float) mapY(tic) + (float) (bounds.getHeight() / 2.0f));
+            } catch (Exception e) {
             }
         }
 
@@ -182,10 +206,14 @@ public class SeaWaterDelta234UGraph extends AbstractDataView {
 
         myOnPeakNormalizedAquireTimes = new double[entryList.size()];
         myOnPeakData = new double[entryList.size()];
+        myOnPeakDataUpperUnct = new double[entryList.size()];
+        myOnPeakDataLowerUnct = new double[entryList.size()];
 
         for (int i = 0; i < myOnPeakNormalizedAquireTimes.length; i++) {
             myOnPeakNormalizedAquireTimes[i] = entryList.get(i).ageInKa;
             myOnPeakData[i] = entryList.get(i).delta234UPerMil;
+            myOnPeakDataUpperUnct[i] = entryList.get(i).delta234UPerMil + entryList.get(i).oneSigmaAbsUnct;
+            myOnPeakDataLowerUnct[i] = entryList.get(i).delta234UPerMil - entryList.get(i).oneSigmaAbsUnct;
         }
 
         setDisplayOffsetY(0.0);
@@ -206,15 +234,24 @@ public class SeaWaterDelta234UGraph extends AbstractDataView {
         // find min and max y
         for (int i = 0; i < myOnPeakData.length; i++) {
             if ((Double.isFinite(myOnPeakData[i]))) {
-                minY = Math.min(minY, myOnPeakData[i]);
-                maxY = Math.max(maxY, myOnPeakData[i]);
+                minY = Math.min(minY, myOnPeakDataLowerUnct[i]);
+                maxY = Math.max(maxY, myOnPeakDataUpperUnct[i]);
             }
         }
 
         // adjust margins for unknowns
-        double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
-        minY -= yMarginStretch;
-        maxY += yMarginStretch;
+        minY -= 2;
+        maxY += 2;
+//        double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
+//        minY -= yMarginStretch;
+//        maxY += yMarginStretch;
+    }
+
+    /**
+     * @param aModel the model to set
+     */
+    public static void setModel(SeaWaterInitialDelta234UTableModel aModel) {
+        model = aModel;
     }
 
 }

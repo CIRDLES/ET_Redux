@@ -513,7 +513,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void editLabDataUTh(int selectedTab)
             throws BadLabDataException {
-        if (myLabDataEditor instanceof LabDataEditorDialogUPb) {
+
+        if (myLabDataEditor == null) {
+            LabDataEditorDialogUPb.amOpen = false;
+        } else if (myLabDataEditor instanceof LabDataEditorDialogUPb) {
             myLabDataEditor.close();
             LabDataEditorDialogUPb.amOpen = false;
         }
@@ -2876,7 +2879,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         labDataUTh.add(editPhysicalConstantsModelsUTh);
 
-        editDetritalUraniumThoriumModels.setText("Detrital Uranium Thorium Models");
+        editDetritalUraniumThoriumModels.setText("Detrital Thorium Uranium Models");
         editDetritalUraniumThoriumModels.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editDetritalUraniumThoriumModelsActionPerformed(evt);
@@ -3714,9 +3717,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         }
 
     }
-    
-    public void updateEvolutionPlot(){
-        ((EvolutionPlotPanel)myEvolutionPlotPanel).repaint();
+
+    public void updateEvolutionPlot() {
+        if (((EvolutionPlotPanel) myEvolutionPlotPanel).isShowMe()) {
+            ((EvolutionPlotPanel) myEvolutionPlotPanel).repaint();
+        }
     }
 
     /**

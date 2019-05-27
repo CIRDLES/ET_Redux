@@ -29,7 +29,7 @@ public class UpperBoundaryComparator implements Comparator<Double>, Serializable
         int retVal = 0;
 
         // allow some slop
-        if (Math.abs(age1 - age2) > 5.0) {
+        if (Math.abs(age1 - age2) > 3.0) {
             retVal = Double.compare(age1, age2);
         }
 

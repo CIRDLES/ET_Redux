@@ -45,6 +45,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.evolution.LowerBoundaryComparator;
 import org.earthtime.plots.evolution.UpperBoundaryComparator;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportSettingsInterface;
@@ -86,6 +87,9 @@ public class ProjectSample implements//
     // maps age to delta
     private Map<Double, Double> upperBoundary;
     private Map<Double, Double> lowerBoundary;
+    
+        
+    private SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel;
 
     /**
      *
@@ -125,6 +129,8 @@ public class ProjectSample implements//
 
         this.upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
         this.lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
+        
+        this.seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance().getDefaultLabSeaWaterModel();
 
         initFilteredFractionsToAll();
 
@@ -605,5 +611,23 @@ public class ProjectSample implements//
     public void setLowerBoundary(Map<Double, Double> lowerBoundary) {
         this.lowerBoundary = lowerBoundary;
     }
+
+    /**
+     * @return the seaWaterInitialDelta234UTableModel
+     */
+    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel() {
+        if (seaWaterInitialDelta234UTableModel == null){
+            this.seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance().getDefaultLabSeaWaterModel();
+        }
+        return seaWaterInitialDelta234UTableModel;
+    }
+
+    /**
+     * @param seaWaterInitialDelta234UTableModel the seaWaterInitialDelta234UTableModel to set
+     */
+    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
+        this.seaWaterInitialDelta234UTableModel = seaWaterInitialDelta234UTableModel;
+    }
+
 
 }

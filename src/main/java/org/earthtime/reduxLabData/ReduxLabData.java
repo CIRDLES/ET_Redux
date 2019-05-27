@@ -81,6 +81,8 @@ public final class ReduxLabData implements Serializable {
             = new ReduxLabDataList<>("Report Settings");
     private ArrayList<LabEquipmentSettings> labEquipmentSettings
             = new ReduxLabDataList<>(" Lab Equipment Settings");
+    private ArrayList<SeaWaterInitialDelta234UTableModel> seaWaterModels = new ReduxLabDataList<>("SeaWater Model");
+
     private AbstractRatiosDataModel defaultLabTracer;
     private ValueModel defaultLabAlphaUModel;
     private ValueModel defaultLabAlphaPbModel;
@@ -123,7 +125,7 @@ public final class ReduxLabData implements Serializable {
     private int defaultNegPctDiscordanceFilter;
     private int defaultPosPctDiscordanceFilter;
     private int defaultPctUncertaintyFilter;
-    
+
     // April 2019
     private SeaWaterInitialDelta234UTableModel defaultSeaWaterInitialDelta234UTableModel;
 
@@ -1409,6 +1411,129 @@ public final class ReduxLabData implements Serializable {
         }
     }
 
+    // SeaWater Models ***************************************************************
+    /**
+     *
+     * @return
+     */
+    public ArrayList<SeaWaterInitialDelta234UTableModel> getSeaWaterModels() {
+        if (seaWaterModels == null) {
+            seaWaterModels = new ReduxLabDataList<>("SeaWater Model");
+        }
+        if (seaWaterModels.isEmpty()) {
+            seaWaterModels.add(getDefaultLabSeaWaterModel());
+        }
+        return seaWaterModels;
+    }
+
+    /**
+     *
+     * @return @throws BadLabDataException
+     */
+    public SeaWaterInitialDelta234UTableModel getNoneSeaWaterModel()
+            throws BadLabDataException {
+        return seaWaterModels.get(0);
+    }
+
+    /**
+     *
+     * @return @throws BadLabDataException
+     */
+    public SeaWaterInitialDelta234UTableModel getFirstSeaWaterModel() {
+        return seaWaterModels.get(1);
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     * @throws BadLabDataException
+     */
+    public SeaWaterInitialDelta234UTableModel getASeaWaterModel(String name)
+            throws BadLabDataException {
+        SeaWaterInitialDelta234UTableModel retVal = seaWaterModels.get(0);
+        for (SeaWaterInitialDelta234UTableModel m : seaWaterModels) {
+            if (m.getNameAndVersion().toUpperCase().compareTo(name.toUpperCase()) == 0) {
+                retVal = m;
+            }
+        }
+        return retVal;
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     * @throws BadLabDataException
+     */
+    public boolean removeASeaWaterUModel(String name)
+            throws BadLabDataException {
+        return ((ReduxLabDataList) seaWaterModels).removeAnElement(name);
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     * @throws BadLabDataException
+     */
+    public boolean containsSeaWaterModelName(String name) {
+        boolean retVal = false;
+        for (SeaWaterInitialDelta234UTableModel seaWaterUModel : getSeaWaterModels()) {
+            if (seaWaterUModel.getNameAndVersion().compareToIgnoreCase(name) == 0) {
+                retVal = true;
+            }
+        }
+        return retVal;
+    }
+
+    /**
+     *
+     * @param seaWaterUModel
+     */
+    public void addSeaWaterModel(SeaWaterInitialDelta234UTableModel seaWaterUModel) {
+        getSeaWaterModels().add(seaWaterUModel);
+        Collections.sort(getSeaWaterModels());
+    }
+
+    /**
+     *
+     * @return @throws BadLabDataException
+     * @throws BadLabDataException
+     */
+    public SeaWaterInitialDelta234UTableModel getDefaultLabSeaWaterModel() {
+        if (defaultSeaWaterInitialDelta234UTableModel == null) {
+            addSeaWaterModel(new SeaWaterInitialDelta234UTableModel());
+            setDefaultSeaWaterInitialDelta234UTableModel(getFirstSeaWaterModel());
+        }
+//        else // detect if legacy default is none and change if possible
+//        if (defaultSeaWaterInitialDelta234UTableModel.equals(getNoneSeaWaterModel())) {
+//            setDefaultLabSeaWaterUModel(getFirstSeaWaterModel());
+//        }
+        return defaultSeaWaterInitialDelta234UTableModel;
+    }
+
+    /**
+     *
+     * @param defaultSeaWaterInitialDelta234UTableModel
+     */
+    public void setDefaultLabSeaWaterUModel(SeaWaterInitialDelta234UTableModel defaultSeaWaterInitialDelta234UTableModel) {
+        this.defaultSeaWaterInitialDelta234UTableModel = defaultSeaWaterInitialDelta234UTableModel;
+    }
+
+    /**
+     *
+     * @param seaWaterUModel
+     * @param isVerbose
+     */
+    public void registerSeaWaterModel(SeaWaterInitialDelta234UTableModel seaWaterUModel, boolean isVerbose) {
+        if (seaWaterUModel != null) {
+            //if (((ReduxLabDataList) seaWaterModels).registerElement(seaWaterUModel, isVerbose)) {
+            addSeaWaterModel(seaWaterUModel);
+            // }
+        }
+    }
+
     // june 2014 report settings models take 2 *********************************
     /**
      *
@@ -2136,14 +2261,15 @@ public final class ReduxLabData implements Serializable {
      * @return the defaultSeaWaterInitialDelta234UTableModel
      */
     public SeaWaterInitialDelta234UTableModel getDefaultSeaWaterInitialDelta234UTableModel() {
-        if (defaultSeaWaterInitialDelta234UTableModel == null){
-            defaultSeaWaterInitialDelta234UTableModel = new SeaWaterInitialDelta234UTableModel();
-        }
+        // if (defaultSeaWaterInitialDelta234UTableModel == null) {
+        defaultSeaWaterInitialDelta234UTableModel = new SeaWaterInitialDelta234UTableModel();
+        // }
         return defaultSeaWaterInitialDelta234UTableModel;
     }
 
     /**
-     * @param defaultSeaWaterInitialDelta234UTableModel the defaultSeaWaterInitialDelta234UTableModel to set
+     * @param defaultSeaWaterInitialDelta234UTableModel the
+     * defaultSeaWaterInitialDelta234UTableModel to set
      */
     public void setDefaultSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel defaultSeaWaterInitialDelta234UTableModel) {
         this.defaultSeaWaterInitialDelta234UTableModel = defaultSeaWaterInitialDelta234UTableModel;

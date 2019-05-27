@@ -66,6 +66,7 @@ import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -2111,4 +2112,12 @@ public interface SampleInterface {
     public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs);
 
     public void initFilteredFractionsToAll();
+
+    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel();
+
+    /**
+     * @param seaWaterInitialDelta234UTableModel the
+     * seaWaterInitialDelta234UTableModel to set
+     */
+    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel);
 }
