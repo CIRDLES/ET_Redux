@@ -167,6 +167,18 @@ public class LabDataEditorDialogUTh extends DialogEditor {
             this.seaWaterInitialDelta234UTableModel = myLabData.getDefaultSeaWaterInitialDelta234UTableModel();
         }
 
+        seaWaterModelVersionMajor_text.setDocument(new IntegerDocument(seaWaterModelVersionMajor_text, true));
+        seaWaterModelVersionMinor_text.setDocument(new IntegerDocument(seaWaterModelVersionMinor_text, true));
+
+        physicalConstantsModelChooserSW.removeAllItems();
+        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
+        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i++) {
+            physicalConstantsModelChooserSW.addItem(physicalConstantsModels.get(i));
+        }
+
+        physicalConstantsModelChooserSW.setSelectedIndex(0);
+        physicalConstantsModelChooserSW.setSelectedItem(seaWaterInitialDelta234UTableModel.getPhysicalConstantsModel());
+
         //create the seaWaterInitialDelta234UTable
         seaWaterInitialDelta234UTable = new JTable(seaWaterInitialDelta234UTableModel);
         seaWaterInitialDelta234UTable.setShowGrid(true);
@@ -941,7 +953,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         // set up SeaWaterModelChooser
         seaWaterModelChooser.removeAllItems();
         ArrayList<SeaWaterInitialDelta234UTableModel> seaWaterModels = myLabData.getSeaWaterModels();
-        for (int i =  0; i < seaWaterModels.size(); i++) {
+        for (int i = 0; i < seaWaterModels.size(); i++) {
             seaWaterModelChooser.addItem(seaWaterModels.get(i).getNameAndVersion());
         }
 
@@ -1199,10 +1211,15 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private void populateSeaWaterModelFields(SeaWaterInitialDelta234UTableModel seaWaterModel, boolean editable)
             throws BadLabDataException {
 
+        seaWaterModelName_text.setText(seaWaterModel.getModelName());
+        seaWaterModelVersionMajor_text.setText(String.valueOf(seaWaterModel.getVersionNumber()));
+        seaWaterModelVersionMinor_text.setText(String.valueOf(seaWaterModel.getMinorVersionNumber()));
+        physicalConstantsModelChooserSW.setSelectedItem(seaWaterModel.getPhysicalConstantsModel());
+
         seaWaterInitialDelta234UTableModel = seaWaterModel;
         seaWaterInitialDelta234UTable.setModel(seaWaterModel);
         seaWaterInitialDelta234UTableModel.fireTableDataChanged();
-        
+
         SeaWaterDelta234UGraph.setModel(seaWaterModel);
         seaWaterDelta234UGraph.preparePanel(true);
         seaWaterDelta234UGraph.repaint();
@@ -1442,8 +1459,11 @@ public class LabDataEditorDialogUTh extends DialogEditor {
             throws BadLabDataException, ETException {
         setAlwaysOnTop(false);
 //        seaWaterDataView.saveAndUpdateModelView(true);
-        myLabData.registerSeaWaterModel(newEmptySeaWaterModel, true);
-        savedSeaWaterModelName = newEmptySeaWaterModel.getNameAndVersion();
+        newEmptySeaWaterModel.setModelName(seaWaterModelName_text.getText());
+        if (!myLabData.containsSeaWaterModelName(newEmptySeaWaterModel.getNameAndVersion())) {
+            myLabData.registerSeaWaterModel(newEmptySeaWaterModel, true);
+            savedSeaWaterModelName = newEmptySeaWaterModel.getNameAndVersion();
+        }
         initSeaWaterModelChooser();
         seaWaterModelChooser.setEnabled(true);
         newEmptySeaWaterModel = null;
@@ -1528,7 +1548,11 @@ public class LabDataEditorDialogUTh extends DialogEditor {
 
     private void exitLabData()
             throws BadLabDataException {
-        //SaveLabData();
+        seaWaterInitialDelta234UTableModel.setModelName(seaWaterModelName_text.getText());
+        seaWaterInitialDelta234UTableModel.setVersionNumber(Integer.parseInt(seaWaterModelVersionMajor_text.getText()));
+        seaWaterInitialDelta234UTableModel.setMinorVersionNumber(Integer.parseInt(seaWaterModelVersionMinor_text.getText()));
+        seaWaterInitialDelta234UTableModel.setPhysicalConstantsModel((AbstractRatiosDataModel) physicalConstantsModelChooserSW.getSelectedItem());
+
         if (checkIsSavedStatusOfDetritalUThModelEdit()
                 && checkIsSavedStatusOfPhysicalConstantsModelEdit()
                 && checkIsSavedStatusOfMineralStandardModelEdit()
@@ -1614,6 +1638,11 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         seaWaterModelChooser = new javax.swing.JComboBox<>();
         seaWaterModelName_label = new javax.swing.JLabel();
         seaWaterModelName_text = new javax.swing.JTextField();
+        seaWaterModelName_label1 = new javax.swing.JLabel();
+        seaWaterModelVersionMajor_text = new javax.swing.JTextField();
+        seaWaterModelName_label2 = new javax.swing.JLabel();
+        seaWaterModelVersionMinor_text = new javax.swing.JTextField();
+        physicalConstantsModelChooserSW = new javax.swing.JComboBox();
         labDefaults_panel = new javax.swing.JPanel();
         defaultDetritalUThModel_label = new javax.swing.JLabel();
         defaultDetritalUThModel_Chooser = new javax.swing.JComboBox<>();
@@ -1770,19 +1799,48 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         chooseSeaWaterModel_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         chooseSeaWaterModel_label.setText("  Choose SeaWater Model:");
         seaWaterDelta234LayeredPane.add(chooseSeaWaterModel_label);
-        chooseSeaWaterModel_label.setBounds(40, 15, 150, 25);
+        chooseSeaWaterModel_label.setBounds(10, 0, 150, 25);
         seaWaterDelta234LayeredPane.add(seaWaterModelChooser);
-        seaWaterModelChooser.setBounds(200, 15, 640, 25);
+        seaWaterModelChooser.setBounds(170, 0, 450, 25);
 
         seaWaterModelName_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         seaWaterModelName_label.setText("  SeaWater Model Name:");
         seaWaterDelta234LayeredPane.add(seaWaterModelName_label);
-        seaWaterModelName_label.setBounds(50, 40, 140, 25);
+        seaWaterModelName_label.setBounds(20, 30, 140, 25);
 
         seaWaterModelName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         seaWaterModelName_text.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        seaWaterModelName_text.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seaWaterModelName_textActionPerformed(evt);
+            }
+        });
         seaWaterDelta234LayeredPane.add(seaWaterModelName_text);
-        seaWaterModelName_text.setBounds(200, 40, 260, 25);
+        seaWaterModelName_text.setBounds(170, 30, 260, 25);
+
+        seaWaterModelName_label1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        seaWaterModelName_label1.setText("Version:");
+        seaWaterDelta234LayeredPane.add(seaWaterModelName_label1);
+        seaWaterModelName_label1.setBounds(450, 30, 50, 25);
+
+        seaWaterModelVersionMajor_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        seaWaterModelVersionMajor_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        seaWaterDelta234LayeredPane.add(seaWaterModelVersionMajor_text);
+        seaWaterModelVersionMajor_text.setBounds(510, 30, 30, 25);
+
+        seaWaterModelName_label2.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        seaWaterModelName_label2.setText(".");
+        seaWaterDelta234LayeredPane.add(seaWaterModelName_label2);
+        seaWaterModelName_label2.setBounds(540, 30, 10, 25);
+
+        seaWaterModelVersionMinor_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        seaWaterModelVersionMinor_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        seaWaterDelta234LayeredPane.add(seaWaterModelVersionMinor_text);
+        seaWaterModelVersionMinor_text.setBounds(550, 30, 30, 25);
+
+        physicalConstantsModelChooserSW.setBackground(new java.awt.Color(245, 236, 206));
+        seaWaterDelta234LayeredPane.add(physicalConstantsModelChooserSW);
+        physicalConstantsModelChooserSW.setBounds(630, 0, 410, 27);
 
         details_pane.addTab("SeaWater Models", seaWaterDelta234LayeredPane);
 
@@ -2657,6 +2715,10 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         }
     }//GEN-LAST:event_saveAndRegisterCurrentSeaWaterModelActionPerformed
 
+    private void seaWaterModelName_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seaWaterModelName_textActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_seaWaterModelName_textActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem ImportPhysicalConstantsModelXML_menuItem;
     private javax.swing.JComboBox<String> MineralStandardModelChooser;
@@ -2714,6 +2776,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private javax.swing.JMenuItem newDetritalUThModelMode_menuItem;
     private javax.swing.JMenuItem newMineralStdModel_menuItem;
     private javax.swing.JMenuItem newPhysicalConstantsModel_menuItem;
+    private javax.swing.JComboBox physicalConstantsModelChooserSW;
     private javax.swing.JComboBox<String> physicalConstantsModel_Chooser;
     private javax.swing.JMenu physicalConstantsModels_menu;
     private javax.swing.JPanel physicalConstantsModels_panel;
@@ -2731,7 +2794,11 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private javax.swing.JLayeredPane seaWaterDelta234LayeredPane;
     private javax.swing.JComboBox<String> seaWaterModelChooser;
     private javax.swing.JLabel seaWaterModelName_label;
+    private javax.swing.JLabel seaWaterModelName_label1;
+    private javax.swing.JLabel seaWaterModelName_label2;
     private javax.swing.JTextField seaWaterModelName_text;
+    private javax.swing.JTextField seaWaterModelVersionMajor_text;
+    private javax.swing.JTextField seaWaterModelVersionMinor_text;
     private javax.swing.JMenu seaWaterModels_menu;
     // End of variables declaration//GEN-END:variables
 }

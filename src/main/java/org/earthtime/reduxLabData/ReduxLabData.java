@@ -1477,9 +1477,14 @@ public final class ReduxLabData implements Serializable {
      * @return
      * @throws BadLabDataException
      */
-    public boolean containsSeaWaterModelName(String name)
-            throws BadLabDataException {
-        return ((ReduxLabDataList) seaWaterModels).containsElementName(name);
+    public boolean containsSeaWaterModelName(String name) {
+        boolean retVal = false;
+        for (SeaWaterInitialDelta234UTableModel seaWaterUModel : getSeaWaterModels()) {
+            if (seaWaterUModel.getNameAndVersion().compareToIgnoreCase(name) == 0) {
+                retVal = true;
+            }
+        }
+        return retVal;
     }
 
     /**

@@ -706,11 +706,13 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 //                    System.out.println(">>>   " + x + "   " + y);
                     this.movingUpperBoundaryPointFromX = x;
                     imageMode = "BOUNDARY";
+                    setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                     repaint();
                 } else if ((lowerBoundary.containsKey(x) && Math.abs(lowerBoundary.get(x) - y) < 3.0)) {
 //                    System.out.println(">>>   " + x + "   " + y);
                     this.movingLowerBoundaryPointFromX = x;
                     imageMode = "BOUNDARY";
+                    setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                     repaint();
                 }
             }
@@ -749,6 +751,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         super.mouseReleased(evt); //To change body of generated methods, choose Tools | Templates.
         this.movingUpperBoundaryPointFromX = -999;
         this.movingLowerBoundaryPointFromX = -999;
+        setCursor(Cursor.getDefaultCursor());
         putInImageModePan();
     }
 

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -48,6 +49,8 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
     private String dateCertified;
     private String reference;
     private String comment;
+    
+    private AbstractRatiosDataModel physicalConstantsModel;
 
     public SeaWaterInitialDelta234UTableModel() {
         initializeModel();
@@ -67,6 +70,8 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         entryList.add(row1);
         entryList.add(row2);
         entryList.add(row3);
+        
+        this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
     }
 
     @Override
@@ -332,5 +337,22 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
      */
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    /**
+     * @return the physicalConstantsModel
+     */
+    public AbstractRatiosDataModel getPhysicalConstantsModel() {
+        if (physicalConstantsModel == null){
+            this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+        }
+        return physicalConstantsModel;
+    }
+
+    /**
+     * @param physicalConstantsModel the physicalConstantsModel to set
+     */
+    public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel) {
+        this.physicalConstantsModel = physicalConstantsModel;
     }
 }
