@@ -387,36 +387,39 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
                             metaData.append("LatitudeWGS84 = ").append(myFractionData.get(49).trim()).append("\n");
                             metaData.append("LongitudeWGS84 = ").append(myFractionData.get(50).trim()).append("\n");
                             metaData.append("LatLongEstimated = ").append(myFractionData.get(51).trim()).append("\n");
-                            metaData.append("Tectonic Category = ").append(myFractionData.get(52).trim()).append("\n");
-                            metaData.append("Tectonic Category comments = ").append(myFractionData.get(53).trim()).append("\n");
-                            metaData.append("Published Uplift rate m/ky = ").append(myFractionData.get(54).trim()).append("\n");
-                            metaData.append("Published Uplift rate Unct m/ky = ").append(myFractionData.get(55).trim()).append("\n");
-                            metaData.append("Interpreted Uplift rate m/ky = ").append(myFractionData.get(56).trim()).append("\n");
-                            metaData.append("Comments (uplift) = ").append(myFractionData.get(57).trim()).append("\n");
-                            metaData.append("Original elevation datum = ").append(myFractionData.get(58).trim()).append("\n");
-                            metaData.append("Elevation measurement methodology = ").append(myFractionData.get(59).trim()).append("\n");
-
-                            metaData.append("Published elevation (m) = ").append(myFractionData.get(60).trim()).append("\n");
-                            metaData.append("Published elevation Unct (m) = ").append(myFractionData.get(61).trim()).append("\n");
-                            metaData.append("Elevation from a different source = ").append(myFractionData.get(62).trim()).append("\n");
-                            metaData.append("Elevation from a different source Unct = ").append(myFractionData.get(63).trim()).append("\n");
-                            metaData.append("Interpreted Elevation rel to mean sea level (m) = ").append(myFractionData.get(64).trim()).append("\n");
-                            metaData.append("Interpreted Elevation Unct (m) = ").append(myFractionData.get(65).trim()).append("\n");
-                            metaData.append("Comments Elevation incl Unct = ").append(myFractionData.get(66).trim()).append("\n");
-
-                            metaData.append("Facies = ").append(myFractionData.get(67).trim()).append("\n");
-                            metaData.append("Reported as in situ = ").append(myFractionData.get(68).trim()).append("\n");
-
-                            metaData.append("Interpreted as in growth position = ").append(myFractionData.get(69).trim()).append("\n");
-                            metaData.append("Taxonomic ID = ").append(myFractionData.get(70).trim()).append("\n");
-                            metaData.append("Comments (taxon) = ").append(myFractionData.get(71).trim()).append("\n");
-
-                            metaData.append("Published assemblage description = ").append(myFractionData.get(72).trim()).append("\n");
-                            metaData.append("Published paleowater depth estimate = ").append(myFractionData.get(73).trim()).append("\n");
-                            metaData.append("Interpreted paleowater depth estimate = ").append(myFractionData.get(74).trim()).append("\n");
-
-                            metaData.append("Uncertainty in Interpreted paleowater depth estimate = ").append(myFractionData.get(75).trim()).append("\n");
-                            metaData.append("Comments-- paleowater depth interpretation = ").append(myFractionData.get(76).trim()).append("\n");
+                            try {
+                                metaData.append("Tectonic Category = ").append(myFractionData.get(52).trim()).append("\n");
+                                metaData.append("Tectonic Category comments = ").append(myFractionData.get(53).trim()).append("\n");
+                                metaData.append("Published Uplift rate m/ky = ").append(myFractionData.get(54).trim()).append("\n");
+                                metaData.append("Published Uplift rate Unct m/ky = ").append(myFractionData.get(55).trim()).append("\n");
+                                metaData.append("Interpreted Uplift rate m/ky = ").append(myFractionData.get(56).trim()).append("\n");
+                                metaData.append("Comments (uplift) = ").append(myFractionData.get(57).trim()).append("\n");
+                                metaData.append("Original elevation datum = ").append(myFractionData.get(58).trim()).append("\n");
+                                metaData.append("Elevation measurement methodology = ").append(myFractionData.get(59).trim()).append("\n");
+                                
+                                metaData.append("Published elevation (m) = ").append(myFractionData.get(60).trim()).append("\n");
+                                metaData.append("Published elevation Unct (m) = ").append(myFractionData.get(61).trim()).append("\n");
+                                metaData.append("Elevation from a different source = ").append(myFractionData.get(62).trim()).append("\n");
+                                metaData.append("Elevation from a different source Unct = ").append(myFractionData.get(63).trim()).append("\n");
+                                metaData.append("Interpreted Elevation rel to mean sea level (m) = ").append(myFractionData.get(64).trim()).append("\n");
+                                metaData.append("Interpreted Elevation Unct (m) = ").append(myFractionData.get(65).trim()).append("\n");
+                                metaData.append("Comments Elevation incl Unct = ").append(myFractionData.get(66).trim()).append("\n");
+                                
+                                metaData.append("Facies = ").append(myFractionData.get(67).trim()).append("\n");
+                                metaData.append("Reported as in situ = ").append(myFractionData.get(68).trim()).append("\n");
+                                
+                                metaData.append("Interpreted as in growth position = ").append(myFractionData.get(69).trim()).append("\n");
+                                metaData.append("Taxonomic ID = ").append(myFractionData.get(70).trim()).append("\n");
+                                metaData.append("Comments (taxon) = ").append(myFractionData.get(71).trim()).append("\n");
+                                
+                                metaData.append("Published assemblage description = ").append(myFractionData.get(72).trim()).append("\n");
+                                metaData.append("Published paleowater depth estimate = ").append(myFractionData.get(73).trim()).append("\n");
+                                metaData.append("Interpreted paleowater depth estimate = ").append(myFractionData.get(74).trim()).append("\n");
+                                
+                                metaData.append("Uncertainty in Interpreted paleowater depth estimate = ").append(myFractionData.get(75).trim()).append("\n");
+                                metaData.append("Comments-- paleowater depth interpretation = ").append(myFractionData.get(76).trim()).append("\n");
+                            } catch (Exception e) {
+                            }
 
                             myFraction.setFractionNotes(metaData.toString());
 

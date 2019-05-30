@@ -260,7 +260,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
             }
 
             if (showSeaWaterModel) {
-                arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
+                arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDatesInKa();
                 arrayOfSeaWaterModelDeltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltas();
 
                 g2d.setPaint(new Color(0, 255, 127));
@@ -434,7 +434,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
 
         if (showSeaWaterModel) {
-            arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
+            arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDatesInKa();
             arrayOfSeaWaterModelDeltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltas();
         }
 

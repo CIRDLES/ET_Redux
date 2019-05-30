@@ -49,7 +49,7 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
     private String dateCertified;
     private String reference;
     private String comment;
-    
+
     private AbstractRatiosDataModel physicalConstantsModel;
 
     public SeaWaterInitialDelta234UTableModel() {
@@ -70,7 +70,7 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         entryList.add(row1);
         entryList.add(row2);
         entryList.add(row3);
-        
+
         this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
     }
 
@@ -214,10 +214,19 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         return entryList;
     }
 
-    public double[] getArrayOfDates() {
+    public double[] getArrayOfDatesInKa() {
         double[] datesArray = new double[entryList.size()];
         for (int i = 0; i < entryList.size(); i++) {
             datesArray[i] = entryList.get(i).ageInKa;
+        }
+
+        return datesArray;
+    }
+
+    public double[] getArrayOfDates() {
+        double[] datesArray = new double[entryList.size()];
+        for (int i = 0; i < entryList.size(); i++) {
+            datesArray[i] = entryList.get(i).ageInKa * 1000.0;
         }
 
         return datesArray;
@@ -343,7 +352,7 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
      * @return the physicalConstantsModel
      */
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
-        if (physicalConstantsModel == null){
+        if (physicalConstantsModel == null) {
             this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
         }
         return physicalConstantsModel;
