@@ -1021,12 +1021,13 @@ public final class ReduxLabData implements Serializable {
             if (defaultPhysicalConstantsModel == null) {
                 addPhysicalConstantsModel(PhysicalConstantsModel.getNoneInstance());
                 defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
-            } else // detect if legacy default is none and change if possible
-            {
-                if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
-                    defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
-                }
-            }
+            } 
+//            else // detect if legacy default is none and change if possible
+//            {
+//                if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
+//                    defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
+//                }
+//            }
         } catch (BadLabDataException badLabDataException) {
             new ETWarningDialog(badLabDataException).setVisible(true);
         }
@@ -1440,7 +1441,7 @@ public final class ReduxLabData implements Serializable {
      * @return @throws BadLabDataException
      */
     public SeaWaterInitialDelta234UTableModel getFirstSeaWaterModel() {
-        return seaWaterModels.get(1);
+        return seaWaterModels.get(0);
     }
 
     /**
@@ -1503,7 +1504,8 @@ public final class ReduxLabData implements Serializable {
      */
     public SeaWaterInitialDelta234UTableModel getDefaultLabSeaWaterModel() {
         if (defaultSeaWaterInitialDelta234UTableModel == null) {
-            addSeaWaterModel(new SeaWaterInitialDelta234UTableModel());
+            defaultSeaWaterInitialDelta234UTableModel = new SeaWaterInitialDelta234UTableModel();
+            addSeaWaterModel(defaultSeaWaterInitialDelta234UTableModel);
             setDefaultSeaWaterInitialDelta234UTableModel(getFirstSeaWaterModel());
         }
 //        else // detect if legacy default is none and change if possible

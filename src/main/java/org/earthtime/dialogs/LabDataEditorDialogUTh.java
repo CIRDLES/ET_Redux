@@ -141,7 +141,8 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         this.savedDetritalUThModelName = myLabData.getDefaultDetritalUraniumAndThoriumModel().getReduxLabDataElementName();
         this.savedPhysicalConstantsModelName = myLabData.getDefaultPhysicalConstantsModel().getNameAndVersion();
         this.savedMineralStandardModelName = myLabData.getDefaultTIMSMineralStandardModel().getReduxLabDataElementName();
-        this.savedSeaWaterModelName = myLabData.getDefaultSeaWaterInitialDelta234UTableModel().getNameAndVersion();
+        this.seaWaterInitialDelta234UTableModel = myLabData.getDefaultSeaWaterInitialDelta234UTableModel();
+        this.savedSeaWaterModelName = seaWaterInitialDelta234UTableModel.getNameAndVersion();
 
         // top panel
         labName_text.setDocument(new UnDoAbleDocument(labName_text, true));
@@ -163,9 +164,6 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     }
 
     private void initializeSeaWaterDelta() {
-        if (this.seaWaterInitialDelta234UTableModel == null) {
-            this.seaWaterInitialDelta234UTableModel = myLabData.getDefaultSeaWaterInitialDelta234UTableModel();
-        }
 
         seaWaterModelVersionMajor_text.setDocument(new IntegerDocument(seaWaterModelVersionMajor_text, true));
         seaWaterModelVersionMinor_text.setDocument(new IntegerDocument(seaWaterModelVersionMinor_text, true));
