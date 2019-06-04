@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -103,10 +102,9 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
     private double[][][] xyLabels;
 
     private SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel;
-//    private int[] seaWaterDateIsochronIndexArray;
-//    private double[] arrayOfSeaWaterModelDeltasAsRatios;
-//    private int[] seaWaterDeltaContourIndexArray;
     private boolean showSeaWaterModel;
+
+    private double pctLossOpenSystemIsochrons;
 
     public EvolutionPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
@@ -160,6 +158,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         this.seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance()
                 .getSeaWaterModels().get(0);
         this.showSeaWaterModel = false;
+
+        this.pctLossOpenSystemIsochrons = 2.5;
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -339,6 +339,24 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 g2d.draw(curvedP);
             }
 
+            // opensystem isochrons
+            for (int i = 10000; i <= 150000; i += 10000) {
+                PolynomialSplineFunction psfOpenSystemIsochron = calculateOpenSystemIsochron(i);
+
+                Shape isochronLine = new Path2D.Double();
+                g2d.setStroke(new BasicStroke(1.75f));
+                ((Path2D) isochronLine).moveTo(//
+                        mapX(getMinX_Display()), //
+                        mapY(psfOpenSystemIsochron.value(getMinX_Display())));
+                ((Path2D) isochronLine).lineTo( //
+                        mapX(getMaxX_Display()), //
+                        mapY(psfOpenSystemIsochron.value(getMaxX_Display())));
+
+                g2d.setPaint(Color.black);
+
+                g2d.draw(isochronLine);
+            }
+            // END opensystem isochrons
             // resets clipping
             try {
                 drawAxesAndTics(g2d, yAxisDisplayAsDeltaUnits);
@@ -675,7 +693,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 tv1[i] = colVal;
             }
         }
-        
+
         xy = new double[ar48icntrs.length][2][nts];
         dardt = new double[ar48icntrs.length][2][nts];
 
@@ -712,16 +730,16 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         // special section for seawater
         if (showSeaWaterModel) {
             LinearInterpolator linearInterpolator = new LinearInterpolator();
-            double [] dates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
+            double[] dates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
             double[] deltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltasAsRatios();
             PolynomialSplineFunction psf = linearInterpolator.interpolate(dates, deltas);
-            
+
             int countOfPoints = 100;
             double step = (dates[dates.length - 1] - dates[0]) / countOfPoints;
             tvsw = new double[1][countOfPoints];
             double[] ar48isw = new double[countOfPoints];
-            
-            for (int i = 0; i < countOfPoints; i ++){
+
+            for (int i = 0; i < countOfPoints; i++) {
                 tvsw[0][i] = dates[0] + i * step;
                 ar48isw[i] = psf.value(tvsw[0][i]);
             }
@@ -834,6 +852,80 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
     private Matrix matrixUTh4(double t) {
         return matrixQUTh().getMatrix(1, 1, 0, 2).times(matrixGUTh(t)).times(matrixQinvUTh()); //For the 234 concentration only (to solve for root)
+    }
+
+    // per Noah email June 2019
+    private PolynomialSplineFunction calculateOpenSystemIsochron(double age) {
+        /*
+        New variables used in calculations appear as outlined text below when they first appear.
+        Inputs:
+
+        In addition to the sample’s physical constant model, which is already user-selected (lambda238, lambda234, lambda230), 
+        there are three user inputs needed to draw an open system isochron. 
+
+        “Coral or source % loss” – entered with units of %.  pctLoss
+        Seawater initial del234Ui – a chooser for the seawater model.  (PS – why is the W capitalized in SeaWater in Redux?  
+        It looks like SeaWorld!  Seawater is a real word.)  This dropdown list chooser should be linked with the graphical displayed seawater model, 
+        so that you’re not plotting a seawater curve with one seawater model and an open system isochron with another model.
+        Isochron age – this can look just like the column of check-boxes for the ‘isochron chooser’ which includes the ability to add/subtract isochrons.  
+        Following the rest of Redux, ages in input/output in ka and saved off and used in computations in units of years.  t
+
+        Calculations:
+
+        Each point on the open system isochron line has an ‘R’ value (this is what it’s called in Andrea’s spreadsheet, 
+        though I can’t find it in the original paper).  If you have two R values, you have two points, and can plot the line between them, 
+        or extend the line out in either direction.  The R values used in Andrea’s spreadsheet range from 0 to 0.14. 
+
+        Calculate the initial seawater 234U/238U activity ratio ar234U_238Uisw for the input age t using the user-input seawater model.  
+        This is an activity ratio, so a typical number would be 1.145.
+        Calculate f234 =  1 – pctLoss / 100
+        Calculate f230 = ((f234 - 1) * (4.754 * 234 / 4.184 / 230) + 1)
+        Calculate ar234U_238U = (1 + R * (1 – f234)) * (1 – EXP(–lambda234 * t)) + ar234U_238Uisw *EXP(–lambda234 * t)
+        Calculate ar230Th_238U = (1 + R * (1 – f234 * f230)) * (1 – lambda230/( lambda230- lambda234) * EXP(–lambda234 * t) + lambda234/( lambda230 - lambda234) * EXP(–lambda230 * t))+(1 + R * (1 - f230)) * (lambda230 / (lambda230 - lambda234) * ar234U_238Uisw * (EXP(–lambda234* t) - EXP(–lambda230 * t)))
+
+
+        You now have the ar234U_238U and ar230Th_238U, which are the y and x values, respectively, for a point on the open system isochron line.
+         */
+        LinearInterpolator linearInterpolator = new LinearInterpolator();
+        double[] dates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
+        double[] deltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltasAsRatios();
+        PolynomialSplineFunction psfSeaWater = linearInterpolator.interpolate(dates, deltas);
+
+        // initial seawater 234U/238U activity ratio
+        double ar234U_238Uisw = psfSeaWater.value(age);
+        double f234 = 1.0 - (pctLossOpenSystemIsochrons / 100.0);
+        double f230 = ((f234 - 1.0) * (4.754 * 234.0 / 4.184 / 230.0) + 1.0);
+
+        double rValue1 = 0.0;
+        double rValue2 = 1.14;
+        double[] ar234U_238U = new double[4];
+        ar234U_238U[1] = (1.0 + rValue1 * (1.0 - f234)) * (1.0 - Math.exp(-lambda234D * age)) + ar234U_238Uisw * Math.exp(-lambda234D * age);
+        ar234U_238U[2] = (1.0 + rValue2 * (1.0 - f234)) * (1.0 - Math.exp(-lambda234D * age)) + ar234U_238Uisw * Math.exp(-lambda234D * age);
+
+        double[] ar230Th_238U = new double[4];
+        ar230Th_238U[1]
+                = (1.0 + rValue1 * (1.0 - f234 * f230))
+                * (1.0 - lambda230D / (lambda230D - lambda234D) * Math.exp(-lambda234D * age)
+                + lambda234D / (lambda230D - lambda234D) * Math.exp(-lambda230D * age))
+                + (1.0 + rValue1 * (1.0 - f230)) * (lambda230D / (lambda230D - lambda234D)
+                * ar234U_238Uisw * (Math.exp(-lambda234D * age) - Math.exp(-lambda230D * age)));
+        ar230Th_238U[2]
+                = (1.0 + rValue2 * (1.0 - f234 * f230))
+                * (1.0 - lambda230D / (lambda230D - lambda234D) * Math.exp(-lambda234D * age)
+                + lambda234D / (lambda230D - lambda234D) * Math.exp(-lambda230D * age))
+                + (1.0 + rValue2 * (1.0 - f230)) * (lambda230D / (lambda230D - lambda234D)
+                * ar234U_238Uisw * (Math.exp(-lambda234D * age) - Math.exp(-lambda230D * age)));
+
+        double slope = ((ar234U_238U[2] - ar234U_238U[1]) / (ar230Th_238U[2] - ar230Th_238U[1]));
+        double intercept = ar234U_238U[1] - slope * ar230Th_238U[1];
+        ar230Th_238U[0] = -5.0;
+        ar234U_238U[0] = -5.0 * slope + intercept;
+        ar230Th_238U[3] = 5.0;
+        ar234U_238U[3] = 5.0 * slope + intercept;
+
+        PolynomialSplineFunction psfIsochron = linearInterpolator.interpolate(ar230Th_238U, ar234U_238U);
+
+        return psfIsochron;
     }
 
     /**

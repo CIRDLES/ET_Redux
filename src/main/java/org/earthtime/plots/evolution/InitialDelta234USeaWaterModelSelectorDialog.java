@@ -143,13 +143,13 @@ public class InitialDelta234USeaWaterModelSelectorDialog extends DialogEditor {
         initDelta234U_LayeredPane.setBackground(new java.awt.Color(255, 204, 204));
         initDelta234U_LayeredPane.setOpaque(true);
 
-        specifyInitDelta234U_label.setText("Choose SeaWater Model");
+        specifyInitDelta234U_label.setText("Choose Seawater Model");
         initDelta234U_LayeredPane.add(specifyInitDelta234U_label);
         specifyInitDelta234U_label.setBounds(10, 10, 300, 16);
 
         showSeaWaterCheckBox.setBackground(new java.awt.Color(255, 204, 204));
         showSeaWaterCheckBox.setSelected(true);
-        showSeaWaterCheckBox.setText("Show Sea Water Model");
+        showSeaWaterCheckBox.setText("Show Seawater Model");
         showSeaWaterCheckBox.setOpaque(true);
         showSeaWaterCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -403,7 +403,7 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
                 String[] sampleFractionTime = fractionBlockOfScans[0].split("<>");
 
                 // sept 2012
-                // find last "-" as delimeter to fractionID = number or standard name
+                // find last "-" as delimiter to fractionID = number or standard name
                 // split on "-" and find last one, then combine rest with trim for sample name
                 String[] sampleFraction = sampleFractionTime[0].trim().split("-");
 
