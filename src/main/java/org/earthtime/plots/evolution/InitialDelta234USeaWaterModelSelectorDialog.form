@@ -107,7 +107,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="specifyInitDelta234U_label">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Choose SeaWater Model"/>
+            <Property name="text" type="java.lang.String" value="Choose Seawater Model"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -121,7 +121,7 @@
               <Color blue="cc" green="cc" red="ff" type="rgb"/>
             </Property>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Show Sea Water Model"/>
+            <Property name="text" type="java.lang.String" value="Show Seawater Model"/>
             <Property name="opaque" type="boolean" value="true"/>
           </Properties>
           <Events>

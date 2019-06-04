@@ -355,7 +355,7 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
                             String ticLabel = "";
                             if (specialYaxisDelta) {
-                                ticLabel = ticsYaxis[i].subtract(BigDecimal.ONE).movePointRight(3).setScale(1, RoundingMode.HALF_UP).toPlainString();
+                                ticLabel = ticsYaxis[i].subtract(BigDecimal.ONE).movePointRight(3).setScale(3, RoundingMode.HALF_UP).toPlainString();
                             } else {
                                 ticLabel = ticsYaxis[i].toPlainString();
                             }

@@ -1942,7 +1942,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         seaWater_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
         concordiaPanZoom_buttonGroup.add(seaWater_toggleButton);
         seaWater_toggleButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
-        seaWater_toggleButton.setText("SeaWater");
+        seaWater_toggleButton.setText("Seawater");
         seaWater_toggleButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         seaWater_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         seaWater_toggleButton.setName("ZOOM"); // NOI18N
