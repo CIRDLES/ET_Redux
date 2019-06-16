@@ -184,12 +184,12 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="seaWaterModels_menu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="SeaWater Models"/>
+            <Property name="text" type="java.lang.String" value="Seawater Models"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyCurrentSeaWaterModel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit copy of current Sea Water Model"/>
+                <Property name="text" type="java.lang.String" value="Edit copy of current Seawater Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCopyCurrentSeaWaterModelActionPerformed"/>
@@ -197,7 +197,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentSeaWaterModel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Sea Water Model"/>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Seawater Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentSeaWaterModelActionPerformed"/>
@@ -538,8 +538,8 @@
             <Container class="javax.swing.JLayeredPane" name="seaWaterDelta234LayeredPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="SeaWater Models">
-                    <Property name="tabTitle" type="java.lang.String" value="SeaWater Models"/>
+                  <JTabbedPaneConstraints tabName="Seawater Models">
+                    <Property name="tabTitle" type="java.lang.String" value="Seawater Models"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -553,7 +553,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Arial" size="12" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="  Choose SeaWater Model:"/>
+                    <Property name="text" type="java.lang.String" value="  Choose Seawater Model:"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -576,7 +576,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Arial" size="12" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="  SeaWater Model Name:"/>
+                    <Property name="text" type="java.lang.String" value="  Seawater Model Name:"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

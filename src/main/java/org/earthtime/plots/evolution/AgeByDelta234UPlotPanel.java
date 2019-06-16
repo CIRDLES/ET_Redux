@@ -36,7 +36,9 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -47,6 +49,7 @@ import org.apache.batik.apps.rasterizer.SVGConverterException;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
+import static org.earthtime.UPb_Redux.ReduxConstants.SEAWATER_GREEN;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.RadDates;
@@ -54,6 +57,7 @@ import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
 import org.earthtime.plots.PlotAxesSetupInterface;
+import org.earthtime.plots.evolution.openSystem.OpenSystemIsochronTableModel;
 import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
@@ -77,13 +81,13 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
     private Map<Double, Double> upperBoundary;
     private Map<Double, Double> lowerBoundary;
 
-    private SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel;
-    private boolean showSeaWaterModel;
     private double[] arrayOfSeaWaterModelDates;
     private double[] arrayOfSeaWaterModelDeltas;
 
     private double movingUpperBoundaryPointFromX;
     private double movingLowerBoundaryPointFromX;
+
+    private List<OpenSystemIsochronTableModel> openSystemIsochronModelsList;
 
     public AgeByDelta234UPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
@@ -129,6 +133,8 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
         this.movingUpperBoundaryPointFromX = -999;
         this.movingLowerBoundaryPointFromX = -999;
+
+        this.openSystemIsochronModelsList = new ArrayList<>();
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -259,30 +265,35 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                         Math.abs(zoomMinY - zoomMaxY));
             }
 
-            if (showSeaWaterModel) {
-                arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDatesInKa();
-                arrayOfSeaWaterModelDeltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltas();
+            // runthrough models opensystem models
+            if (!openSystemIsochronModelsList.isEmpty()) {
+                for (OpenSystemIsochronTableModel ositm : openSystemIsochronModelsList) {
+                    if (ositm.isShowSeawaterModel()) {
+                        arrayOfSeaWaterModelDates = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDatesInKa();
+                        arrayOfSeaWaterModelDeltas = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDeltas();
 
-                g2d.setPaint(new Color(0, 255, 127));
-                g2d.setStroke(new BasicStroke(1.5f));
+                        g2d.setPaint(SEAWATER_GREEN);
+                        g2d.setStroke(new BasicStroke(1.5f));
 
-                for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
-                    Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double(
-                            mapX(arrayOfSeaWaterModelDates[i]) - 3,
-                            mapY(arrayOfSeaWaterModelDeltas[i]) - 3, 6, 6);
+                        for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
+                            Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double(
+                                    mapX(arrayOfSeaWaterModelDates[i]) - 3,
+                                    mapY(arrayOfSeaWaterModelDeltas[i]) - 3, 6, 6);
 
-                    g2d.draw(rawRatioPoint);
-                    g2d.fill(rawRatioPoint);
+                            g2d.draw(rawRatioPoint);
+                            g2d.fill(rawRatioPoint);
 
-                    if (i > 0) {
-                        // draw line
-                        Line2D line = new Line2D.Double(
-                                mapX(arrayOfSeaWaterModelDates[i - 1]),
-                                mapY(arrayOfSeaWaterModelDeltas[i - 1]),
-                                mapX(arrayOfSeaWaterModelDates[i]),
-                                mapY(arrayOfSeaWaterModelDeltas[i]));
-                        g2d.setStroke(new BasicStroke(2.0f));
-                        g2d.draw(line);
+                            if (i > 0) {
+                                // draw line
+                                Line2D line = new Line2D.Double(
+                                        mapX(arrayOfSeaWaterModelDates[i - 1]),
+                                        mapY(arrayOfSeaWaterModelDeltas[i - 1]),
+                                        mapX(arrayOfSeaWaterModelDates[i]),
+                                        mapY(arrayOfSeaWaterModelDeltas[i]));
+                                g2d.setStroke(new BasicStroke(2.0f));
+                                g2d.draw(line);
+                            }
+                        }
                     }
                 }
             }
@@ -320,7 +331,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                             (int) mapX(Math.round(movingUpperBoundaryPointFromX)) + 10,
                             (int) mapY(Math.round(y)) + 10);
                 }
-                
+
                 if (movingLowerBoundaryPointFromX > 0) {
                     g2d.setPaint(Color.red);
                     Line2D line = new Line2D.Double(
@@ -386,11 +397,10 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         }
 
     }
-    
 
     @Override
-    public void preparePanel(boolean doReset
-    ) {
+    public void preparePanel(boolean doReset ) {
+        setOpenSystemIsochronModelsList(((ProjectSample) mySample).updateListOfOpenIsochronModels());
         if (doReset) {
 
             removeAll();
@@ -432,11 +442,6 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
         ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
         ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
-
-        if (showSeaWaterModel) {
-            arrayOfSeaWaterModelDates = seaWaterInitialDelta234UTableModel.getArrayOfDatesInKa();
-            arrayOfSeaWaterModelDeltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltas();
-        }
 
         repaint();
         validate();
@@ -892,18 +897,11 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
     }
 
     /**
-     * @param seaWaterInitialDelta234UTableModel the
-     * seaWaterInitialDelta234UTableModel to set
+     * @param openSystemIsochronModelsList the openSystemIsochronModelsList to
+     * set
      */
-    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
-        this.seaWaterInitialDelta234UTableModel = seaWaterInitialDelta234UTableModel;
-    }
-
-    /**
-     * @param showSeaWaterModel the showSeaWaterModel to set
-     */
-    public void setShowSeaWaterModel(boolean showSeaWaterModel) {
-        this.showSeaWaterModel = showSeaWaterModel;
+    public void setOpenSystemIsochronModelsList(List<OpenSystemIsochronTableModel> openSystemIsochronModelsList) {
+        this.openSystemIsochronModelsList = openSystemIsochronModelsList;
     }
 
 }

@@ -18,7 +18,6 @@
  */
 package org.earthtime.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -54,7 +53,6 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.plots.AbstractDataView;
-import org.earthtime.plots.evolution.seaWater.SeaWaterDataView;
 import org.earthtime.plots.evolution.seaWater.SeaWaterDelta234UGraph;
 import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -1795,14 +1793,14 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         details_pane.addTab("Ref Material Models", mineralStandard_panel);
 
         chooseSeaWaterModel_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        chooseSeaWaterModel_label.setText("  Choose SeaWater Model:");
+        chooseSeaWaterModel_label.setText("  Choose Seawater Model:");
         seaWaterDelta234LayeredPane.add(chooseSeaWaterModel_label);
-        chooseSeaWaterModel_label.setBounds(10, 0, 150, 25);
+        chooseSeaWaterModel_label.setBounds(10, 0, 148, 25);
         seaWaterDelta234LayeredPane.add(seaWaterModelChooser);
         seaWaterModelChooser.setBounds(170, 0, 450, 25);
 
         seaWaterModelName_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        seaWaterModelName_label.setText("  SeaWater Model Name:");
+        seaWaterModelName_label.setText("  Seawater Model Name:");
         seaWaterDelta234LayeredPane.add(seaWaterModelName_label);
         seaWaterModelName_label.setBounds(20, 30, 140, 25);
 
@@ -1840,7 +1838,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         seaWaterDelta234LayeredPane.add(physicalConstantsModelChooserSW);
         physicalConstantsModelChooserSW.setBounds(630, 0, 410, 27);
 
-        details_pane.addTab("SeaWater Models", seaWaterDelta234LayeredPane);
+        details_pane.addTab("Seawater Models", seaWaterDelta234LayeredPane);
 
         labDefaults_panel.setBackground(new java.awt.Color(212, 231, 232));
 
@@ -2182,9 +2180,9 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         labData_menuBar.add(detritalUTh_menu);
         detritalUTh_menu.getAccessibleContext().setAccessibleName("");
 
-        seaWaterModels_menu.setText("SeaWater Models");
+        seaWaterModels_menu.setText("Seawater Models");
 
-        editCopyCurrentSeaWaterModel.setText("Edit copy of current Sea Water Model");
+        editCopyCurrentSeaWaterModel.setText("Edit copy of current Seawater Model");
         editCopyCurrentSeaWaterModel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCopyCurrentSeaWaterModelActionPerformed(evt);
@@ -2192,7 +2190,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         });
         seaWaterModels_menu.add(editCopyCurrentSeaWaterModel);
 
-        saveAndRegisterCurrentSeaWaterModel.setText("Save and Register Current Edit of Sea Water Model");
+        saveAndRegisterCurrentSeaWaterModel.setText("Save and Register Current Edit of Seawater Model");
         saveAndRegisterCurrentSeaWaterModel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveAndRegisterCurrentSeaWaterModelActionPerformed(evt);

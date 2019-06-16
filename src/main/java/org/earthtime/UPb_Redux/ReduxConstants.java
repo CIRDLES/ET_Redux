@@ -128,15 +128,15 @@ final public class ReduxConstants {
      *
      */
     static public final Color dataModelGray
-            = //
-            new Color(235, 235, 235);
+            = new Color(235, 235, 235);
 
     /**
      *
      */
     static public final Color palePinkBelowDetection
-            = //
-            new Color(255, 248, 248);//pale pink
+            = new Color(255, 248, 248);//pale pink
+    
+    static public final Color SEAWATER_GREEN = new Color(46,139,87);
     /**
      *
      */
