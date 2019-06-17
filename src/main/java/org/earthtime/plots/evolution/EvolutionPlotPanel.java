@@ -217,6 +217,9 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
             for (int index = 0; index < ar48icntrs.length; index++) {
                 if (Math.abs(ar48icntrs[index]) < getMinY_Display()) {
                     lowIndex = index;
+                    if (lowIndex == 1) {
+                        lowIndex = 0;
+                    }
                 }
                 if (Math.abs(ar48icntrs[index]) < getMaxY_Display()) {
                     highIndex = Math.min(ar48icntrs.length - 1, index + 6 + (zoomCount / 10) * 1);
@@ -334,7 +337,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                             Point2D.Double openIsoPointEnd = calculateOpenSystemIsochronEndPoint(age, ar234U_238Uisw, isoEndR, isoPctLoss);
 
                             Shape isochronLine = new Path2D.Double();
-                            g2d.setStroke(new BasicStroke(3.75f));
+                            g2d.setStroke(new BasicStroke(2.0f));
                             ((Path2D) isochronLine).moveTo(//
                                     mapX(openIsoPointStart.getX()), //
                                     mapY(openIsoPointStart.getY()));
@@ -485,7 +488,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
     @Override
     public void preparePanel(boolean doReset) {
         setOpenSystemIsochronModelsList(((ProjectSample) sample).updateListOfOpenIsochronModels());
-        
+
         if (doReset) {
 
             removeAll();

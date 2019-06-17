@@ -187,6 +187,16 @@
             <Property name="text" type="java.lang.String" value="Seawater Models"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="removeSeawaterModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Remove current Seawater Model from Lab Data"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeSeawaterModel_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyCurrentSeaWaterModel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit copy of current Seawater Model"/>
@@ -591,9 +601,6 @@
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="2"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="seaWaterModelName_textActionPerformed"/>
-                  </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="170" y="30" width="260" height="25"/>

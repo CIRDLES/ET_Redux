@@ -1469,7 +1469,10 @@ public final class ReduxLabData implements Serializable {
      */
     public boolean removeASeaWaterUModel(String name)
             throws BadLabDataException {
-        return ((ReduxLabDataList) seaWaterModels).removeAnElement(name);
+        
+        SeaWaterInitialDelta234UTableModel model = getASeaWaterModel(name);
+               
+        return seaWaterModels.remove(model);
     }
 
     /**

@@ -2857,7 +2857,7 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
 
     //  evolutionPlotPanel.setBounds(0,0,evolutionLayeredPane.getWidth(), evolutionLayeredPane.getHeight() - 400);
     //evolutionPlotPanel.setSize(evolutionLayeredPane.getSize());
-    ((org.earthtime.plots.AbstractDataView) evolutionPlotPanel).refreshPanel(true);
+//    ((AbstractDataView) evolutionPlotPanel).refreshPanel(true);
 
     try {
 //        ((AbstractPlot) evolutionLayeredPane).setGraphWidth(widthCP);
@@ -3435,7 +3435,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         null,
                         true,
                         openSystemIsochronModelsList);
-        myDialog.setSize(325, Math.min(3, openSystemIsochronModelsList.size()) * 265 + 50);
+        myDialog.setSize(340, Math.min(3, openSystemIsochronModelsList.size()) * 265 + 50);
         myDialog.setLocationRelativeTo(this);
         myDialog.setVisible(true);
 
