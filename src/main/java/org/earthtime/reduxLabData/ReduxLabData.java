@@ -1021,7 +1021,7 @@ public final class ReduxLabData implements Serializable {
             if (defaultPhysicalConstantsModel == null) {
                 addPhysicalConstantsModel(PhysicalConstantsModel.getNoneInstance());
                 defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
-            } 
+            }
 //            else // detect if legacy default is none and change if possible
 //            {
 //                if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
@@ -1422,7 +1422,7 @@ public final class ReduxLabData implements Serializable {
             seaWaterModels = new ReduxLabDataList<>("SeaWater Model");
         }
         if (seaWaterModels.isEmpty()) {
-            seaWaterModels.add(getDefaultLabSeaWaterModel());
+            addSeaWaterModel(getDefaultLabSeaWaterModel());
         }
         return seaWaterModels;
     }
@@ -1469,7 +1469,10 @@ public final class ReduxLabData implements Serializable {
      */
     public boolean removeASeaWaterUModel(String name)
             throws BadLabDataException {
-        return ((ReduxLabDataList) seaWaterModels).removeAnElement(name);
+        
+        SeaWaterInitialDelta234UTableModel model = getASeaWaterModel(name);
+               
+        return seaWaterModels.remove(model);
     }
 
     /**
@@ -1493,7 +1496,9 @@ public final class ReduxLabData implements Serializable {
      * @param seaWaterUModel
      */
     public void addSeaWaterModel(SeaWaterInitialDelta234UTableModel seaWaterUModel) {
-        getSeaWaterModels().add(seaWaterUModel);
+        if (!seaWaterModels.contains(seaWaterUModel)) {
+            seaWaterModels.add(seaWaterUModel);
+        }
         Collections.sort(getSeaWaterModels());
     }
 
@@ -1506,7 +1511,7 @@ public final class ReduxLabData implements Serializable {
         if (defaultSeaWaterInitialDelta234UTableModel == null) {
             defaultSeaWaterInitialDelta234UTableModel = new SeaWaterInitialDelta234UTableModel();
             addSeaWaterModel(defaultSeaWaterInitialDelta234UTableModel);
-            setDefaultSeaWaterInitialDelta234UTableModel(getFirstSeaWaterModel());
+            //setDefaultSeaWaterInitialDelta234UTableModel(getFirstSeaWaterModel());
         }
 //        else // detect if legacy default is none and change if possible
 //        if (defaultSeaWaterInitialDelta234UTableModel.equals(getNoneSeaWaterModel())) {

@@ -18,7 +18,9 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +43,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -52,6 +55,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -81,7 +85,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
@@ -101,10 +104,11 @@ import org.earthtime.plots.anyTwo.PlotAny2Panel;
 import org.earthtime.plots.evolution.AgeByDelta234UPlotPanel;
 import org.earthtime.plots.evolution.EvolutionPlotPanel;
 import org.earthtime.plots.evolution.InitialDelta234UEvolutionSelectorDialog;
-import org.earthtime.plots.evolution.InitialDelta234USeaWaterModelSelectorDialog;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
 import org.earthtime.plots.evolution.IsochronsEvolutionSelectorDialog;
+import org.earthtime.plots.evolution.openSystem.OpenSystemIsochronTableModel;
+import org.earthtime.plots.evolution.openSystem.OpenSystemModelsManager;
 import org.earthtime.projects.ProjectSample;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportColumnInterface;
@@ -286,7 +290,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
             default:
         }
-        
+
         seaDelta234U_button.setVisible(false);
 
     }
@@ -533,9 +537,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         ((AliquotDetailsDisplayInterface) ageDelta234PlotPanel).//
                 setSelectedFractions(sample.getFractions());
-        ((AgeByDelta234UPlotPanel)ageDelta234PlotPanel).setUpperBoundary(((ProjectSample)sample).getUpperBoundary());
-        ((AgeByDelta234UPlotPanel)ageDelta234PlotPanel).setLowerBoundary(((ProjectSample)sample).getLowerBoundary());
-        
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).setUpperBoundary(((ProjectSample) sample).getUpperBoundary());
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).setLowerBoundary(((ProjectSample) sample).getLowerBoundary());
+
         ((AbstractDataView) ageDelta234PlotPanel).refreshPanel(true);
 
     }
@@ -1004,7 +1008,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         } catch (Exception e) {
         }
 
-        // evolutionPlotPanel.setPreferredSize(new Dimension(adjustedWidth, adjustedHeight - 400));
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(adjustedHeight);
 
@@ -1233,7 +1236,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         evolutionPlotPanel = null;
         ageDelta234PlotPanel = null;
         probabilityPanel = null;
-        
+
         removeAll();
         dispose();
 
@@ -1314,6 +1317,18 @@ public class SampleDateInterpretationsManager extends DialogEditor
         showInitDelta234UOnToggle_checkbox = new javax.swing.JCheckBox();
         seaDelta234U_button =  new ET_JButton("Sea \u03B4234U");
         seaWater_toggleButton =  new ET_JToggleButton();
+        seaWater_toggleButton.setLayout(new BorderLayout());
+        JLabel label1 = new JLabel("Seawater &");
+        label1.setFont(new Font("SansSerif", 1, 9));
+        label1.setForeground(new java.awt.Color(255, 51, 0));
+        label1.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel label2 = new JLabel("OpenSys Isochrons");
+        label2.setForeground(new java.awt.Color(255, 51, 0));
+        label2.setFont(new Font("SansSerif", 1, 9));
+        label2.setHorizontalAlignment(SwingConstants.CENTER);
+        seaWater_toggleButton.add(BorderLayout.NORTH,label1);
+        seaWater_toggleButton.add(BorderLayout.SOUTH,label2);
+        //https://www.javaworld.com/article/2077368/a-multiline-button-is-possible.html
         useriesIsochronLayeredPane = new javax.swing.JLayeredPane();
         uSeriesIsochronToolPanel = new javax.swing.JPanel();
         zoomInX2Isochron_button =  new ET_JButton();
@@ -1942,7 +1957,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         seaWater_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
         concordiaPanZoom_buttonGroup.add(seaWater_toggleButton);
         seaWater_toggleButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
-        seaWater_toggleButton.setText("Seawater");
         seaWater_toggleButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         seaWater_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         seaWater_toggleButton.setName("ZOOM"); // NOI18N
@@ -1952,7 +1966,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 seaWater_toggleButtonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(seaWater_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 2, 50, 30));
+        evolutionToolPanel.add(seaWater_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 2, 90, 30));
 
         evolutionLayeredPane.add(evolutionToolPanel);
         evolutionToolPanel.setBounds(0, 604, 920, 35);
@@ -2843,7 +2857,7 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
 
     //  evolutionPlotPanel.setBounds(0,0,evolutionLayeredPane.getWidth(), evolutionLayeredPane.getHeight() - 400);
     //evolutionPlotPanel.setSize(evolutionLayeredPane.getSize());
-    ((org.earthtime.plots.AbstractDataView) evolutionPlotPanel).refreshPanel(true);
+//    ((AbstractDataView) evolutionPlotPanel).refreshPanel(true);
 
     try {
 //        ((AbstractPlot) evolutionLayeredPane).setGraphWidth(widthCP);
@@ -3414,31 +3428,23 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_seaDelta234U_buttonActionPerformed
 
     private void seaWater_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seaWater_toggleButtonActionPerformed
-       DialogEditor myDialog
-                = new InitialDelta234USeaWaterModelSelectorDialog(
+        List<OpenSystemIsochronTableModel> openSystemIsochronModelsList = ((ProjectSample) sample).updateListOfOpenIsochronModels();
+
+        DialogEditor myDialog
+                = new OpenSystemModelsManager(
                         null,
                         true,
-                        sample.getSeaWaterInitialDelta234UTableModel());
-        myDialog.setSize(370, 295);
+                        openSystemIsochronModelsList);
+        myDialog.setSize(340, Math.min(3, openSystemIsochronModelsList.size()) * 265 + 50);
         myDialog.setLocationRelativeTo(this);
         myDialog.setVisible(true);
 
-        
-        
-        sample.setSeaWaterInitialDelta234UTableModel(((InitialDelta234USeaWaterModelSelectorDialog)myDialog).getSeaWaterInitialDelta234UTableModel());
-        
-        
-        
-        ((EvolutionPlotPanel) evolutionPlotPanel).setSeaWaterInitialDelta234UTableModel(
-                ((InitialDelta234USeaWaterModelSelectorDialog)myDialog).getSeaWaterInitialDelta234UTableModel());
-        ((EvolutionPlotPanel) evolutionPlotPanel).setShowSeaWaterModel(((InitialDelta234USeaWaterModelSelectorDialog)myDialog).isShowSeaWaterModel());
+        ((EvolutionPlotPanel) evolutionPlotPanel).setOpenSystemIsochronModelsList(openSystemIsochronModelsList);
         ((EvolutionPlotPanel) evolutionPlotPanel).repaint();
-        
-        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).setSeaWaterInitialDelta234UTableModel(
-                ((InitialDelta234USeaWaterModelSelectorDialog)myDialog).getSeaWaterInitialDelta234UTableModel());
-        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).setShowSeaWaterModel(((InitialDelta234USeaWaterModelSelectorDialog)myDialog).isShowSeaWaterModel());
+
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).setOpenSystemIsochronModelsList(openSystemIsochronModelsList);
         ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).repaint();
-        
+
         myDialog.dispose();
     }//GEN-LAST:event_seaWater_toggleButtonActionPerformed
 

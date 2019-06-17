@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.Vector;
@@ -2113,11 +2114,11 @@ public interface SampleInterface {
 
     public void initFilteredFractionsToAll();
 
-    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel();
+    public List<SeaWaterInitialDelta234UTableModel> getSeaWaterInitialDelta234UTableModels();
 
     /**
      * @param seaWaterInitialDelta234UTableModel the
      * seaWaterInitialDelta234UTableModel to set
      */
-    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel);
+    public void setSeaWaterInitialDelta234UTableModels(List<SeaWaterInitialDelta234UTableModel> seaWaterInitialDelta234UTableModels);
 }

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -45,6 +46,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.evolution.LowerBoundaryComparator;
 import org.earthtime.plots.evolution.UpperBoundaryComparator;
+import org.earthtime.plots.evolution.openSystem.OpenSystemIsochronTableModel;
 import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -87,9 +89,10 @@ public class ProjectSample implements//
     // maps age to delta
     private Map<Double, Double> upperBoundary;
     private Map<Double, Double> lowerBoundary;
-    
-        
-    private SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel;
+
+    private List<SeaWaterInitialDelta234UTableModel> seaWaterInitialDelta234UTableModels;
+
+    private Map<String, OpenSystemIsochronTableModel> mapOfSeawaterModelsToOpenIsochronsModels;
 
     /**
      *
@@ -129,8 +132,10 @@ public class ProjectSample implements//
 
         this.upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
         this.lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
-        
-        this.seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance().getDefaultLabSeaWaterModel();
+
+        this.seaWaterInitialDelta234UTableModels = ReduxLabData.getInstance().getSeaWaterModels();
+
+        this.mapOfSeawaterModelsToOpenIsochronsModels = new TreeMap<>();
 
         initFilteredFractionsToAll();
 
@@ -615,19 +620,73 @@ public class ProjectSample implements//
     /**
      * @return the seaWaterInitialDelta234UTableModel
      */
-    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel() {
-        if (seaWaterInitialDelta234UTableModel == null){
-            this.seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance().getDefaultLabSeaWaterModel();
+    public List<SeaWaterInitialDelta234UTableModel> getSeaWaterInitialDelta234UTableModels() {
+        if (seaWaterInitialDelta234UTableModels == null) {
+            this.seaWaterInitialDelta234UTableModels = ReduxLabData.getInstance().getSeaWaterModels();
         }
-        return seaWaterInitialDelta234UTableModel;
+        return seaWaterInitialDelta234UTableModels;
     }
 
     /**
-     * @param seaWaterInitialDelta234UTableModel the seaWaterInitialDelta234UTableModel to set
+     * @param seaWaterInitialDelta234UTableModel the
+     * seaWaterInitialDelta234UTableModel to set
      */
-    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
-        this.seaWaterInitialDelta234UTableModel = seaWaterInitialDelta234UTableModel;
+    public void setSeaWaterInitialDelta234UTableModels(List<SeaWaterInitialDelta234UTableModel> seaWaterInitialDelta234UTableModel) {
+        this.seaWaterInitialDelta234UTableModels = seaWaterInitialDelta234UTableModel;
     }
 
+    /**
+     * @return the mapOfSeawaterModelsToOpenIsochronsModels
+     */
+    public Map<String, OpenSystemIsochronTableModel> updateMapOfSeawaterModelsToOpenIsochronsModels() {
+        if (mapOfSeawaterModelsToOpenIsochronsModels == null) {
+            this.mapOfSeawaterModelsToOpenIsochronsModels = new TreeMap<>();
+        }
 
+        // update list
+        for (SeaWaterInitialDelta234UTableModel swm : ReduxLabData.getInstance().getSeaWaterModels()) {
+            if (!mapOfSeawaterModelsToOpenIsochronsModels.containsKey(swm.getNameAndVersion())) {
+                mapOfSeawaterModelsToOpenIsochronsModels.put(swm.getNameAndVersion(), new OpenSystemIsochronTableModel());
+            }
+        }
+        return mapOfSeawaterModelsToOpenIsochronsModels;
+    }
+
+    public List<OpenSystemIsochronTableModel> updateListOfOpenIsochronModels() {
+        // first update lab data
+        for (SeaWaterInitialDelta234UTableModel model : seaWaterInitialDelta234UTableModels) {
+            if (!ReduxLabData.getInstance().getSeaWaterModels().contains(model)) {
+                ReduxLabData.getInstance().addSeaWaterModel(model);
+            }
+        }
+        // then update this sample
+        for (SeaWaterInitialDelta234UTableModel model : ReduxLabData.getInstance().getSeaWaterModels()) {
+            if (!seaWaterInitialDelta234UTableModels.contains(model)) {
+                seaWaterInitialDelta234UTableModels.add(model);
+                mapOfSeawaterModelsToOpenIsochronsModels.put(model.getNameAndVersion(), new OpenSystemIsochronTableModel());
+            }
+        }
+
+        List<OpenSystemIsochronTableModel> models = new ArrayList<>();
+        List<String> badModels = new ArrayList<>();
+
+        for (Entry<String, OpenSystemIsochronTableModel> entry : updateMapOfSeawaterModelsToOpenIsochronsModels().entrySet()) {
+            try {
+                SeaWaterInitialDelta234UTableModel swm = ReduxLabData.getInstance().getASeaWaterModel(entry.getKey());
+                entry.getValue().setSeaWaterInitialDelta234UTableModel(swm);
+                models.add(entry.getValue());
+                seaWaterInitialDelta234UTableModels.add(swm);
+            } catch (BadLabDataException badLabDataException) {
+                badModels.add(entry.getKey());
+            }
+        }
+
+        return models;
+    }
+
+    private boolean seawaterModelsListContainsModelByName(String modelName, List<OpenSystemIsochronTableModel> models) {
+        boolean retVal = false;
+
+        return retVal;
+    }
 }

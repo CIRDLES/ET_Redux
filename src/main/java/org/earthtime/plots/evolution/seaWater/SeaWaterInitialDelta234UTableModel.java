@@ -82,6 +82,18 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
                 .compareToIgnoreCase(modelID));
     }
 
+    @Override
+    public boolean equals(Object model) {
+        //check for self-comparison
+        if (this == model) {
+            return true;
+        }
+        
+        return this.compareTo((SeaWaterInitialDelta234UTableModel)model) == 0;
+    }
+    
+    
+
     public SeaWaterInitialDelta234UTableModel copyModel(boolean doAppendName) {
 
         SeaWaterInitialDelta234UTableModel myModel = cloneModel();
@@ -197,10 +209,10 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
             int retVal;
             if (o1.getAgeInKa() < 0) {
                 retVal = 1;
-            } else if (o2.ageInKa < 0) {
+            } else if (o2.getAgeInKa() < 0) {
                 retVal = -1;
             } else {
-                retVal = Double.compare(o1.ageInKa, o2.ageInKa);
+                retVal = Double.compare(o1.getAgeInKa(), o2.getAgeInKa());
             }
 
             return retVal;

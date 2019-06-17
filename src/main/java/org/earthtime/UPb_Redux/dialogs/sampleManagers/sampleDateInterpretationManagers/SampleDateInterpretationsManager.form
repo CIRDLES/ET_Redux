@@ -1394,7 +1394,6 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="9" style="1"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Seawater"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                             <LineBorder/>
@@ -1411,10 +1410,11 @@
                       </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value=" new ET_JToggleButton()"/>
+                        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="seaWater_toggleButton.setLayout(new BorderLayout());&#xa;JLabel label1 = new JLabel(&quot;Seawater &amp;&quot;);&#xa;label1.setFont(new Font(&quot;SansSerif&quot;, 1, 9));&#xa;label1.setForeground(new java.awt.Color(255, 51, 0));&#xa;label1.setHorizontalAlignment(SwingConstants.CENTER);&#xa;JLabel label2 = new JLabel(&quot;OpenSys Isochrons&quot;);&#xa;label2.setForeground(new java.awt.Color(255, 51, 0));&#xa;label2.setFont(new Font(&quot;SansSerif&quot;, 1, 9));&#xa;label2.setHorizontalAlignment(SwingConstants.CENTER);&#xa;seaWater_toggleButton.add(BorderLayout.NORTH,label1);&#xa;seaWater_toggleButton.add(BorderLayout.SOUTH,label2);&#xa;//https://www.javaworld.com/article/2077368/a-multiline-button-is-possible.html"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="400" y="2" width="50" height="30"/>
+                          <AbsoluteConstraints x="400" y="2" width="90" height="30"/>
                         </Constraint>
                       </Constraints>
                     </Component>

@@ -1678,12 +1678,12 @@ public class Sample implements
     }
 
     @Override
-    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel() {
+    public List<SeaWaterInitialDelta234UTableModel> getSeaWaterInitialDelta234UTableModels() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
+    public void setSeaWaterInitialDelta234UTableModels(List<SeaWaterInitialDelta234UTableModel> seaWaterInitialDelta234UTableModels) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

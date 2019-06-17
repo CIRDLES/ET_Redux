@@ -18,7 +18,6 @@
  */
 package org.earthtime.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -54,7 +53,6 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.plots.AbstractDataView;
-import org.earthtime.plots.evolution.seaWater.SeaWaterDataView;
 import org.earthtime.plots.evolution.seaWater.SeaWaterDelta234UGraph;
 import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -495,7 +493,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
 
     private void RemoveCurrentDetritalUThModel()
             throws BadLabDataException {
-        // see also menu item is truned off
+        // see also menu item is turned off
         if (!(((String) detritalUThChooser.getSelectedItem()).equalsIgnoreCase("<none>")
                 || ((String) detritalUThChooser.getSelectedItem()).equalsIgnoreCase(ReduxConstants.NONE))) {
             String tempName = (String) detritalUThChooser.getSelectedItem();
@@ -946,19 +944,6 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         MineralStandardModelChooser.setSelectedItem(savedMineralStandardModelName);
     }
 
-    private void initSeaWaterModelChooser() throws BadLabDataException {
-
-        // set up SeaWaterModelChooser
-        seaWaterModelChooser.removeAllItems();
-        ArrayList<SeaWaterInitialDelta234UTableModel> seaWaterModels = myLabData.getSeaWaterModels();
-        for (int i = 0; i < seaWaterModels.size(); i++) {
-            seaWaterModelChooser.addItem(seaWaterModels.get(i).getNameAndVersion());
-        }
-
-        seaWaterModelChooser.setSelectedIndex(0);
-        seaWaterModelChooser.setSelectedItem(savedSeaWaterModelName);
-    }
-
     class MineralStandardModelItemListener implements ItemListener {
 
         @Override
@@ -1224,19 +1209,19 @@ public class LabDataEditorDialogUTh extends DialogEditor {
 
     }
 
-//    private void initMineralStandardModelChooser() throws BadLabDataException {
-//
-//        // set up MineralStandardModelChooser
-//        MineralStandardModelChooser.removeAllItems();
-//        ArrayList<AbstractRatiosDataModel> mineralStandardModels = myLabData.getMineralStandardModels();
-//        for (int i = (mineralStandardModels.size() > 1 ? 1 : 0); i < mineralStandardModels.size(); i++) {
-//            MineralStandardModelChooser.addItem(mineralStandardModels.get(i).getReduxLabDataElementName());
-//        }
-//
-//        MineralStandardModelChooser.setSelectedIndex(0);
-//        MineralStandardModelChooser.setSelectedItem(savedMineralStandardModelName);
-//    }
-//
+    private void initSeaWaterModelChooser() throws BadLabDataException {
+
+        // set up SeaWaterModelChooser
+        seaWaterModelChooser.removeAllItems();
+        ArrayList<SeaWaterInitialDelta234UTableModel> seaWaterModels = myLabData.getSeaWaterModels();
+        for (int i = 0; i < seaWaterModels.size(); i++) {
+            seaWaterModelChooser.addItem(seaWaterModels.get(i).getNameAndVersion());
+        }
+
+        seaWaterModelChooser.setSelectedIndex(0);
+        seaWaterModelChooser.setSelectedItem(savedSeaWaterModelName);
+    }
+
     class SeaWaterModelItemListener implements ItemListener {
 
         @Override
@@ -1353,16 +1338,18 @@ public class LabDataEditorDialogUTh extends DialogEditor {
 //        MineralStandardModelChooser.setSelectedItem(tempModel.getReduxLabDataElementName());
 //    }
 //
-//    private void removeCurrentMineralStandardModel() throws BadLabDataException {
-//        // see also menu item is turned off
-//
-//        String mineralStandardModelName = (String) MineralStandardModelChooser.getSelectedItem();
-//        MineralStandardModelChooser.removeAllItems();
-//        myLabData.removeAMineralStandardModel(mineralStandardModelName);
-//
-//        initMineralStandardModelChooser();
-//
-//    }
+
+    private void removeCurrentSeawaterModel() throws BadLabDataException {
+        // see also menu item is turned off
+
+        String seawaterModelName = (String) seaWaterModelChooser.getSelectedItem();
+        seaWaterModelChooser.removeAllItems();
+        
+        myLabData.removeASeaWaterUModel(seawaterModelName);
+
+        initSeaWaterModelChooser();
+
+    }
 //
 //    private boolean exportMineralStandardModelAsXML()
 //            throws BadLabDataException, ETException {
@@ -1456,8 +1443,10 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private void saveAndRegisterCurrentEditOfSeaWaterModel()
             throws BadLabDataException, ETException {
         setAlwaysOnTop(false);
-//        seaWaterDataView.saveAndUpdateModelView(true);
+
         newEmptySeaWaterModel.setModelName(seaWaterModelName_text.getText());
+        newEmptySeaWaterModel.setVersionNumber(Integer.parseInt(seaWaterModelVersionMajor_text.getText()));
+        newEmptySeaWaterModel.setMinorVersionNumber(Integer.parseInt(seaWaterModelVersionMinor_text.getText()));
         if (!myLabData.containsSeaWaterModelName(newEmptySeaWaterModel.getNameAndVersion())) {
             myLabData.registerSeaWaterModel(newEmptySeaWaterModel, true);
             savedSeaWaterModelName = newEmptySeaWaterModel.getNameAndVersion();
@@ -1684,6 +1673,8 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         jSeparator22 = new javax.swing.JPopupMenu.Separator();
         saveAndRegisterCurrentEditOfDetritalUThModel_menuItem = new javax.swing.JMenuItem();
         seaWaterModels_menu = new javax.swing.JMenu();
+        removeSeawaterModel_menuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         editCopyCurrentSeaWaterModel = new javax.swing.JMenuItem();
         saveAndRegisterCurrentSeaWaterModel = new javax.swing.JMenuItem();
         MineralStdModels_menu = new javax.swing.JMenu();
@@ -1795,24 +1786,19 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         details_pane.addTab("Ref Material Models", mineralStandard_panel);
 
         chooseSeaWaterModel_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        chooseSeaWaterModel_label.setText("  Choose SeaWater Model:");
+        chooseSeaWaterModel_label.setText("  Choose Seawater Model:");
         seaWaterDelta234LayeredPane.add(chooseSeaWaterModel_label);
-        chooseSeaWaterModel_label.setBounds(10, 0, 150, 25);
+        chooseSeaWaterModel_label.setBounds(10, 0, 148, 25);
         seaWaterDelta234LayeredPane.add(seaWaterModelChooser);
         seaWaterModelChooser.setBounds(170, 0, 450, 25);
 
         seaWaterModelName_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        seaWaterModelName_label.setText("  SeaWater Model Name:");
+        seaWaterModelName_label.setText("  Seawater Model Name:");
         seaWaterDelta234LayeredPane.add(seaWaterModelName_label);
         seaWaterModelName_label.setBounds(20, 30, 140, 25);
 
         seaWaterModelName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         seaWaterModelName_text.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        seaWaterModelName_text.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                seaWaterModelName_textActionPerformed(evt);
-            }
-        });
         seaWaterDelta234LayeredPane.add(seaWaterModelName_text);
         seaWaterModelName_text.setBounds(170, 30, 260, 25);
 
@@ -1840,7 +1826,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         seaWaterDelta234LayeredPane.add(physicalConstantsModelChooserSW);
         physicalConstantsModelChooserSW.setBounds(630, 0, 410, 27);
 
-        details_pane.addTab("SeaWater Models", seaWaterDelta234LayeredPane);
+        details_pane.addTab("Seawater Models", seaWaterDelta234LayeredPane);
 
         labDefaults_panel.setBackground(new java.awt.Color(212, 231, 232));
 
@@ -2182,9 +2168,18 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         labData_menuBar.add(detritalUTh_menu);
         detritalUTh_menu.getAccessibleContext().setAccessibleName("");
 
-        seaWaterModels_menu.setText("SeaWater Models");
+        seaWaterModels_menu.setText("Seawater Models");
 
-        editCopyCurrentSeaWaterModel.setText("Edit copy of current Sea Water Model");
+        removeSeawaterModel_menuItem.setText("Remove current Seawater Model from Lab Data");
+        removeSeawaterModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeSeawaterModel_menuItemActionPerformed(evt);
+            }
+        });
+        seaWaterModels_menu.add(removeSeawaterModel_menuItem);
+        seaWaterModels_menu.add(jSeparator1);
+
+        editCopyCurrentSeaWaterModel.setText("Edit copy of current Seawater Model");
         editCopyCurrentSeaWaterModel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCopyCurrentSeaWaterModelActionPerformed(evt);
@@ -2192,7 +2187,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         });
         seaWaterModels_menu.add(editCopyCurrentSeaWaterModel);
 
-        saveAndRegisterCurrentSeaWaterModel.setText("Save and Register Current Edit of Sea Water Model");
+        saveAndRegisterCurrentSeaWaterModel.setText("Save and Register Current Edit of Seawater Model");
         saveAndRegisterCurrentSeaWaterModel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveAndRegisterCurrentSeaWaterModelActionPerformed(evt);
@@ -2713,9 +2708,13 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         }
     }//GEN-LAST:event_saveAndRegisterCurrentSeaWaterModelActionPerformed
 
-    private void seaWaterModelName_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seaWaterModelName_textActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_seaWaterModelName_textActionPerformed
+    private void removeSeawaterModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeSeawaterModel_menuItemActionPerformed
+        try {
+            removeCurrentSeawaterModel();
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_removeSeawaterModel_menuItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem ImportPhysicalConstantsModelXML_menuItem;
@@ -2756,6 +2755,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSeparator jSeparator14;
     private javax.swing.JSeparator jSeparator15;
     private javax.swing.JSeparator jSeparator16;
@@ -2781,6 +2781,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private javax.swing.JMenuItem removeDetritalUThModel_menuItem;
     private javax.swing.JMenuItem removeMineralStdModel_menuItem;
     private javax.swing.JMenuItem removePhysicalConstantsModel_menuItem;
+    private javax.swing.JMenuItem removeSeawaterModel_menuItem;
     private javax.swing.JMenuItem saveAndRegisterCurrentEditOfDetritalUThModel_menuItem;
     private javax.swing.JMenuItem saveAndRegisterCurrentEditOfMineralStandardModel_menuItem;
     private javax.swing.JMenuItem saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem;
