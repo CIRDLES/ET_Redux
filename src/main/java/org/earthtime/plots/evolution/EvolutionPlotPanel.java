@@ -901,7 +901,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         Calculate the initial seawater 234U/238U activity ratio ar234U_238Uisw for the input age t using the user-input seawater model.  
         This is an activity ratio, so a typical number would be 1.145.
         Calculate f234 =  1 – pctLoss / 100
-        Calculate f230 = ((f234 - 1) * (4.754 * 234 / 4.184 / 230) + 1)
+        Calculate f230 = ((f234 - 1) * (4.754 * 234 / 4.184 / 230) + 1 + f234)/2
         Calculate ar234U_238U = (1 + R * (1 – f234)) * (1 – EXP(–lambda234 * t)) + ar234U_238Uisw *EXP(–lambda234 * t)
         Calculate ar230Th_238U = (1 + R * (1 – f234 * f230)) * (1 – lambda230/( lambda230- lambda234) * EXP(–lambda234 * t) + lambda234/( lambda230 - lambda234) * EXP(–lambda230 * t))+(1 + R * (1 - f230)) * (lambda230 / (lambda230 - lambda234) * ar234U_238Uisw * (EXP(–lambda234* t) - EXP(–lambda230 * t)))
 
@@ -913,7 +913,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         double ar230Th_238U;
 
         double f234 = 1.0 - (pctLoss / 100.0);
-        double f230 = ((f234 - 1.0) * (4.754 * 234.0 / 4.184 / 230.0) + 1.0);
+        double f230 = ((f234 - 1.0) * (4.754 * 234.0 / 4.184 / 230.0) + 1.0 + f234)/2;
 
         ar234U_238U = (1.0 + rValue * (1.0 - f234)) * (1.0 - Math.exp(-lambda234D * age)) + ar234U_238Uisw * Math.exp(-lambda234D * age);
         ar230Th_238U
