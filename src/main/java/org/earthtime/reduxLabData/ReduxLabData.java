@@ -1424,7 +1424,10 @@ public final class ReduxLabData implements Serializable {
         if (seaWaterModels.isEmpty()) {
             addSeaWaterModel(getDefaultLabSeaWaterModel());
         }
-        return seaWaterModels;
+
+        ArrayList<SeaWaterInitialDelta234UTableModel> retVal = new ArrayList<>();
+        retVal.addAll(seaWaterModels);
+        return retVal;
     }
 
     /**
@@ -1499,7 +1502,7 @@ public final class ReduxLabData implements Serializable {
         if (!seaWaterModels.contains(seaWaterUModel)) {
             seaWaterModels.add(seaWaterUModel);
         }
-        Collections.sort(getSeaWaterModels());
+        Collections.sort(seaWaterModels);
     }
 
     /**
