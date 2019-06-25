@@ -395,15 +395,13 @@ public class UThFractionReducer extends FractionReducer {
             //Ja = [d.t_ntUncorr(2:3); d.eanegtcorr(2:3,2:3)];
             Matrix Jb = new Matrix(new double[][]{//
                 {1., 0., 0.},
-                {0., - numberAtomsTimeT.get(1, 0) / (numberAtomsTimeT.get(0, 0) * numberAtomsTimeT.get(0, 0)),
+                {0., -numberAtomsTimeT.get(1, 0) / (numberAtomsTimeT.get(0, 0) * numberAtomsTimeT.get(0, 0)),
                     1.0 / numberAtomsTimeT.get(0, 0)}});
 //            //Jb = [1 0 0; 0 -nt(2)/nt(1)^2 1/nt(1)];
             Matrix Cout2
                     = Jb.times(Ja).times(covariance_in.getMatrix(0, 1, 0, 1))
                             .times(Ja.transpose().times(Jb.transpose()));
 //            Cout2 = Jb*Ja*C.in(1:2,1:2)*Ja'*Jb';
-
-
 
 // Arrange outputs
             /**
@@ -537,14 +535,23 @@ public class UThFractionReducer extends FractionReducer {
 
             fraction.setRadiogenicIsotopeDateByName(RadDates.dateCorr, dateCorr);
 
-            ValueModel dateCorrBP = new ValueModel(//
-                    RadDates.dateCorrBP.getName(), //
-                    new BigDecimal(timeCorrected - yearsSince1950_di), ///
-                    "ABS", //
-                    new BigDecimal(correctedDateOneSigmaAbs), //
+            ValueModel dateCorrBP = new ValueModel(
+                    RadDates.dateCorrBP.getName(),
+                    new BigDecimal(timeCorrected - yearsSince1950_di),
+                    "ABS",
+                    new BigDecimal(correctedDateOneSigmaAbs),
                     BigDecimal.ZERO);
 
             fraction.setRadiogenicIsotopeDateByName(RadDates.dateCorrBP, dateCorrBP);
+
+            ValueModel dateOpenSys = new ValueModel(
+                    RadDates.dateOpenSys.getName(),
+                    new BigDecimal(11111),
+                    "ABS",
+                    new BigDecimal(correctedDateOneSigmaAbs),
+                    BigDecimal.ZERO);
+
+            fraction.setRadiogenicIsotopeDateByName(RadDates.dateOpenSys, dateOpenSys);
 
             //  initial 234U/238U not detrital corrected *************************************************************
             // ni(2)/ni(1) (line 90 MatLab code) 
@@ -557,7 +564,6 @@ public class UThFractionReducer extends FractionReducer {
             // TODO: june 2017 uncertainty math is still missing - Noah?
 //            outvec(15) = 2*sqrt(Cout2(2,2))*lambda.U234/lambda.U238 * 1000; %2-sigma abs unct in del234Uinitial (uncorrected)
 //            outvec(16) = Cout2(1,2)/sqrt(Cout2(1,1)*Cout2(2,2)); % rho date-del234Uinitial (uncorrected)
-            
             double initial234_238atomRatioUnct = Math.sqrt(Cout2.get(1, 1));
 
             if (!Double.isFinite(initial234_238atomRatioUnct)) {
@@ -567,7 +573,7 @@ public class UThFractionReducer extends FractionReducer {
             //
             double ar234_238i = initial234_238atomRatio * lambda234D / lambda238D;
             double ar234_238i_unct = initial234_238atomRatioUnct * lambda234D / lambda238D;
-            
+
             // atom ratio
             fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r234U_238Ui.getName())//
                     .setValue(new BigDecimal(initial234_238atomRatio));

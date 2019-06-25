@@ -55,6 +55,7 @@ public final class SampleDateTypes {
         // USeries carbonate Nov 2018
         {"weighted mean Corrected Date", "WMDate", RadDates.dateCorr.getName()},
         {"weighted mean UnCorrected Date", "WMDate", RadDates.date.getName()},
+        {"open-system Date", "WMDate", RadDates.dateOpenSys.getName()},
     };
 
     /**

@@ -1144,7 +1144,7 @@ public class SampleDateModel extends ValueModel implements
                 RadRatios ratioName = RadRatios.valueOf(radiogenicIsotopeDateName.replace("age", "r"));
 
                 SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary
-                        =//
+                        =
                         sessionCorrectedUnknownsSummaries.get(ratioName);
 
                 Matrix unknownsAnalyticalCovarianceSu = sessionCorrectedUnknownsSummary.getUnknownsAnalyticalCovarianceSu();
@@ -1340,10 +1340,10 @@ public class SampleDateModel extends ValueModel implements
         // build vector of date values for specified date with one for each fraction
         Matrix vectorXBar = new Matrix(countOfFractions, 1);
         for (int i = 0; i < countOfFractions; i++) {
-            vectorXBar.set(//
-                    i, //
-                    0, //
-                    myFractions.get(i).getRadiogenicIsotopeDateByName(radiogenicIsotopeDateName).//
+            vectorXBar.set(
+                    i,
+                    0,
+                    myFractions.get(i).getRadiogenicIsotopeDateByName(radiogenicIsotopeDateName).
                             getValue().doubleValue());
         }
 
@@ -2080,6 +2080,14 @@ public class SampleDateModel extends ValueModel implements
         calculateWeightedMeansWithMSWDforRatioBasedData(myFractions, dateName);
     }
 
+    // June 2019 to handle open-system date
+    public void OSDate(Vector<ETFractionInterface> myFractions)
+            throws ETException {
+        ZeroAllValues();
+
+        calculateWeightedMeansWithMSWDforRatioBasedData(myFractions, dateName);
+    }
+
     /**
      * zeroes all values, sets this <code>SampleDateModel</code>'s fields to
      * those of the first <code>Fraction</code> found in argument
@@ -2796,12 +2804,9 @@ public class SampleDateModel extends ValueModel implements
 
         String contents = "";
         if ((dateName.length() > 0) && (methodName.compareToIgnoreCase("ISO238_230") != 0)) {
-            contents
-                    = //
-                    " : date = "//
-                    + fraction.getRadiogenicIsotopeDateByName(dateName)//
-                            .formatValueAndTwoSigmaForPublicationSigDigMode(//
-                                    "ABS", ReduxConstants.getUnitConversionMoveCount(unitsForYears), 2)//
+            contents = " : date = " + fraction.getRadiogenicIsotopeDateByName(dateName)
+                    .formatValueAndTwoSigmaForPublicationSigDigMode(//
+                            "ABS", ReduxConstants.getUnitConversionMoveCount(unitsForYears), 2)
                     + " " + unitsForYears + " 2\u03C3";//               " Ma 2\u03C3";
         }
 
@@ -3243,7 +3248,8 @@ public class SampleDateModel extends ValueModel implements
     }
 
     /**
-     * @param ar48icntrsDsplayAsDeltaUnits the ar48icntrsDsplayAsDeltaUnits to set
+     * @param ar48icntrsDsplayAsDeltaUnits the ar48icntrsDsplayAsDeltaUnits to
+     * set
      */
     public void setAr48icntrsDsplayAsDeltaUnits(boolean ar48icntrsDsplayAsDeltaUnits) {
         this.ar48icntrsDsplayAsDeltaUnits = ar48icntrsDsplayAsDeltaUnits;

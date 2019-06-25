@@ -114,7 +114,8 @@ public enum RadDates {
     date("date"),
     dateCorr("dateCorr"),
     dateBP("dateBP"),
-    dateCorrBP("dateCorrBP");
+    dateCorrBP("dateCorrBP"),
+    dateOpenSys("dateOpenSys");
 
 
     private String name;
