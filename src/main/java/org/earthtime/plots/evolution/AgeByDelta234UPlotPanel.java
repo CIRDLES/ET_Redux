@@ -399,7 +399,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
     }
 
     @Override
-    public void preparePanel(boolean doReset ) {
+    public void preparePanel(boolean doReset) {
         setOpenSystemIsochronModelsList(((ProjectSample) mySample).updateListOfOpenIsochronModels());
         if (doReset) {
 
@@ -557,9 +557,9 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
             double notches = e.getPreciseWheelRotation();
             if (true) {//(notches == Math.rint(notches)) {
                 if (notches < 0) {// zoom in
-                    minX += getRangeX_Display() / ZOOM_FACTOR;
+                    if (zoomCount >=0){    minX += getRangeX_Display() / ZOOM_FACTOR;}
                     maxX -= getRangeX_Display() / ZOOM_FACTOR;
-                    minY += getRangeY_Display() / ZOOM_FACTOR;
+                    if (zoomCount >=0){  minY += getRangeY_Display() / ZOOM_FACTOR;}
                     maxY -= getRangeY_Display() / ZOOM_FACTOR;
 
                     zoomCount++;
@@ -573,13 +573,28 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
                     zoomCount--;
                     // stop zoom out
-                    // if (minX * minY > 0.0) {
+                    if (minX * minY > 0.0) {
+                        maxX += getRangeX_Display() / ZOOM_FACTOR;
+                        maxY += getRangeY_Display() / ZOOM_FACTOR;
+                        zoomCount = 0;
 
-                    maxX += getRangeX_Display() / ZOOM_FACTOR;
+                    } else {
+                        minX = 0.0;
+                        minY = 0.0;
 
-                    maxY += getRangeY_Display() / ZOOM_FACTOR;
-                    //  }
+                        maxX += getRangeX_Display() / ZOOM_FACTOR;
+                        maxY += getRangeY_Display() / ZOOM_FACTOR;
+                    }
 
+                }
+                if (minX <= 0.0) {
+                    minX = 0.0;
+                    displayOffsetX = 0.0;
+
+                }
+                if (minY <= 0.0) {
+                    minY = 0.0;
+                    displayOffsetY = 0.0;
                 }
 
                 zoomMinX = zoomMaxX;
