@@ -31,6 +31,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
@@ -1013,6 +1014,11 @@ public interface SampleInterface {
                     ((UPbSampleInterface) sample).processXMLFractionFile(returnFile[i], aliquotNumber, true, doValidate);
                     successCount++;
                 } catch (ETException ex) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            ex.getMessage(),
+                            "ET Redux Warning",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
             // return folder for persistent state 
