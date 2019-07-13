@@ -51,6 +51,9 @@ public class ReportSpecificationsUTh_Carb extends ReportSpecificationsAbstract {
         {" BP", "corrected", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorrBP.getName(), "ABS",
             "", "false", "false", "2", "true", "Date BP (detrital Th-corr.)", "false", "false"
         },
+        {"", "Open-System", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateOpenSys.getName(), "ABS",
+            "", "false", "false", "2", "true", "", "false", "false"
+        },
         //
         {"uncorrected", "delta234U", "initial", "", "getAnalysisMeasure", UThAnalysisMeasures.delta234Ui.getName(), "ABS",
             "", "true", "false", "3", "true", "initial delta234U", "false", "false"

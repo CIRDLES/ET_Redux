@@ -1057,16 +1057,28 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         }
 
         // walk the column and trim the strings
+//        for (int f = FRACTION_DATA_START_ROW; f
+//                < retVal.length; f++) {
+//            if (retVal[f][columnCount] != null) {
+//                retVal[f][columnCount] = retVal[f][columnCount].substring(minLeading);
+//                retVal[f][columnCount]
+//                        = retVal[f][columnCount].substring(//
+//                                0, retVal[f][columnCount].length() - minTrailing);
+//
+//            }
+//
+//        }
+        // july 2019 from Squid
         for (int f = FRACTION_DATA_START_ROW; f
                 < retVal.length; f++) {
-            if (retVal[f][columnCount] != null) {
+            if ((retVal[f][columnCount] != null) && (retVal[f][columnCount].length() > 0)) {
                 retVal[f][columnCount] = retVal[f][columnCount].substring(minLeading);
-                retVal[f][columnCount]
-                        = retVal[f][columnCount].substring(//
-                                0, retVal[f][columnCount].length() - minTrailing);
-
+                if (retVal[f][columnCount].length() >= minTrailing) {
+                    retVal[f][columnCount]
+                            = retVal[f][columnCount].substring(//
+                                    0, retVal[f][columnCount].length() - minTrailing);
+                }
             }
-
         }
 
         // walk the column and padleft to meet width of displayname the strings

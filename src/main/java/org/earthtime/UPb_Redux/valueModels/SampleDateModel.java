@@ -2076,6 +2076,9 @@ public class SampleDateModel extends ValueModel implements
     public void WMDate(Vector<ETFractionInterface> myFractions)
             throws ETException {
         ZeroAllValues();
+        
+         // TODO: make more robust
+        unitsForYears = "ka";
 
         calculateWeightedMeansWithMSWDforRatioBasedData(myFractions, dateName);
     }
@@ -2084,6 +2087,9 @@ public class SampleDateModel extends ValueModel implements
     public void OSDate(Vector<ETFractionInterface> myFractions)
             throws ETException {
         ZeroAllValues();
+        
+        // TODO: make more robust
+        unitsForYears = "ka";
 
         calculateWeightedMeansWithMSWDforRatioBasedData(myFractions, dateName);
     }

@@ -112,6 +112,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     private JButton sortFractionsButton;
     private JButton toggleMeasuredRatiosButton;
     private JButton toggleAliquotBarsButton;
+    private JButton showSeawaterAssignmentsButton;
     public static boolean showAliquotBars = false;
     private ArrayList<JButton> sortButtons;
     private static TableRowObject lastAquiredTableRowObject;
@@ -325,6 +326,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             sortFractionsButton.setBounds(1, DATATABLE_TOP_HEIGHT - lineHeight - 1, fractionColumnWidth - 3, lineHeight - 3);
             toggleMeasuredRatiosButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
             toggleAliquotBarsButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
+            showSeawaterAssignmentsButton.setBounds(1, 2 + lineHeight - 3, fractionColumnWidth - 3, lineHeight - 3);
 
             int drawnWidth = 3;
             // oct 2016 added -1 for filtering cell added
@@ -489,6 +491,22 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             } else {
                 showAliquotBars = true;
             }
+            
+            // July 2019 add button upper left to access seawater assignment in support of USeries
+            showSeawaterAssignmentsButton = new ET_JButton("Assign SeawaterModels");
+            showSeawaterAssignmentsButton.setFont(ReduxConstants.sansSerif_10_Bold);
+            showSeawaterAssignmentsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //parentFrame.loadAndShowReportTableData("");
+                }
+            });
+            if (reportFractions[1][0].contains("UTh")) {
+                upperLeftCorner.add(showSeawaterAssignmentsButton, JLayeredPane.PALETTE_LAYER);
+            } else {
+                showAliquotBars = true;
+            }
+            
 
             reSizeSortButtons();
 

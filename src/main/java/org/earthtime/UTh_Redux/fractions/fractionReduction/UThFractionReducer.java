@@ -33,6 +33,7 @@ import org.earthtime.fractions.fractionReduction.FractionReducer;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import static org.earthtime.UPb_Redux.ReduxConstants.TIME_IN_MILLISECONDS_FROM_1970_TO_1950;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
+import org.earthtime.plots.evolution.openSystem.OpenSystemDateCalculator;
 
 /* NOTES from Noah 28 October 2015
     So instead, here's a MATLAB file that goes with an Excel worksheet and VBA Add-In I created to calculate U-Th dates.  Here's what's going on in the code.
@@ -544,12 +545,22 @@ public class UThFractionReducer extends FractionReducer {
 
             fraction.setRadiogenicIsotopeDateByName(RadDates.dateCorrBP, dateCorrBP);
 
+            // july 2019 
             ValueModel dateOpenSys = new ValueModel(
-                    RadDates.dateOpenSys.getName(),
-                    new BigDecimal(11111),
-                    "ABS",
-                    new BigDecimal(correctedDateOneSigmaAbs),
-                    BigDecimal.ZERO);
+                        RadDates.dateOpenSys.getName(),
+                        new BigDecimal(0),
+                        "ABS",
+                        new BigDecimal(0),
+                        BigDecimal.ZERO);
+            
+            if (timeUncorrected > 0.0) {
+                dateOpenSys = OpenSystemDateCalculator.calculateOpenSystemDate(
+                        ((UThFraction) fraction).getPctLoss(),
+                        fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName()),
+                        fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Ufc.getName()),
+                        ((UThFraction) fraction).getRadiogenicIsotopeDateByName(RadDates.date.getName()).getValue().doubleValue(),
+                        ((UThFraction) fraction).getSeaWaterInitialDelta234UTableModel());
+            } 
 
             fraction.setRadiogenicIsotopeDateByName(RadDates.dateOpenSys, dateOpenSys);
 

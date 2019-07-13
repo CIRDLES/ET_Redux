@@ -317,18 +317,18 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
             // opensystem isochrons
             if (!openSystemIsochronModelsList.isEmpty()) {
-                LinearInterpolator linearInterpolator = new LinearInterpolator();
+                //LinearInterpolator linearInterpolator = new LinearInterpolator();
 
                 for (OpenSystemIsochronTableModel ositm : openSystemIsochronModelsList) {
                     // for each model, we use the seawaater model to calculate the open isochrons
                     if (ositm.isShowOpenIsochrons()) {
-                        double[] dates = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDates();
-                        double[] deltas = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDeltasAsRatios();
-                        PolynomialSplineFunction psfSeaWater = linearInterpolator.interpolate(dates, deltas);
+                        //double[] dates = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDates();
+                        //double[] deltas = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDeltasAsRatios();
+                        //PolynomialSplineFunction psfSeaWater = linearInterpolator.interpolate(dates, deltas);
 
                         for (OpenSystemIsochronModelEntry osime : ositm.getEntryList()) {
                             double age = osime.getAgeInKa() * 1000.0;
-                            double ar234U_238Uisw = psfSeaWater.value(age);
+                            double ar234U_238Uisw = ositm.getSeaWaterInitialDelta234UTableModel().calculateAr234U_238Uisw(age);
                             double isoPctLoss = osime.getPctLoss();
                             double isoStartR = osime.getrStart();
                             double isoEndR = osime.getrEnd();
@@ -785,10 +785,10 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
     }
 
     private void buildSeawaterModelPlot(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
-        LinearInterpolator linearInterpolator = new LinearInterpolator();
+        //LinearInterpolator linearInterpolator = new LinearInterpolator();
         double[] dates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
-        double[] deltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltasAsRatios();
-        PolynomialSplineFunction psf = linearInterpolator.interpolate(dates, deltas);
+        //double[] deltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltasAsRatios();
+        //PolynomialSplineFunction psf = linearInterpolator.interpolate(dates, deltas);
 
         int countOfPoints = 100;
         double step = (dates[dates.length - 1] - dates[0]) / countOfPoints;
@@ -797,7 +797,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
         for (int i = 0; i < countOfPoints; i++) {
             tvsw[0][i] = dates[0] + i * step;
-            ar48isw[i] = psf.value(tvsw[0][i]);
+            ar48isw[i] = seaWaterInitialDelta234UTableModel.calculateAr234U_238Uisw(tvsw[0][i]);
         }
 
         xysw = new double[1][2][ar48isw.length];
