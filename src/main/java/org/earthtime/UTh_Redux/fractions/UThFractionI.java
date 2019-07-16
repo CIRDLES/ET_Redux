@@ -20,6 +20,7 @@ package org.earthtime.UTh_Redux.fractions;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 
 /**
  *
@@ -28,7 +29,7 @@ import org.earthtime.fractions.ETFractionInterface;
 public interface UThFractionI extends ETFractionInterface {
 
     abstract ValueModel[] getLegacyActivityRatios();
-    
+
     abstract void setLegacyActivityRatios(ValueModel[] compositionalMeasures);
 
     public default ValueModel getLegacyActivityRatioByName(String arName) {
@@ -65,4 +66,26 @@ public interface UThFractionI extends ETFractionInterface {
             }
         }
     }
+
+    /**
+     * @return the seaWaterInitialDelta234UTableModel
+     */
+    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel();
+
+    /**
+     * @param seaWaterInitialDelta234UTableModel the
+     * seaWaterInitialDelta234UTableModel to set
+     */
+    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel);
+
+    /**
+     * @return the pctLoss
+     */
+    public ValueModel getPctLoss();
+
+    /**
+     * @param pctLoss the pctLoss to set
+     */
+    public void setPctLoss(ValueModel pctLoss);
+
 }

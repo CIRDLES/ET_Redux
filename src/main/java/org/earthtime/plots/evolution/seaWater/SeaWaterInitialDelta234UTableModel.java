@@ -60,8 +60,8 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
 
     private void initializeModel() {
         SeaWaterDelta234UModelEntry row1 = new SeaWaterDelta234UModelEntry(0, 145, 1);
-        SeaWaterDelta234UModelEntry row2 = new SeaWaterDelta234UModelEntry(500, 155, 1);
-        SeaWaterDelta234UModelEntry row3 = new SeaWaterDelta234UModelEntry(1000, 165, 1);
+        SeaWaterDelta234UModelEntry row2 = new SeaWaterDelta234UModelEntry(500, 145, 1);
+        SeaWaterDelta234UModelEntry row3 = new SeaWaterDelta234UModelEntry(1000, 145, 1);
 
         //build the list
         modelName = "Default";
@@ -125,6 +125,13 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
     public String getNameAndVersion() {
         return makeNameAndVersion(modelName, versionNumber, minorVersionNumber);
     }
+
+    @Override
+    public String toString() {
+        return getNameAndVersion();
+    }
+    
+
 
     private static String makeNameAndVersion(String name, int version, int minorVersionNumber) {
         return name.trim()//

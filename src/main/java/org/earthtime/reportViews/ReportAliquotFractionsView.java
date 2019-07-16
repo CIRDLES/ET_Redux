@@ -80,6 +80,7 @@ import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.evolution.seaWater.SeawaterModelAssignmentManager;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.w3c.dom.DOMImplementation;
@@ -491,14 +492,16 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             } else {
                 showAliquotBars = true;
             }
-            
+
             // July 2019 add button upper left to access seawater assignment in support of USeries
             showSeawaterAssignmentsButton = new ET_JButton("Assign SeawaterModels");
             showSeawaterAssignmentsButton.setFont(ReduxConstants.sansSerif_10_Bold);
             showSeawaterAssignmentsButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //parentFrame.loadAndShowReportTableData("");
+                    SeawaterModelAssignmentManager seawaterModelAssignmentManager 
+                            = new SeawaterModelAssignmentManager(parentFrame, true, sample);
+                    seawaterModelAssignmentManager.setVisible(true);
                 }
             });
             if (reportFractions[1][0].contains("UTh")) {
@@ -506,7 +509,6 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             } else {
                 showAliquotBars = true;
             }
-            
 
             reSizeSortButtons();
 

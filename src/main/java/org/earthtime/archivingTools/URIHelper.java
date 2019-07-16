@@ -77,8 +77,13 @@ public class URIHelper {
         try {
             url = new URL(fileURI);
             urlConn = url.openConnection();
+
             urlConn.setDoInput(true);
             urlConn.setUseCaches(false);
+
+            // july 2019
+            urlConn.setConnectTimeout(5000);
+            urlConn.setReadTimeout(5000);
 
             retval = urlConn.getInputStream();
 

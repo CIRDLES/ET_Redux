@@ -782,6 +782,7 @@ public class UThFraction implements
     /**
      * @return the seaWaterInitialDelta234UTableModel
      */
+    @Override
     public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel() {
         return seaWaterInitialDelta234UTableModel;
     }
@@ -789,6 +790,7 @@ public class UThFraction implements
     /**
      * @param seaWaterInitialDelta234UTableModel the seaWaterInitialDelta234UTableModel to set
      */
+    @Override
     public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
         if (seaWaterInitialDelta234UTableModel == null){
             seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance().getDefaultLabSeaWaterModel();
@@ -799,6 +801,7 @@ public class UThFraction implements
     /**
      * @return the pctLoss
      */
+    @Override
     public ValueModel getPctLoss() {
         if (pctLoss == null){
             this.pctLoss = new ValueModel("pctLoss", new BigDecimal(2.5), "ABS", BigDecimal.ONE, BigDecimal.ZERO);
@@ -809,6 +812,7 @@ public class UThFraction implements
     /**
      * @param pctLoss the pctLoss to set
      */
+    @Override
     public void setPctLoss(ValueModel pctLoss) {
         this.pctLoss = pctLoss.copy();
     }
