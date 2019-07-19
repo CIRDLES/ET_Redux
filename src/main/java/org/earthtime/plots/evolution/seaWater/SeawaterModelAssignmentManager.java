@@ -74,11 +74,12 @@ public class SeawaterModelAssignmentManager extends DialogEditor {
     private static final int SEAWATER_COL_X = 150;
     private static final int PCTLOSS_COL_X = 400;
     private static final int PCTLOSSUNCT_COL_X = 500;
-    private static final int START_DATA_Y = 120;
+    private static final int START_DATA_Y = 100;
     private static int DISPLAY_WIDTH = 600;
 
     private Vector<ETFractionInterface> fractions;
     private JLabel[] fractionNames;
+    private JComboBox<SeaWaterInitialDelta234UTableModel> seawaterModelChoicesMaster;
     private JComboBox<SeaWaterInitialDelta234UTableModel>[] seawaterModelChoices;
     private JTextField[] pctLoss;
     private JTextField[] pctLossUnct;
@@ -132,6 +133,32 @@ public class SeawaterModelAssignmentManager extends DialogEditor {
         seawaterHeaderLabel.setBounds(SEAWATER_COL_X, 15, 100, 25);
         modelsPanel.add(seawaterHeaderLabel);
 
+        List<SeaWaterInitialDelta234UTableModel> seawaterModelsList = projectSample.getSeaWaterInitialDelta234UTableModels();
+
+        seawaterModelChoicesMaster
+                = new JComboBox<>(
+                        seawaterModelsList.toArray(new SeaWaterInitialDelta234UTableModel[seawaterModelsList.size()]));
+        seawaterModelChoicesMaster.setBounds(SEAWATER_COL_X, 40, 200, 25);
+        seawaterModelChoicesMaster.setSelectedIndex(0);
+        modelsPanel.add(seawaterModelChoicesMaster);
+
+        JButton seaWaterFillButton = new ET_JButton("Fill");
+        seaWaterFillButton.setBounds(SEAWATER_COL_X, 65, 200, 25);
+        seaWaterFillButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel 
+                        = (SeaWaterInitialDelta234UTableModel)seawaterModelChoicesMaster.getSelectedItem();
+                for (int i = 0; i < fractions.size(); i++) {
+                    ((UThFractionI) fractions.get(i)).setSeaWaterInitialDelta234UTableModel(seaWaterInitialDelta234UTableModel);
+                    seawaterModelChoices[i].setSelectedItem(seaWaterInitialDelta234UTableModel);
+                    UThFractionReducer.reduceFraction((UThLegacyFractionI) fractions.get(i), false);
+                }
+                parentFrame.updateReportTable();
+            }
+        });
+        modelsPanel.add(seaWaterFillButton);
+
         JLabel pctLossHeaderLabel = new JLabel("% Loss");
         pctLossHeaderLabel.setBounds(PCTLOSS_COL_X, 15, 100, 25);
         modelsPanel.add(pctLossHeaderLabel);
@@ -144,7 +171,7 @@ public class SeawaterModelAssignmentManager extends DialogEditor {
         modelsPanel.add(pctLossFillValue);
 
         JButton pctLossFillButton = new ET_JButton("Fill");
-        pctLossFillButton.setBounds(PCTLOSS_COL_X, 65, 40, 25);
+        pctLossFillButton.setBounds(PCTLOSS_COL_X, 65, 50, 25);
         pctLossFillButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -152,6 +179,7 @@ public class SeawaterModelAssignmentManager extends DialogEditor {
                 for (int i = 0; i < fractions.size(); i++) {
                     ((UThFractionI) fractions.get(i)).getPctLoss().setValue(pctLossValue);
                     pctLoss[i].setText(String.valueOf(pctLossValue));
+                    UThFractionReducer.reduceFraction((UThLegacyFractionI) fractions.get(i), false);
                 }
                 parentFrame.updateReportTable();
             }
@@ -169,7 +197,21 @@ public class SeawaterModelAssignmentManager extends DialogEditor {
         pctLossUnctFillValue.setBounds(PCTLOSSUNCT_COL_X, 40, 50, 25);
         modelsPanel.add(pctLossUnctFillValue);
 
-        List<SeaWaterInitialDelta234UTableModel> seawaterModelsList = projectSample.getSeaWaterInitialDelta234UTableModels();
+        JButton pctLossUnctFillButton = new ET_JButton("Fill");
+        pctLossUnctFillButton.setBounds(PCTLOSSUNCT_COL_X, 65, 50, 25);
+        pctLossUnctFillButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double pctLossUnctValue = (double) Double.parseDouble(pctLossUnctFillValue.getText());
+                for (int i = 0; i < fractions.size(); i++) {
+                    ((UThFractionI) fractions.get(i)).getPctLoss().setOneSigma(pctLossUnctValue);
+                    pctLossUnct[i].setText(String.valueOf(pctLossUnctValue));
+                    UThFractionReducer.reduceFraction((UThLegacyFractionI) fractions.get(i), false);
+                }
+                parentFrame.updateReportTable();
+            }
+        });
+        modelsPanel.add(pctLossUnctFillButton);
 
         int rowY = 0;
         for (int i = 0; i < projectSample.getFractions().size(); i++) {
@@ -208,7 +250,7 @@ public class SeawaterModelAssignmentManager extends DialogEditor {
         }
 
         JButton okButton = new ET_JButton("OK");
-        okButton.setBounds(FRACTION_COL_X, rowY + 50, 500, 25);
+        okButton.setBounds(FRACTION_COL_X, rowY + 50, 550, 25);
         okButton.addActionListener((ActionEvent e) -> {
             parentFrame.updateReportTable();
             dispose();

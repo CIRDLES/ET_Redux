@@ -50,8 +50,8 @@ public class ClientHttpRequest {
     protected void connect() throws IOException {
         if (os == null) {
             // july 2019
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
             os = connection.getOutputStream();
         }
     }
@@ -121,8 +121,8 @@ public class ClientHttpRequest {
     public ClientHttpRequest(URLConnection connection) throws IOException {
         this.connection = connection;
         // july 2019
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(10000);
 
         connection.setDoOutput(true);
         connection.setRequestProperty("Content-Type",
@@ -345,8 +345,8 @@ public class ClientHttpRequest {
         os.close();
 
         // july 2019
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(10000);
         return connection.getInputStream();
     }
 

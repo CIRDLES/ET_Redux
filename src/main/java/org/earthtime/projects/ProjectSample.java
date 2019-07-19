@@ -676,7 +676,9 @@ public class ProjectSample implements//
                 SeaWaterInitialDelta234UTableModel swm = ReduxLabData.getInstance().getASeaWaterModel(entry.getKey());
                 entry.getValue().setSeaWaterInitialDelta234UTableModel(swm);
                 models.add(entry.getValue());
-                seaWaterInitialDelta234UTableModels.add(swm);
+                if (!seaWaterInitialDelta234UTableModels.contains(swm)) {
+                    seaWaterInitialDelta234UTableModels.add(swm);
+                }
             } catch (BadLabDataException badLabDataException) {
                 badModels.add(entry.getKey());
             }

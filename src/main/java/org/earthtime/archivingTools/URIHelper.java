@@ -82,8 +82,8 @@ public class URIHelper {
             urlConn.setUseCaches(false);
 
             // july 2019
-            urlConn.setConnectTimeout(5000);
-            urlConn.setReadTimeout(5000);
+            urlConn.setConnectTimeout(10000);
+            urlConn.setReadTimeout(10000);
 
             retval = urlConn.getInputStream();
 

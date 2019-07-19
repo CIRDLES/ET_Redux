@@ -169,12 +169,22 @@ public class OpenSystemDateCalculator {
 //            covMat.print(new DecimalFormat("0.000000E00"), 14);
         }
 
-        ValueModel dateOpenSys = new ValueModel(
-                RadDates.dateOpenSys.getName(),
-                new BigDecimal(t),
-                "ABS",
-                new BigDecimal(openSystemDate_oneSigmaAbs),
-                BigDecimal.ZERO);
+        ValueModel dateOpenSys = null;
+        try {
+            dateOpenSys = new ValueModel(
+                    RadDates.dateOpenSys.getName(),
+                    new BigDecimal(t),
+                    "ABS",
+                    new BigDecimal(openSystemDate_oneSigmaAbs),
+                    BigDecimal.ZERO);
+        } catch (Exception e) {
+            dateOpenSys = new ValueModel(
+                    RadDates.dateOpenSys.getName(),
+                    BigDecimal.ZERO,
+                    "ABS",
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO);
+        }
 
         return dateOpenSys;
 

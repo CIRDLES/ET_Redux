@@ -243,7 +243,8 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         try {
             retVal = psfSeaWater.value(ageInYears);
         } catch (Exception e) {
-            System.out.println("calculateAr234U_238Uisw error with age = " + ageInYears);
+//            System.out.println("calculateAr234U_238Uisw error with age = " + ageInYears);
+            retVal = 0;
         }
 
         return retVal;
@@ -259,7 +260,8 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         try {
             retVal = psfSeaWaterUnct.value(ageInYears);
         } catch (Exception e) {
-            System.out.println("calculateAr234U_238UiswUnct error with age = " + ageInYears);
+//            System.out.println("calculateAr234U_238UiswUnct error with age = " + ageInYears);
+            retVal = 0;
         }
 
         return retVal;
