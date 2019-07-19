@@ -130,8 +130,6 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
     public String toString() {
         return getNameAndVersion();
     }
-    
-
 
     private static String makeNameAndVersion(String name, int version, int minorVersionNumber) {
         return name.trim()//
@@ -310,6 +308,15 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         }
 
         return deltasArray;
+    }
+
+    public double[] getArrayOfDeltasUnct() {
+        double[] deltasUnctArray = new double[entryList.size()];
+        for (int i = 0; i < entryList.size(); i++) {
+            deltasUnctArray[i] = entryList.get(i).oneSigmaAbsUnct;
+        }
+
+        return deltasUnctArray;
     }
 
     /**
