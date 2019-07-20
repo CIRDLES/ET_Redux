@@ -130,10 +130,10 @@ public class ReportSpecificationsUTh_Carb extends ReportSpecificationsAbstract {
         },
         //
         {"[232Th/", " 238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
-            "FN-1", "false", "false", "3", "true", "[232Th/238U]", "false", "false"
+            "FN-1", "true", "false", "4", "false", "[232Th/238U]", "false", "false"
         },
         {"232Th/", "238U", "", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName(), "ABS",
-            "", "false", "false", "3", "true", "232Th/238U", "false", "false"
+            "", "true", "false", "4", "false", "232Th/238U", "false", "false"
         },
         //
         {"uncorrected", "[230Th/", " 238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",

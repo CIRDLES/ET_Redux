@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -39,7 +40,6 @@ import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
-import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
@@ -93,6 +93,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
             // we allow multiple sampleIDs
             String savedSourceID = "";
             String savedSampleID = "";
+            Vector<String> myHeaderData = processLegacyTSVLine(fractionData.get(0));
+            boolean isAtomic232Th238U = myHeaderData.get(15).toLowerCase(Locale.ENGLISH).startsWith("atomic");
             for (int i = 1; i < fractionData.size(); i++) {
                 @SuppressWarnings("UseOfObsoleteCollectionType")
                 Vector<String> myFractionData = processLegacyTSVLine(fractionData.get(i));
@@ -248,17 +250,35 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-                            // column 15 is r232Th_238Ufc * 10^5  ATOM RATIO !
-                            ratioName = UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName();
-                            myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(15)).//
-                                            movePointLeft(5));
-                            // column 16 is r232Th_238Ufc * 10^5 uncertainty ATOM RATIO !
-                            // convert 2-sigma to 1-sigma
-                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).movePointLeft(5).
-                                    divide(new BigDecimal(2.0));
-                            myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                                    .setOneSigma(oneSigmaAbs);
+                            // *************************************************
+                            // July 2019 per issue 182, we will detect if activity or atom ratio is present for the next two***                                                       
+                            if (isAtomic232Th238U) {
+                                // column 15 is r232Th_238Ufc * 10^5  ATOM RATIO !
+                                ratioName = UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName();
+                                myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
+                                        .setValue(readDelimitedTextCell(myFractionData.get(15)).//
+                                                movePointLeft(5));
+                                // column 16 is r232Th_238Ufc * 10^5 uncertainty ATOM RATIO !
+                                // convert 2-sigma to 1-sigma
+                                oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).movePointLeft(5).
+                                        divide(new BigDecimal(2.0));
+                                myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
+                                        .setOneSigma(oneSigmaAbs);
+                            } else {
+                                // column 15 is ar232Th_238Ufc * 10^5 ACTIVITY RATIO
+                                ratioName = UThAnalysisMeasures.ar232Th_238Ufc.getName();
+                                myFraction.getLegacyActivityRatioByName(ratioName)//
+                                        .setValue(readDelimitedTextCell(myFractionData.get(15)).//
+                                                movePointLeft(5));
+
+                                // column 16 is ar232Th_238Ufc * 10^5 uncertainty ACTIVITY RATIO
+                                // convert 2-sigma to 1-sigma
+                                oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).movePointLeft(5).
+                                        divide(new BigDecimal(2.0));
+                                myFraction.getLegacyActivityRatioByName(ratioName)//
+                                        .setOneSigma(oneSigmaAbs);
+                            }
+                            // **************************************************
 
                             // column 17 is conc238U in ppm
                             ratioName = UThCompositionalMeasures.conc238U.getName();
@@ -396,7 +416,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
                                 metaData.append("Comments (uplift) = ").append(myFractionData.get(57).trim()).append("\n");
                                 metaData.append("Original elevation datum = ").append(myFractionData.get(58).trim()).append("\n");
                                 metaData.append("Elevation measurement methodology = ").append(myFractionData.get(59).trim()).append("\n");
-                                
+
                                 metaData.append("Published elevation (m) = ").append(myFractionData.get(60).trim()).append("\n");
                                 metaData.append("Published elevation Unct (m) = ").append(myFractionData.get(61).trim()).append("\n");
                                 metaData.append("Elevation from a different source = ").append(myFractionData.get(62).trim()).append("\n");
@@ -404,18 +424,18 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
                                 metaData.append("Interpreted Elevation rel to mean sea level (m) = ").append(myFractionData.get(64).trim()).append("\n");
                                 metaData.append("Interpreted Elevation Unct (m) = ").append(myFractionData.get(65).trim()).append("\n");
                                 metaData.append("Comments Elevation incl Unct = ").append(myFractionData.get(66).trim()).append("\n");
-                                
+
                                 metaData.append("Facies = ").append(myFractionData.get(67).trim()).append("\n");
                                 metaData.append("Reported as in situ = ").append(myFractionData.get(68).trim()).append("\n");
-                                
+
                                 metaData.append("Interpreted as in growth position = ").append(myFractionData.get(69).trim()).append("\n");
                                 metaData.append("Taxonomic ID = ").append(myFractionData.get(70).trim()).append("\n");
                                 metaData.append("Comments (taxon) = ").append(myFractionData.get(71).trim()).append("\n");
-                                
+
                                 metaData.append("Published assemblage description = ").append(myFractionData.get(72).trim()).append("\n");
                                 metaData.append("Published paleowater depth estimate = ").append(myFractionData.get(73).trim()).append("\n");
                                 metaData.append("Interpreted paleowater depth estimate = ").append(myFractionData.get(74).trim()).append("\n");
-                                
+
                                 metaData.append("Uncertainty in Interpreted paleowater depth estimate = ").append(myFractionData.get(75).trim()).append("\n");
                                 metaData.append("Comments-- paleowater depth interpretation = ").append(myFractionData.get(76).trim()).append("\n");
                             } catch (Exception e) {
@@ -433,7 +453,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
 
                             myFraction.setDetritalUThModel(ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel());
 
-                            UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
+                            UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction, isAtomic232Th238U);
 
                         }
 
@@ -460,7 +480,10 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
         AliquotInterface existingSuperSampleAliquot
                 = superSample.getAliquotByNameForProjectSuperSample(currentSample.getSampleName() + "::" + currentAliquot.getAliquotName());
         if (existingSuperSampleAliquot == null) {
-            SampleInterface.copyAliquotIntoSample(superSample, currentSample.getAliquotByNameForProjectSuperSample(currentAliquot.getAliquotName()), new UThReduxAliquot());
+            SampleInterface.copyAliquotIntoSample(
+                    superSample, 
+                    currentSample.getAliquotByNameForProjectSuperSample(currentAliquot.getAliquotName()),
+                    new UThReduxAliquot(currentSample.getSampleAnalysisType()));
         } else {
             for (ETFractionInterface fraction : ((ReduxAliquotInterface) currentAliquot).getAliquotFractions()) {
                 if (!((ReduxAliquotInterface) existingSuperSampleAliquot).getAliquotFractions().contains(fraction)) {

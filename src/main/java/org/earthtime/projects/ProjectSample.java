@@ -181,16 +181,26 @@ public class ProjectSample implements//
         return retVal;
     }
 
+    /**
+     *
+     * @param aliquotNumber the value of aliquotNumber
+     * @param aliquotName the value of aliquotName
+     * @param physicalConstants the value of physicalConstants
+     * @param compiled the value of compiled
+     * @param mySESARSampleMetadata the value of mySESARSampleMetadata
+     * @param sampleAnalysisType the value of sampleAnalysisType
+     */
     @Override
     public AliquotInterface generateDefaultAliquot(//
-            int aliquotNumber, String aliquotName, AbstractRatiosDataModel physicalConstants, boolean compiled, SESARSampleMetadata mySESARSampleMetadata) {
+            int aliquotNumber, String aliquotName, AbstractRatiosDataModel physicalConstants, boolean compiled, SESARSampleMetadata mySESARSampleMetadata, String sampleAnalysisType) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public AliquotInterface generateDefaultAliquot() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    //
+    
+//    @Override
+//    public AliquotInterface generateDefaultAliquot() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
 
     @Override
     public void setUpSample() {

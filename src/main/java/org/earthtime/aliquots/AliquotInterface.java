@@ -29,6 +29,7 @@ import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
+import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.USERIES_CARB;
 import org.earthtime.dataDictionaries.SampleDateTypes;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -250,22 +251,45 @@ public interface AliquotInterface {
         Vector<ValueModel> retVal = new Vector<>();
         // choose models not already in use by Aliquot
         if (this instanceof UThReduxAliquot) {
-            for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
-                if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
-                    ValueModel tempModel = null;
-                    if (SampleDateTypes.getSampleDateType(i).endsWith("Date")) {
-                        tempModel
-                                = new SampleDateModel(//
-                                        SampleDateTypes.getSampleDateType(i),
-                                        SampleDateTypes.getSampleDateTypeMethod(i),
-                                        SampleDateTypes.getSampleDateTypeName(i),
-                                        BigDecimal.ZERO,
-                                        "ABS",
-                                        BigDecimal.ZERO);
+            if (((UThReduxAliquot) this).getSampleAnalysisType().compareToIgnoreCase(USERIES_CARB.getName()) == 0) {
+                for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
+                    if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
+                        ValueModel tempModel = null;
+                        if (SampleDateTypes.getSampleDateType(i).endsWith("Date")) {
+                            tempModel
+                                    = new SampleDateModel(//
+                                            SampleDateTypes.getSampleDateType(i),
+                                            SampleDateTypes.getSampleDateTypeMethod(i),
+                                            SampleDateTypes.getSampleDateTypeName(i),
+                                            BigDecimal.ZERO,
+                                            "ABS",
+                                            BigDecimal.ZERO);
+                        }
+                        if (tempModel != null) {
+                            ((SampleDateModel) tempModel).setAliquot(this);
+                            retVal.add(tempModel);
+                        }
                     }
-                    if (tempModel != null) {
-                        ((SampleDateModel) tempModel).setAliquot(this);
-                        retVal.add(tempModel);
+                }
+            } else {
+                // igneous
+                for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
+                    if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
+                        ValueModel tempModel = null;
+                        if (SampleDateTypes.getSampleDateType(i).endsWith("isochron")) {
+                            tempModel
+                                    = new SampleDateModel(//
+                                            SampleDateTypes.getSampleDateType(i),
+                                            SampleDateTypes.getSampleDateTypeMethod(i),
+                                            SampleDateTypes.getSampleDateTypeName(i),
+                                            BigDecimal.ZERO,
+                                            "ABS",
+                                            BigDecimal.ZERO);
+                        }
+                        if (tempModel != null) {
+                            ((SampleDateModel) tempModel).setAliquot(this);
+                            retVal.add(tempModel);
+                        }
                     }
                 }
             }

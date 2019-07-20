@@ -290,7 +290,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         ((UThFraction) myFraction).setR230Th_238Ufc_referenceMaterialName("");
                         ((UThFraction) myFraction).setR234U_238Ufc_referenceMaterialName("");
 
-                        UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
+                        UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction, true);
 
                     }
                 }
@@ -314,7 +314,10 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
         AliquotInterface existingSuperSampleAliquot
                 = superSample.getAliquotByNameForProjectSuperSample(currentSample.getSampleName() + "::" + currentAliquot.getAliquotName());
         if (existingSuperSampleAliquot == null) {
-            SampleInterface.copyAliquotIntoSample(superSample, currentSample.getAliquotByNameForProjectSuperSample(currentAliquot.getAliquotName()), new UThReduxAliquot());
+            SampleInterface.copyAliquotIntoSample(
+                    superSample, 
+                    currentSample.getAliquotByNameForProjectSuperSample(currentAliquot.getAliquotName()), 
+                    new UThReduxAliquot(currentSample.getSampleAnalysisType()));
         } else {
             for (ETFractionInterface fraction : ((ReduxAliquotInterface) currentAliquot).getAliquotFractions()) {
                 if (!((ReduxAliquotInterface) existingSuperSampleAliquot).getAliquotFractions().contains(fraction)) {

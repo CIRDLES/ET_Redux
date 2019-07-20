@@ -649,14 +649,26 @@ public interface SampleInterface {
         }
     }
 
+    /**
+     *
+     * @param aliquotNumber the value of aliquotNumber
+     * @param aliquotName the value of aliquotName
+     * @param physicalConstants the value of physicalConstants
+     * @param compiled the value of compiled
+     * @param mySESARSampleMetadata the value of mySESARSampleMetadata
+     * @param sampleAnalysisType the value of sampleAnalysisType
+     * @return 
+     */
     public AliquotInterface generateDefaultAliquot(//
-            int aliquotNumber,
-            String aliquotName,
+            int aliquotNumber, 
+            String aliquotName, 
             AbstractRatiosDataModel physicalConstants,
-            boolean compiled,
-            SESARSampleMetadata mySESARSampleMetadata);
+            boolean compiled, 
+            SESARSampleMetadata mySESARSampleMetadata,
+            String sampleAnalysisType);
+    //
 
-    public AliquotInterface generateDefaultAliquot();
+////    public AliquotInterface generateDefaultAliquot();
 
     /**
      * adds an <code>Aliquot</code> to <code>aliquots</code>. It is created with
@@ -683,7 +695,8 @@ public interface SampleInterface {
                             "Aliquot-" + Integer.toString(getAliquots().size() + 1),
                             getPhysicalConstantsModel(),
                             isAnalyzed(),
-                            getMySESARSampleMetadata());
+                            getMySESARSampleMetadata(), 
+                            getSampleAnalysisType());
 
 //                    = new UPbReduxAliquot(
 //                            getAliquots().size() + 1,

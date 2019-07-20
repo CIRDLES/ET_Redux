@@ -55,7 +55,7 @@ public class ReportSettings implements
      * report models upon opening in ET_Redux.
      */
     private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 405;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6027;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6029;
     private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 6007;
 
     // Fields
