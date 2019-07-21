@@ -215,7 +215,7 @@ public class UPbReduxAliquot extends Aliquot
 
         setDefaultUBlankMassText(getMyReduxLabData().getDefaultAssumedUBlankMassInGrams().
                 getValue().multiply(ReduxConstants.PicoGramsPerGram).
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         setDefaultR238_235sText(getMyReduxLabData().getDefaultR238_235s()//
@@ -227,7 +227,7 @@ public class UPbReduxAliquot extends Aliquot
                         RoundingMode.HALF_UP).toPlainString());
 
         setDefaultR18O_16OText(getMyReduxLabData().getDefaultR18O_16O()//
-                .getValue().setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                .getValue().setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         try {
@@ -244,7 +244,7 @@ public class UPbReduxAliquot extends Aliquot
 
         setDefaultPbBlankMassText(getMyReduxLabData().getDefaultPbBlankMassInGrams().
                 getValue().multiply(ReduxConstants.PicoGramsPerGram).
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         setDefaultRTh_UmagmaText(getMyReduxLabData().getDefaultRTh_Umagma().
@@ -267,38 +267,38 @@ public class UPbReduxAliquot extends Aliquot
 
         // uncertainties
         setDefaultTracerMassOneSigmaText(getMyReduxLabData().getDefaultTracerMass()//
-                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         setDefaultUBlankMassOneSigmaText(getMyReduxLabData().getDefaultAssumedUBlankMassInGrams()//
                 .getOneSigmaAbs().multiply(ReduxConstants.PicoGramsPerGram)//
-                .setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                .setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         setDefaultR238_235sOneSigmaText(getMyReduxLabData().getDefaultR238_235s()//
-                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         this.defaultR238_235bOneSigmaText = getMyReduxLabData().getDefaultR238_235b()//
-                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString();
 
         this.defaultPbBlankMassOneSigmaText = getMyReduxLabData().getDefaultPbBlankMassInGrams()//
                 .getOneSigmaAbs().multiply(ReduxConstants.PicoGramsPerGram).//
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString();
 
         // TODO there is some odd duplication with this getters setters
         setDefaultR18O_16OOneSigmaText(getMyReduxLabData().getDefaultR18O_16O()//
-                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         this.defaultRTh_UmagmaOneSigmaText = getMyReduxLabData().getDefaultRTh_Umagma()//
-                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString();
 
         this.defaultAr231_235sampleOneSigmaText = getMyReduxLabData().getDefaultAr231_235sample()//
-                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                .getOneSigmaAbs().setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString();
 
         this.automaticDataUpdateMode = false;

@@ -3500,8 +3500,10 @@
                   <Font name="Tahoma" size="12" style="1"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="11"/>
-                <Property name="text" type="java.lang.String" value="fraction mass in g:"/>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="fractionMassInGrams_label.setText(&quot;fraction mass in \u03BCg:&quot;);&#xa;"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JCheckBox" name="fractionIsZircon_CheckBox">
               <Properties>

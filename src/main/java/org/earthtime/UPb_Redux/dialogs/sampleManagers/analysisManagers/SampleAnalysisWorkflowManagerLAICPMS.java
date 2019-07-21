@@ -1292,7 +1292,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 //
 //        ((JTextField) fractionPbBlankMassText.get( row )).setText(
 //                tempFrac.getAnalysisMeasure( AnalysisMeasures.pbBlankMassInGrams.getName() ).getValue().multiply(
-//                ReduxConstants.PicoGramsPerGram ).setScale( ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+//                ReduxConstants.PicoGramsPerGram ).setScale( ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
 //                RoundingMode.HALF_UP ).toPlainString() );
 //        ((UnDoAbleDocument) ((JTextField) fractionPbBlankMassText.get( row )).getDocument()).undo.discardAllEdits();
 //        fractionPbBlankMassText.get( row ).setEnabled(  ! isZircon );
@@ -1322,14 +1322,14 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 //
 //        ((JTextField) fractionTracerMassText.get( row )).setText(
 //                tempFrac.getAnalysisMeasure( AnalysisMeasures.tracerMassInGrams.getName() ).getValue().
-//                setScale( ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+//                setScale( ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
 //                RoundingMode.HALF_UP ).toPlainString() );
 //        ((UnDoAbleDocument) ((JTextField) fractionTracerMassText.get( row )).getDocument()).undo.discardAllEdits();
 //        fractionTracerMassText.get( row ).setEnabled(  ! (fraCorrU) );
 //
 //        ((JTextField) fractionMassText.get( row )).setText(
 //                tempFrac.getAnalysisMeasure( AnalysisMeasures.fractionMass.getName() ).getValue().
-//                setScale( ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP ).//
+//                setScale( ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP ).//
 //                toPlainString() );
 //        ((UnDoAbleDocument) ((JTextField) fractionMassText.get( row )).getDocument()).undo.discardAllEdits();
 //
@@ -1347,7 +1347,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 //
 //        ((JTextField) fractionPbBlankMassText.get( row )).setText(
 //                tempFrac.getAnalysisMeasure( AnalysisMeasures.pbBlankMassInGrams.getName() ).getValue().multiply(
-//                ReduxConstants.PicoGramsPerGram ).setScale( ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+//                ReduxConstants.PicoGramsPerGram ).setScale( ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
 //                RoundingMode.HALF_UP ).toPlainString() );
 //        ((UnDoAbleDocument) ((JTextField) fractionPbBlankMassText.get( row )).getDocument()).undo.discardAllEdits();
 //        fractionPbBlankMassText.get( row ).setEnabled(  ! isZircon );

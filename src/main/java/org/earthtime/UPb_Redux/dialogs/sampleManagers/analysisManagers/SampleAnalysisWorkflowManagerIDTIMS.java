@@ -719,7 +719,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         });
 
         // populate rows
-        for (int row = 0; row < ((UPbReduxAliquot) aliquot).getAliquotFractions().size(); row++) {
+        Vector<ETFractionInterface> fractionsFromAliquot = ((UPbReduxAliquot) aliquot).getAliquotFractionsSorted();
+        for (int row = 0; row < fractionsFromAliquot.size(); row++) {
             ETFractionInterface tempFrac = ((UPbReduxAliquot) aliquot).getAliquotFractions().get(row);
             int max = ((UPbReduxAliquot) aliquot).getAliquotFractions().size();
             addFractionRow(aliquot, tempFrac, row, max);
@@ -855,7 +856,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         insertTableTextFieldForDoubles(fractionMassText, max);
 
         // Fraction Mass grams label
-        tempJL = new JLabel(" g");
+        tempJL = new JLabel("\u03BCg");
         tempJL.setForeground(Color.RED);
         tempJL.setFont(new Font("Monospaced", Font.BOLD, 10));
         fractionMassGRAMS.add(tempJL);
@@ -1059,8 +1060,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         // build display *******************************************************
         // master fields
         myHorizFraction.add(jPanel2Layout.createSequentialGroup()//
-                .add(55, 55, 55) // left margin
-                .add(masterNewFractionName, 110, 110, 110)//
+                .add(60, 60, 60) // left margin
+                .add(masterNewFractionName, 100, 100, 100)//
                 .add(0, 0, 0)//
                 .add(masterZirconCaseCheckBox, 75, 75, 75)//
                 .add(5, 5, 5)//
@@ -1126,7 +1127,6 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                         .add(masterEstimatedDateFiller)//, 22, 22, 22)//
                         .add(masterPbBlankMassFiller)//, 22, 22, 22)//
                 );
-
 
         // stop delete when only one fraction
         fractionDeleteButtons.get(0).setEnabled(fractionDeleteButtons.size() != 1);
@@ -1327,9 +1327,9 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
     }
 
     private void tuneNotesButton(JButton tempJB, String notes) {
-        
+
         Font font = tempJB.getFont();
-        
+
         if (notes.length() == 0) {
             tempJB.setFont(font.deriveFont(font.getStyle() & ~Font.BOLD));
 
@@ -1433,7 +1433,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 toPlainString());
         fractionEstDateText.get(row).setEnabled(hasStaceyKramersModel);
 
-        ((JTextComponent) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+        ((JTextComponent) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                 RoundingMode.HALF_UP).toPlainString());
         ((UnDoAbleDocument) ((JTextComponent) fractionPbBlankMassText.get(row)).getDocument()).undo.discardAllEdits();
         fractionPbBlankMassText.get(row).setEnabled(!isZircon);
@@ -1462,13 +1462,15 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         fractionTracerChoice.get(row).setEnabled(!(fraCorrU || fraCorrPb));
 
         ((JTextComponent) fractionTracerMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).getValue().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
         ((UnDoAbleDocument) ((JTextComponent) fractionTracerMassText.get(row)).getDocument()).undo.discardAllEdits();
         fractionTracerMassText.get(row).setEnabled(!(fraCorrU));
 
-        ((JTextComponent) fractionMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName()).getValue().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
+        // july 2019 issue 164 switch to micrograms display
+        ((JTextComponent) fractionMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName())
+                .getValue().movePointRight(6).
+                setScale(ReduxConstants.DEFAULT_MASS_IN_MICRO_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
                 toPlainString());
         ((UnDoAbleDocument) ((JTextComponent) fractionMassText.get(row)).getDocument()).undo.discardAllEdits();
 
@@ -1482,7 +1484,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 setSelectedItem(((UPbFraction) tempFrac).getInitialPbModel().getReduxLabDataElementName());
         fractionInitialPbChoice.get(row).setEnabled(!isZircon);
 
-        ((JTextComponent) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+        ((JTextComponent) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                 RoundingMode.HALF_UP).toPlainString());
         ((UnDoAbleDocument) ((JTextField) fractionPbBlankMassText.get(row)).getDocument()).undo.discardAllEdits();
         fractionPbBlankMassText.get(row).setEnabled(!isZircon);
@@ -1680,7 +1682,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             try {
                 getMySample().setPhysicalConstantsModel(
                         ReduxLabData.getInstance().
-                        getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
+                                getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
 
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
@@ -1779,8 +1781,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             if (((UPbFraction) tempFrac).needsAlphaPbModel()) {
                 if (((UPbFractionI) tempFrac).getAlphaPbModel().equals(noneAlphaPb)) {
                     ValueModel alphaPb
-                            = //
-                            ((UPbFraction) tempFrac).getMyLabData().getAnAlphaPbModel(((UPbReduxAliquot) aliquot).getDefaultAlphaPbModelID());
+                            = ((UPbFraction) tempFrac).getMyLabData().getAnAlphaPbModel(((UPbReduxAliquot) aliquot).getDefaultAlphaPbModelID());
                     ((UPbFractionI) tempFrac).setAlphaPbModel(alphaPb);
                 }
             } else {
@@ -1815,8 +1816,9 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         tempFrac.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName())//
                 .setValue(new BigDecimal(((JTextComponent) fractionTracerMassText.get(row)).getText()));
 
+        // July 2019 issue 164 switch to micrograms
         tempFrac.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName())//
-                .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText()));
+                .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText()).movePointLeft(6));
 
         try {
             AbstractRatiosDataModel pbBlank = ((UPbFraction) tempFrac).getMyLabData().//
@@ -2150,7 +2152,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
         // dec 2011 update sample date models
         SampleInterface.updateAndSaveSampleDateModelsByAliquot(mySample);
-        
+
         // Sept 2017
         mySample.initFilteredFractionsToAll();
 

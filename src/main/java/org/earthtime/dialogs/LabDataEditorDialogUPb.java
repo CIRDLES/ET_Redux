@@ -2498,21 +2498,21 @@ public class LabDataEditorDialogUPb extends DialogEditor {
         defaultPbBlankMass_text.setText(
                 myLabData.getDefaultPbBlankMassInGrams().getValue().//
                         multiply(ReduxConstants.PicoGramsPerGram).//
-                        setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultPbBlankMassOneSigma_text.setText(
                 myLabData.getDefaultPbBlankMassInGrams().getOneSigma().//
                         multiply(ReduxConstants.PicoGramsPerGram).//
-                        setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // assumed U Blank mass
         defaultUBlankMass_text.setText(
                 myLabData.getDefaultAssumedUBlankMassInGrams().getValue().//
                         multiply(ReduxConstants.PicoGramsPerGram).//
-                        setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultUBlankMassOneSigma_text.setText(
                 myLabData.getDefaultAssumedUBlankMassInGrams().getOneSigma().
                         multiply(ReduxConstants.PicoGramsPerGram).//
-                        setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default r18O_16O
         default18O_16O_text.setText(
@@ -2541,7 +2541,7 @@ public class LabDataEditorDialogUPb extends DialogEditor {
         // default tracerModel mass uncertainty
         defaultTracerMassOneSigma_text.setText(
                 myLabData.getDefaultTracerMass().getOneSigma()//
-                        .setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default rTh_Umagma
         defaultRTh_Umagma_text.setText(

@@ -1440,8 +1440,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         fractionIsZircon_CheckBox.setSelected(((FractionI)myFraction).isZircon());
 
+        // july 2019 issue 164 - switching to micrograms       
         fractionMass_text.setText(myFraction.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName()).//
-                getValue().setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                getValue().movePointRight(6).setScale(ReduxConstants.DEFAULT_MASS_IN_MICRO_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // Pb tab **************************************************************
         r206_204_text.setText(myFraction.getMeasuredRatioByName(MeasuredRatios.r206_204m.getName()).//
@@ -1554,14 +1555,14 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         inputAlphaUOneSigmaAbs_text.setText(((UPbFraction) myFraction).getInputAlphaU().getOneSigmaAbs().//
                 movePointRight(2).//
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // tracer tab **********************************************************
         tracerMassOneSigmaAbs_label.setText("<html><u>1\u03C3 ABS:</u></html>");
         tracerMass_text.setText(myFraction.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).//
                 getValue().setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
         tracerMassOneSigmaAbs_text.setText(myFraction.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).//
-                getOneSigma().setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                getOneSigma().setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // set up Tracer chooser modified June 2012
         ItemListener[] tracerActionListeners = tracerChooser.getItemListeners();
@@ -2004,8 +2005,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
 
         try {
+            // july 2019 issue 164 switch to micrograms display
             myFraction.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName()).
-                    setValue(new BigDecimal(fractionMass_text.getText()));
+                    setValue(new BigDecimal(fractionMass_text.getText()).movePointLeft(6));
 
             // Pb tab
             myFraction.getMeasuredRatioByName(MeasuredRatios.r206_204m.getName()).setValue(new BigDecimal(r206_204_text.getText()));
@@ -2475,6 +2477,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         fractionMass_text = new javax.swing.JTextField();
         fractionID_text = new javax.swing.JTextField();
         fractionMassInGrams_label = new javax.swing.JLabel();
+        fractionMassInGrams_label.setText("fraction mass in \u03BCg:");
         fractionIsZircon_CheckBox = new javax.swing.JCheckBox();
         fraction_Chooser = new javax.swing.JComboBox<>();
         fractionID_label1 = new javax.swing.JLabel();
@@ -4142,7 +4145,6 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         fractionMassInGrams_label.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         fractionMassInGrams_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        fractionMassInGrams_label.setText("fraction mass in g:");
 
         fractionIsZircon_CheckBox.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         fractionIsZircon_CheckBox.setText("No InitialPb");
