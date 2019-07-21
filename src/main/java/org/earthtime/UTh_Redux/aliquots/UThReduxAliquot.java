@@ -121,7 +121,13 @@ public class UThReduxAliquot implements //
     private Vector<ETFractionInterface> aliquotFractions;
     private transient ReduxLabData myReduxLabData;
 
+    private String sampleAnalysisType;
+
     public UThReduxAliquot() {
+    }
+    
+    public UThReduxAliquot(String sampleAnalysisType) {
+        this.sampleAnalysisType = sampleAnalysisType;
     }
 
     /**
@@ -131,6 +137,7 @@ public class UThReduxAliquot implements //
      * @param physicalConstantsModel
      * @param reduxLabData
      * @param physicalConstants
+     * @param sampleAnalysisType
      * @param compiled
      * @param mySESARSampleMetadata
      */
@@ -139,7 +146,8 @@ public class UThReduxAliquot implements //
             String aliquotName,
             AbstractRatiosDataModel physicalConstantsModel,
             boolean compiled,
-            SESARSampleMetadata mySESARSampleMetadata) {
+            SESARSampleMetadata mySESARSampleMetadata,
+            String sampleAnalysisType) {
 
         this.aliquotIGSN = ReduxConstants.DEFAULT_ALIQUOT_IGSN;
         this.aliquotName = aliquotName;
@@ -158,12 +166,9 @@ public class UThReduxAliquot implements //
         this.laboratoryName = ReduxLabData.getInstance().getLabName();
         this.analystName = ReduxLabData.getInstance().getAnalystName();
 
-//        this.automaticDataUpdateMode = false;
-//
-//        this.containingSampleDataFolder = null;
-//
-//        this.mySESARSampleMetadata = mySESARSampleMetadata;
         this.myReduxLabData = ReduxLabData.getInstance();
+
+        this.sampleAnalysisType = sampleAnalysisType;
     }
 
     @Override
@@ -606,4 +611,11 @@ public class UThReduxAliquot implements //
     }
 
     // END  XML Serialization***********************************************************************************************************END
+
+    /**
+     * @return the sampleAnalysisType
+     */
+    public String getSampleAnalysisType() {
+        return sampleAnalysisType;
+    }
 }

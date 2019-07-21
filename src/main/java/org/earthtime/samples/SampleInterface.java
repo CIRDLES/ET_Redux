@@ -31,6 +31,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
@@ -648,14 +649,26 @@ public interface SampleInterface {
         }
     }
 
+    /**
+     *
+     * @param aliquotNumber the value of aliquotNumber
+     * @param aliquotName the value of aliquotName
+     * @param physicalConstants the value of physicalConstants
+     * @param compiled the value of compiled
+     * @param mySESARSampleMetadata the value of mySESARSampleMetadata
+     * @param sampleAnalysisType the value of sampleAnalysisType
+     * @return 
+     */
     public AliquotInterface generateDefaultAliquot(//
-            int aliquotNumber,
-            String aliquotName,
+            int aliquotNumber, 
+            String aliquotName, 
             AbstractRatiosDataModel physicalConstants,
-            boolean compiled,
-            SESARSampleMetadata mySESARSampleMetadata);
+            boolean compiled, 
+            SESARSampleMetadata mySESARSampleMetadata,
+            String sampleAnalysisType);
+    //
 
-    public AliquotInterface generateDefaultAliquot();
+////    public AliquotInterface generateDefaultAliquot();
 
     /**
      * adds an <code>Aliquot</code> to <code>aliquots</code>. It is created with
@@ -682,7 +695,8 @@ public interface SampleInterface {
                             "Aliquot-" + Integer.toString(getAliquots().size() + 1),
                             getPhysicalConstantsModel(),
                             isAnalyzed(),
-                            getMySESARSampleMetadata());
+                            getMySESARSampleMetadata(), 
+                            getSampleAnalysisType());
 
 //                    = new UPbReduxAliquot(
 //                            getAliquots().size() + 1,
@@ -1013,6 +1027,11 @@ public interface SampleInterface {
                     ((UPbSampleInterface) sample).processXMLFractionFile(returnFile[i], aliquotNumber, true, doValidate);
                     successCount++;
                 } catch (ETException ex) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            ex.getMessage(),
+                            "ET Redux Warning",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
             // return folder for persistent state 
@@ -2117,6 +2136,7 @@ public interface SampleInterface {
     public List<SeaWaterInitialDelta234UTableModel> getSeaWaterInitialDelta234UTableModels();
 
     /**
+     * @param seaWaterInitialDelta234UTableModels
      * @param seaWaterInitialDelta234UTableModel the
      * seaWaterInitialDelta234UTableModel to set
      */

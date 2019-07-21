@@ -205,21 +205,33 @@ public class SampleUTh extends ETSample implements
 //        initFilteredFractionsToAll();
     }
 
+    /**
+     *
+     * @param aliquotNumber the value of aliquotNumber
+     * @param aliquotName the value of aliquotName
+     * @param physicalConstants the value of physicalConstants
+     * @param compiled the value of compiled
+     * @param mySESARSampleMetadata the value of mySESARSampleMetadata
+     * @param sampleAnalysisType the value of sampleAnalysisType
+     */
     @Override
     public AliquotInterface generateDefaultAliquot(//
-            int aliquotNumber,
-            String aliquotName,
-            AbstractRatiosDataModel physicalConstants,
-            boolean compiled,
-            SESARSampleMetadata mySESARSampleMetadata) {
+            int aliquotNumber, 
+            String aliquotName, 
+            AbstractRatiosDataModel physicalConstants, 
+            boolean compiled, 
+            SESARSampleMetadata mySESARSampleMetadata, 
+            String sampleAnalysisType) {
 
-        return new UThReduxAliquot(aliquotNumber, aliquotName, physicalConstants, compiled, mySESARSampleMetadata);
+        return new UThReduxAliquot(
+                aliquotNumber, aliquotName, physicalConstants, compiled, mySESARSampleMetadata, sampleAnalysisType);
     }
-
-    @Override
-    public AliquotInterface generateDefaultAliquot() {
-        return new UThReduxAliquot();
-    }
+    //
+//    
+//    @Override
+//    public AliquotInterface generateDefaultAliquot() {
+//        return new UThReduxAliquot();
+//    }
 
     /**
      *
@@ -464,7 +476,7 @@ public class SampleUTh extends ETSample implements
 
     @Override
     public void setSampleAnalysisType(String sampleAnalysisType) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.sampleAnalysisType = sampleAnalysisType;
     }
 
     @Override
@@ -474,7 +486,7 @@ public class SampleUTh extends ETSample implements
 
     @Override
     public String getSampleAnalysisType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return sampleAnalysisType;
     }
 
     @Override

@@ -51,6 +51,9 @@ public class ReportSpecificationsUTh_Carb extends ReportSpecificationsAbstract {
         {" BP", "corrected", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorrBP.getName(), "ABS",
             "", "false", "false", "2", "true", "Date BP (detrital Th-corr.)", "false", "false"
         },
+        {"", "Open-System", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateOpenSys.getName(), "ABS",
+            "", "false", "false", "2", "true", "", "false", "false"
+        },
         //
         {"uncorrected", "delta234U", "initial", "", "getAnalysisMeasure", UThAnalysisMeasures.delta234Ui.getName(), "ABS",
             "", "true", "false", "3", "true", "initial delta234U", "false", "false"
@@ -127,10 +130,10 @@ public class ReportSpecificationsUTh_Carb extends ReportSpecificationsAbstract {
         },
         //
         {"[232Th/", " 238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
-            "FN-1", "false", "false", "3", "true", "[232Th/238U]", "false", "false"
+            "FN-1", "true", "false", "4", "false", "[232Th/238U]", "false", "false"
         },
         {"232Th/", "238U", "", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName(), "ABS",
-            "", "false", "false", "3", "true", "232Th/238U", "false", "false"
+            "", "true", "false", "4", "false", "232Th/238U", "false", "false"
         },
         //
         {"uncorrected", "[230Th/", " 238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",

@@ -141,7 +141,7 @@ public class IsochronsSelectorDialog extends DialogEditor {
         displayedList = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Available Sample Date Interpretation Models");
+        setTitle("Available Isochrons");
         setAlwaysOnTop(true);
         setBackground(new java.awt.Color(245, 236, 206));
         setForeground(java.awt.Color.white);

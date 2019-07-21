@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -83,6 +84,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
     private double[] arrayOfSeaWaterModelDates;
     private double[] arrayOfSeaWaterModelDeltas;
+    private double[] arrayOfSeaWaterModelDeltasUnct;
 
     private double movingUpperBoundaryPointFromX;
     private double movingLowerBoundaryPointFromX;
@@ -161,6 +163,64 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
             g2d.setPaint(Color.black);
             g2d.drawRect(leftMargin, topMargin, (int) graphWidth - 1, (int) graphHeight - 1);
 
+            // runthrough models opensystem models
+            if (!openSystemIsochronModelsList.isEmpty()) {
+                for (OpenSystemIsochronTableModel ositm : openSystemIsochronModelsList) {
+                    if (ositm.isShowSeawaterModel()) {
+                        arrayOfSeaWaterModelDates = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDatesInKa();
+                        arrayOfSeaWaterModelDeltas = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDeltas();
+                        arrayOfSeaWaterModelDeltasUnct = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDeltasUnct();
+
+                        g2d.setStroke(new BasicStroke(1.5f));
+
+                        for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
+                            Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double(
+                                    mapX(arrayOfSeaWaterModelDates[i]) - 3,
+                                    mapY(arrayOfSeaWaterModelDeltas[i]) - 3, 6, 6);
+
+                            g2d.draw(rawRatioPoint);
+                            g2d.fill(rawRatioPoint);
+
+                            if (i > 0) {
+                                // upper envelope
+                                Line2D lineU = new Line2D.Double(
+                                        mapX(arrayOfSeaWaterModelDates[i - 1]),
+                                        mapY(arrayOfSeaWaterModelDeltas[i - 1] + arrayOfSeaWaterModelDeltasUnct[i - 1]),
+                                        mapX(arrayOfSeaWaterModelDates[i]),
+                                        mapY(arrayOfSeaWaterModelDeltas[i] + arrayOfSeaWaterModelDeltasUnct[i]));
+
+                                // lower envelope
+                                Line2D lineL = new Line2D.Double(
+                                        mapX(arrayOfSeaWaterModelDates[i - 1]),
+                                        mapY(arrayOfSeaWaterModelDeltas[i - 1] - arrayOfSeaWaterModelDeltasUnct[i - 1]),
+                                        mapX(arrayOfSeaWaterModelDates[i]),
+                                        mapY(arrayOfSeaWaterModelDeltas[i] - arrayOfSeaWaterModelDeltasUnct[i]));
+
+                                // draw envelope
+                                g2d.setPaint(new Color(213, 255, 232));
+                                int[] xPoints = new int[]{(int) lineU.getX1(), (int) lineU.getX2(), (int) lineL.getX2(), (int) lineL.getX1()};
+                                int[] yPoints = new int[]{(int) lineU.getY1(), (int) lineU.getY2(), (int) lineL.getY2(), (int) lineL.getY1()};
+                                g2d.fillPolygon(
+                                        xPoints,
+                                        yPoints,
+                                        4);
+
+                                // draw seawater
+                                Line2D line = new Line2D.Double(
+                                        mapX(arrayOfSeaWaterModelDates[i - 1]),
+                                        mapY(arrayOfSeaWaterModelDeltas[i - 1]),
+                                        mapX(arrayOfSeaWaterModelDates[i]),
+                                        mapY(arrayOfSeaWaterModelDeltas[i]));
+
+                                g2d.setStroke(new BasicStroke(2.0f));
+                                g2d.setPaint(SEAWATER_GREEN);
+                                g2d.draw(line);
+                            }
+                        }
+                    }
+                }
+            }
+
             g2d.setPaint(Color.black);
 
             Color includedBorderColor = Color.BLACK;
@@ -198,9 +258,6 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                     }
                 }
             }
-
-            double rangeX = (getMaxX_Display() - getMinX_Display());
-            double rangeY = (getMaxY_Display() - getMinY_Display());
 
             // paint partitions
             if (upperBoundary.size() > 0) {
@@ -263,39 +320,6 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                         Math.min(zoomMaxY, zoomMinY),
                         Math.abs(zoomMaxX - zoomMinX),
                         Math.abs(zoomMinY - zoomMaxY));
-            }
-
-            // runthrough models opensystem models
-            if (!openSystemIsochronModelsList.isEmpty()) {
-                for (OpenSystemIsochronTableModel ositm : openSystemIsochronModelsList) {
-                    if (ositm.isShowSeawaterModel()) {
-                        arrayOfSeaWaterModelDates = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDatesInKa();
-                        arrayOfSeaWaterModelDeltas = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDeltas();
-
-                        g2d.setPaint(SEAWATER_GREEN);
-                        g2d.setStroke(new BasicStroke(1.5f));
-
-                        for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
-                            Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double(
-                                    mapX(arrayOfSeaWaterModelDates[i]) - 3,
-                                    mapY(arrayOfSeaWaterModelDeltas[i]) - 3, 6, 6);
-
-                            g2d.draw(rawRatioPoint);
-                            g2d.fill(rawRatioPoint);
-
-                            if (i > 0) {
-                                // draw line
-                                Line2D line = new Line2D.Double(
-                                        mapX(arrayOfSeaWaterModelDates[i - 1]),
-                                        mapY(arrayOfSeaWaterModelDeltas[i - 1]),
-                                        mapX(arrayOfSeaWaterModelDates[i]),
-                                        mapY(arrayOfSeaWaterModelDeltas[i]));
-                                g2d.setStroke(new BasicStroke(2.0f));
-                                g2d.draw(line);
-                            }
-                        }
-                    }
-                }
             }
 
             if (imageMode == "BOUNDARY") {
@@ -399,7 +423,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
     }
 
     @Override
-    public void preparePanel(boolean doReset ) {
+    public void preparePanel(boolean doReset) {
         setOpenSystemIsochronModelsList(((ProjectSample) mySample).updateListOfOpenIsochronModels());
         if (doReset) {
 
@@ -557,9 +581,13 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
             double notches = e.getPreciseWheelRotation();
             if (true) {//(notches == Math.rint(notches)) {
                 if (notches < 0) {// zoom in
-                    minX += getRangeX_Display() / ZOOM_FACTOR;
+                    if (zoomCount >= 0) {
+                        minX += getRangeX_Display() / ZOOM_FACTOR;
+                    }
                     maxX -= getRangeX_Display() / ZOOM_FACTOR;
-                    minY += getRangeY_Display() / ZOOM_FACTOR;
+                    if (zoomCount >= 0) {
+                        minY += getRangeY_Display() / ZOOM_FACTOR;
+                    }
                     maxY -= getRangeY_Display() / ZOOM_FACTOR;
 
                     zoomCount++;
@@ -573,13 +601,28 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
                     zoomCount--;
                     // stop zoom out
-                    // if (minX * minY > 0.0) {
+                    if (minX * minY > 0.0) {
+                        maxX += getRangeX_Display() / ZOOM_FACTOR;
+                        maxY += getRangeY_Display() / ZOOM_FACTOR;
+                        zoomCount = 0;
 
-                    maxX += getRangeX_Display() / ZOOM_FACTOR;
+                    } else {
+                        minX = 0.0;
+                        minY = 0.0;
 
-                    maxY += getRangeY_Display() / ZOOM_FACTOR;
-                    //  }
+                        maxX += getRangeX_Display() / ZOOM_FACTOR;
+                        maxY += getRangeY_Display() / ZOOM_FACTOR;
+                    }
 
+                }
+                if (minX <= 0.0) {
+                    minX = 0.0;
+                    displayOffsetX = 0.0;
+
+                }
+                if (minY <= 0.0) {
+                    minY = 0.0;
+                    displayOffsetY = 0.0;
                 }
 
                 zoomMinX = zoomMaxX;

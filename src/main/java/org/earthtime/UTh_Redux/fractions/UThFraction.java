@@ -39,6 +39,7 @@ import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import static org.earthtime.UPb_Redux.ReduxConstants.TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 
 public class UThFraction implements
         UThFractionI,
@@ -81,6 +82,10 @@ public class UThFraction implements
 
     protected boolean filtered;
 
+    // July 2019 - see emails from Noah 20 June 2019 and following
+    protected SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel;
+    protected ValueModel pctLoss;
+
     private int rgbColor;
     private transient Path2D errorEllipsePath;
     private transient double ellipseRho;
@@ -97,20 +102,20 @@ public class UThFraction implements
         this.numberOfGrains = ReduxLabData.getInstance().getDefaultNumberOfGrains();
         this.estimatedDate = BigDecimal.ZERO;
 
-        analysisMeasures = valueModelArrayFactory(UThAnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
-        measuredRatios = new ValueModel[0];
-        fractionationCorrectedIsotopeRatios = valueModelArrayFactory(UThFractionationCorrectedIsotopicRatios.getNames(), UncertaintyTypesEnum.ABS.getName());
-        isotopeDates = valueModelArrayFactory(RadDates.getNamesSorted(), UncertaintyTypesEnum.ABS.getName());
-        compositionalMeasures = valueModelArrayFactory(UThCompositionalMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
-        sampleIsochronRatios = new ValueModel[0]; //valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
+        this.analysisMeasures = valueModelArrayFactory(UThAnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
+        this.measuredRatios = new ValueModel[0];
+        this.fractionationCorrectedIsotopeRatios = valueModelArrayFactory(UThFractionationCorrectedIsotopicRatios.getNames(), UncertaintyTypesEnum.ABS.getName());
+        this.isotopeDates = valueModelArrayFactory(RadDates.getNamesSorted(), UncertaintyTypesEnum.ABS.getName());
+        this.compositionalMeasures = valueModelArrayFactory(UThCompositionalMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
+        this.sampleIsochronRatios = new ValueModel[0]; //valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
 
-        physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
-        detritalUThModel = ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel();
+        this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+        this.detritalUThModel = ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel();
 
-        dateTimeMillisecondsOfAnalysis = TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
+        this.dateTimeMillisecondsOfAnalysis = TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
 
-        spikeCalibrationR230_238IsSecular = false;
-        spikeCalibrationR234_238IsSecular = false;
+        this.spikeCalibrationR230_238IsSecular = false;
+        this.spikeCalibrationR234_238IsSecular = false;
         // see fraction reducer for multiplicative use
         this.r230Th_238Ufc_rectificationFactor = new ValueModel(
                 "r230Th_238Ufc_rectificationFactor",
@@ -124,16 +129,19 @@ public class UThFraction implements
                 "ABS",
                 BigDecimal.ONE,
                 BigDecimal.ONE);
-        
-        r230Th_238Ufc_referenceMaterialName = "";
-        r234U_238Ufc_referenceMaterialName = "";
-        
+
+        this.r230Th_238Ufc_referenceMaterialName = "";
+        this.r234U_238Ufc_referenceMaterialName = "";
+
         this.changed = false;
         this.deleted = false;
         this.fractionNotes = "";
         this.rejected = false;
 
-        rgbColor = 0;
+        this.rgbColor = 0;
+
+        this.seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance().getDefaultLabSeaWaterModel();
+        this.pctLoss = new ValueModel("pctLoss", new BigDecimal(2.5), "ABS", BigDecimal.ONE, BigDecimal.ZERO);
 
     }
 
@@ -735,7 +743,7 @@ public class UThFraction implements
 
     /**
      * @param r234U_238Ufc_rectificationFactor the
- r234U_238Ufc_rectificationFactor to set
+     * r234U_238Ufc_rectificationFactor to set
      */
     public void setR234U_238Ufc_rectificationFactor(ValueModel r234U_238Ufc_rectificationFactor) {
         this.r234U_238Ufc_rectificationFactor = r234U_238Ufc_rectificationFactor;
@@ -749,7 +757,8 @@ public class UThFraction implements
     }
 
     /**
-     * @param r230Th_238Ufc_referenceMaterialName the r230Th_238Ufc_referenceMaterialName to set
+     * @param r230Th_238Ufc_referenceMaterialName the
+     * r230Th_238Ufc_referenceMaterialName to set
      */
     public void setR230Th_238Ufc_referenceMaterialName(String r230Th_238Ufc_referenceMaterialName) {
         this.r230Th_238Ufc_referenceMaterialName = r230Th_238Ufc_referenceMaterialName;
@@ -763,10 +772,49 @@ public class UThFraction implements
     }
 
     /**
-     * @param r234U_238Ufc_referenceMaterialName the r234U_238Ufc_referenceMaterialName to set
+     * @param r234U_238Ufc_referenceMaterialName the
+     * r234U_238Ufc_referenceMaterialName to set
      */
     public void setR234U_238Ufc_referenceMaterialName(String r234U_238Ufc_referenceMaterialName) {
         this.r234U_238Ufc_referenceMaterialName = r234U_238Ufc_referenceMaterialName;
+    }
+
+    /**
+     * @return the seaWaterInitialDelta234UTableModel
+     */
+    @Override
+    public SeaWaterInitialDelta234UTableModel getSeaWaterInitialDelta234UTableModel() {
+        return seaWaterInitialDelta234UTableModel;
+    }
+
+    /**
+     * @param seaWaterInitialDelta234UTableModel the seaWaterInitialDelta234UTableModel to set
+     */
+    @Override
+    public void setSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
+        if (seaWaterInitialDelta234UTableModel == null){
+            seaWaterInitialDelta234UTableModel = ReduxLabData.getInstance().getDefaultLabSeaWaterModel();
+        }
+        this.seaWaterInitialDelta234UTableModel = seaWaterInitialDelta234UTableModel;
+    }
+
+    /**
+     * @return the pctLoss
+     */
+    @Override
+    public ValueModel getPctLoss() {
+        if (pctLoss == null){
+            this.pctLoss = new ValueModel("pctLoss", new BigDecimal(2.5), "ABS", BigDecimal.ONE, BigDecimal.ZERO);
+        }
+        return pctLoss;
+    }
+
+    /**
+     * @param pctLoss the pctLoss to set
+     */
+    @Override
+    public void setPctLoss(ValueModel pctLoss) {
+        this.pctLoss = pctLoss.copy();
     }
 
 }

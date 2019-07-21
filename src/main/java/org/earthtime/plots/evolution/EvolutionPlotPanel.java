@@ -265,6 +265,117 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 }
             }
 
+            // opensystem isochrons
+            if (!openSystemIsochronModelsList.isEmpty()) {
+                //LinearInterpolator linearInterpolator = new LinearInterpolator();
+
+                for (OpenSystemIsochronTableModel ositm : openSystemIsochronModelsList) {
+                    // for each model, we use the seawaater model to calculate the open isochrons
+                    if (ositm.isShowOpenIsochrons()) {
+                        //double[] dates = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDates();
+                        //double[] deltas = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDeltasAsRatios();
+                        //PolynomialSplineFunction psfSeaWater = linearInterpolator.interpolate(dates, deltas);
+
+                        for (OpenSystemIsochronModelEntry osime : ositm.getEntryList()) {
+                            double age = osime.getAgeInKa() * 1000.0;
+                            double ar234U_238Uisw = ositm.getSeaWaterInitialDelta234UTableModel().calculateAr234U_238Uisw(age);
+                            double isoPctLoss = osime.getPctLoss();
+                            double isoStartR = osime.getrStart();
+                            double isoEndR = osime.getrEnd();
+
+                            Point2D.Double openIsoPointStart = calculateOpenSystemIsochronEndPoint(age, ar234U_238Uisw, isoStartR, isoPctLoss);
+                            Point2D.Double openIsoPointEnd = calculateOpenSystemIsochronEndPoint(age, ar234U_238Uisw, isoEndR, isoPctLoss);
+
+                            Shape isochronLine = new Path2D.Double();
+                            g2d.setStroke(new BasicStroke(2.0f));
+                            ((Path2D) isochronLine).moveTo(//
+                                    mapX(openIsoPointStart.getX()), //
+                                    mapY(openIsoPointStart.getY()));
+                            ((Path2D) isochronLine).lineTo( //
+                                    mapX(openIsoPointEnd.getX()), //
+                                    mapY(openIsoPointEnd.getY()));
+
+                            g2d.setPaint(ositm.getDisplayColor());
+
+                            g2d.draw(isochronLine);
+                        }
+                    }
+
+                    if (ositm.isShowSeawaterModel()) {
+
+                        // uppper envelope
+                        buildSeawaterModelPlot(ositm.getSeaWaterInitialDelta234UTableModel(), 1);
+                        Path2D curvedP = new Path2D.Double(Path2D.WIND_NON_ZERO);
+                        curvedP.moveTo(
+                                (float) mapX(xysw[0][0][0]),
+                                (float) mapY(xysw[0][1][0]));
+
+                        for (int j = 1; j < tvsw[0].length; j++) {
+                            double deltaTOver3 = (tvsw[0][j] - tvsw[0][j - 1]) / 3;
+
+                            curvedP.curveTo(//
+                                    (float) mapX(xysw[0][0][j - 1] + deltaTOver3 * dardtsw[0][0][j - 1]),
+                                    (float) mapY(xysw[0][1][j - 1] + deltaTOver3 * dardtsw[0][1][j - 1]),
+                                    (float) mapX(xysw[0][0][j] - deltaTOver3 * dardtsw[0][0][j]),
+                                    (float) mapY(xysw[0][1][j] - deltaTOver3 * dardtsw[0][1][j]),
+                                    (float) mapX(xysw[0][0][j]),
+                                    (float) mapY(xysw[0][1][j]));
+                        }
+
+                        // lower envelope
+                        buildSeawaterModelPlot(ositm.getSeaWaterInitialDelta234UTableModel(), -1);
+                        //curvedP = new Path2D.Double(Path2D.WIND_NON_ZERO);
+                        int hiIndex = tvsw[0].length - 1;
+                        curvedP.lineTo(
+                                (float) mapX(xysw[0][0][hiIndex]),
+                                (float) mapY(xysw[0][1][hiIndex]));
+
+                        for (int j = hiIndex - 1; j >= 0; j--) {
+                            double deltaTOver3 = (tvsw[0][j + 1] - tvsw[0][j]) / 3;
+
+                            curvedP.curveTo(//
+                                    (float) mapX(xysw[0][0][j + 1] + deltaTOver3 * dardtsw[0][0][j + 1]),
+                                    (float) mapY(xysw[0][1][j + 1] + deltaTOver3 * dardtsw[0][1][j + 1]),
+                                    (float) mapX(xysw[0][0][j] - deltaTOver3 * dardtsw[0][0][j]),
+                                    (float) mapY(xysw[0][1][j] - deltaTOver3 * dardtsw[0][1][j]),
+                                    (float) mapX(xysw[0][0][j]),
+                                    (float) mapY(xysw[0][1][j]));
+                        }
+                        
+                        curvedP.closePath();
+                        
+                        g2d.setPaint(new Color(213, 255, 232));
+                        g2d.setStroke(new BasicStroke(1.5f));
+                        g2d.fill(curvedP);
+
+                        // seawater
+                        buildSeawaterModelPlot(ositm.getSeaWaterInitialDelta234UTableModel(), 0);
+                        curvedP = new Path2D.Double(Path2D.WIND_NON_ZERO);
+                        curvedP.moveTo(
+                                (float) mapX(xysw[0][0][0]),
+                                (float) mapY(xysw[0][1][0]));
+
+                        for (int j = 1; j < tvsw[0].length; j++) {
+                            double deltaTOver3 = (tvsw[0][j] - tvsw[0][j - 1]) / 3;
+
+                            curvedP.curveTo(//
+                                    (float) mapX(xysw[0][0][j - 1] + deltaTOver3 * dardtsw[0][0][j - 1]),
+                                    (float) mapY(xysw[0][1][j - 1] + deltaTOver3 * dardtsw[0][1][j - 1]),
+                                    (float) mapX(xysw[0][0][j] - deltaTOver3 * dardtsw[0][0][j]),
+                                    (float) mapY(xysw[0][1][j] - deltaTOver3 * dardtsw[0][1][j]),
+                                    (float) mapX(xysw[0][0][j]),
+                                    (float) mapY(xysw[0][1][j]));
+                        }
+                        g2d.setPaint(SEAWATER_GREEN);
+                        g2d.setStroke(new BasicStroke(2.f));
+                        g2d.draw(curvedP);
+
+                    }
+                }
+            }
+
+            // END opensystem isochrons            
+            // ellipses
             g2d.setPaint(Color.black);
 
             Color includedBorderColor = Color.BLACK;
@@ -300,9 +411,6 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 }
             }
 
-            double rangeX = (getMaxX_Display() - getMinX_Display());
-            double rangeY = (getMaxY_Display() - getMinY_Display());
-
             // draw zoom box if in use
             if (isInImageModeZoom()
                     && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
@@ -315,69 +423,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                         Math.abs(zoomMinY - zoomMaxY));
             }
 
-            // opensystem isochrons
-            if (!openSystemIsochronModelsList.isEmpty()) {
-                LinearInterpolator linearInterpolator = new LinearInterpolator();
 
-                for (OpenSystemIsochronTableModel ositm : openSystemIsochronModelsList) {
-                    // for each model, we use the seawaater model to calculate the open isochrons
-                    if (ositm.isShowOpenIsochrons()) {
-                        double[] dates = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDates();
-                        double[] deltas = ositm.getSeaWaterInitialDelta234UTableModel().getArrayOfDeltasAsRatios();
-                        PolynomialSplineFunction psfSeaWater = linearInterpolator.interpolate(dates, deltas);
-
-                        for (OpenSystemIsochronModelEntry osime : ositm.getEntryList()) {
-                            double age = osime.getAgeInKa() * 1000.0;
-                            double ar234U_238Uisw = psfSeaWater.value(age);
-                            double isoPctLoss = osime.getPctLoss();
-                            double isoStartR = osime.getrStart();
-                            double isoEndR = osime.getrEnd();
-
-                            Point2D.Double openIsoPointStart = calculateOpenSystemIsochronEndPoint(age, ar234U_238Uisw, isoStartR, isoPctLoss);
-                            Point2D.Double openIsoPointEnd = calculateOpenSystemIsochronEndPoint(age, ar234U_238Uisw, isoEndR, isoPctLoss);
-
-                            Shape isochronLine = new Path2D.Double();
-                            g2d.setStroke(new BasicStroke(2.0f));
-                            ((Path2D) isochronLine).moveTo(//
-                                    mapX(openIsoPointStart.getX()), //
-                                    mapY(openIsoPointStart.getY()));
-                            ((Path2D) isochronLine).lineTo( //
-                                    mapX(openIsoPointEnd.getX()), //
-                                    mapY(openIsoPointEnd.getY()));
-
-                            g2d.setPaint(ositm.getDisplayColor());
-
-                            g2d.draw(isochronLine);
-                        }
-                    }
-
-                    if (ositm.isShowSeawaterModel()) {
-
-                        buildSeawaterModelPlot(ositm.getSeaWaterInitialDelta234UTableModel());
-                        Path2D curvedP = new Path2D.Double(Path2D.WIND_NON_ZERO);
-                        curvedP.moveTo(
-                                (float) mapX(xysw[0][0][0]),
-                                (float) mapY(xysw[0][1][0]));
-
-                        for (int j = 1; j < tvsw[0].length; j++) {
-                            double deltaTOver3 = (tvsw[0][j] - tvsw[0][j - 1]) / 3;
-
-                            curvedP.curveTo(//
-                                    (float) mapX(xysw[0][0][j - 1] + deltaTOver3 * dardtsw[0][0][j - 1]),
-                                    (float) mapY(xysw[0][1][j - 1] + deltaTOver3 * dardtsw[0][1][j - 1]),
-                                    (float) mapX(xysw[0][0][j] - deltaTOver3 * dardtsw[0][0][j]),
-                                    (float) mapY(xysw[0][1][j] - deltaTOver3 * dardtsw[0][1][j]),
-                                    (float) mapX(xysw[0][0][j]),
-                                    (float) mapY(xysw[0][1][j]));
-                        }
-                        g2d.setPaint(SEAWATER_GREEN);
-                        g2d.setStroke(new BasicStroke(1.75f));
-                        g2d.draw(curvedP);
-                    }
-                }
-            }
-
-            // END opensystem isochrons
             // resets clipping
             try {
                 drawAxesAndTics(g2d, yAxisDisplayAsDeltaUnits);
@@ -784,11 +830,14 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         }
     }
 
-    private void buildSeawaterModelPlot(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel) {
-        LinearInterpolator linearInterpolator = new LinearInterpolator();
+    /**
+     *
+     * @param seaWaterInitialDelta234UTableModel
+     * @param limit limit negative = lower envelope, 0 = seawater, >0 = upper
+     * envelope
+     */
+    private void buildSeawaterModelPlot(SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel, int limit) {
         double[] dates = seaWaterInitialDelta234UTableModel.getArrayOfDates();
-        double[] deltas = seaWaterInitialDelta234UTableModel.getArrayOfDeltasAsRatios();
-        PolynomialSplineFunction psf = linearInterpolator.interpolate(dates, deltas);
 
         int countOfPoints = 100;
         double step = (dates[dates.length - 1] - dates[0]) / countOfPoints;
@@ -797,7 +846,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
         for (int i = 0; i < countOfPoints; i++) {
             tvsw[0][i] = dates[0] + i * step;
-            ar48isw[i] = psf.value(tvsw[0][i]);
+            ar48isw[i] = seaWaterInitialDelta234UTableModel.calculateAr234U_238Uisw(tvsw[0][i])
+                    + Math.signum(limit) * seaWaterInitialDelta234UTableModel.calculateAr234U_238UiswUnct(tvsw[0][i]);
         }
 
         xysw = new double[1][2][ar48isw.length];
@@ -901,7 +951,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         Calculate the initial seawater 234U/238U activity ratio ar234U_238Uisw for the input age t using the user-input seawater model.  
         This is an activity ratio, so a typical number would be 1.145.
         Calculate f234 =  1 – pctLoss / 100
-        Calculate f230 = ((f234 - 1) * (4.754 * 234 / 4.184 / 230) + 1)
+        Calculate f230 = ((f234 - 1) * (4.754 * 234 / 4.184 / 230) + 1 + f234)/2
         Calculate ar234U_238U = (1 + R * (1 – f234)) * (1 – EXP(–lambda234 * t)) + ar234U_238Uisw *EXP(–lambda234 * t)
         Calculate ar230Th_238U = (1 + R * (1 – f234 * f230)) * (1 – lambda230/( lambda230- lambda234) * EXP(–lambda234 * t) + lambda234/( lambda230 - lambda234) * EXP(–lambda230 * t))+(1 + R * (1 - f230)) * (lambda230 / (lambda230 - lambda234) * ar234U_238Uisw * (EXP(–lambda234* t) - EXP(–lambda230 * t)))
 
@@ -913,7 +963,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         double ar230Th_238U;
 
         double f234 = 1.0 - (pctLoss / 100.0);
-        double f230 = ((f234 - 1.0) * (4.754 * 234.0 / 4.184 / 230.0) + 1.0);
+        double f230 = ((f234 - 1.0) * (4.754 * 234.0 / 4.184 / 230.0) + 1.0 + f234) / 2;
 
         ar234U_238U = (1.0 + rValue * (1.0 - f234)) * (1.0 - Math.exp(-lambda234D * age)) + ar234U_238Uisw * Math.exp(-lambda234D * age);
         ar230Th_238U

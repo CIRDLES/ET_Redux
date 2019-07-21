@@ -94,8 +94,9 @@ public class RadDatesTest {
         assertEquals("dateBP", list[17]);
         assertEquals("dateCorr", list[18]);
         assertEquals("dateCorrBP", list[19]);
-        assertEquals("percentDiscordance", list[20]);
-        assertEquals("percentDiscordance_PbcCorr", list[21]);
+        assertEquals("dateOpenSys", list[20]);
+        assertEquals("percentDiscordance", list[21]);
+        assertEquals("percentDiscordance_PbcCorr", list[22]);
 
     }
 

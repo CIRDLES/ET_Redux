@@ -59,6 +59,7 @@ public class OpenSystemModelsManager extends DialogEditor {
     private void initModels() {
         setSize(375, openModels.size() * 265 + 50);
         setTitle("Manage Plots Seawater/Open Sys Isochrons");
+        setAlwaysOnTop(true);
 
         JPanel modelsPanel = new JPanel(null);
         modelsPanel.setSize(300, openModels.size() * 250);

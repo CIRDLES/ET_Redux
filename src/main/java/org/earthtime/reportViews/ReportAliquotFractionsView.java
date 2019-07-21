@@ -78,8 +78,10 @@ import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.evolution.seaWater.SeawaterModelAssignmentManager;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.w3c.dom.DOMImplementation;
@@ -112,6 +114,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     private JButton sortFractionsButton;
     private JButton toggleMeasuredRatiosButton;
     private JButton toggleAliquotBarsButton;
+    private JButton showSeawaterAssignmentsButton;
     public static boolean showAliquotBars = false;
     private ArrayList<JButton> sortButtons;
     private static TableRowObject lastAquiredTableRowObject;
@@ -325,6 +328,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             sortFractionsButton.setBounds(1, DATATABLE_TOP_HEIGHT - lineHeight - 1, fractionColumnWidth - 3, lineHeight - 3);
             toggleMeasuredRatiosButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
             toggleAliquotBarsButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
+            showSeawaterAssignmentsButton.setBounds(1, 2 + lineHeight - 3, fractionColumnWidth - 3, lineHeight - 3);
 
             int drawnWidth = 3;
             // oct 2016 added -1 for filtering cell added
@@ -370,19 +374,21 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
     /**
      *
+     * @param sampleAnalysisType the value of sampleAnalysisType
      */
-    public void refreshPanel() {
-        preparePanel();
+    public void refreshPanel(String sampleAnalysisType) {
+        preparePanel(sampleAnalysisType);
         reSizeScrollPanes();
     }
 
     /**
+     * @param sampleAnalysisType
      *
      */
-    public void preparePanel() {
+    public void preparePanel(String sampleAnalysisType) {
 
-        int saveVerticalScrollPosition = 0;
-        int saveHorizontalScrollPosition = 0;
+        int saveVerticalScrollPosition;
+        int saveHorizontalScrollPosition;
         try {
             saveVerticalScrollPosition = reportBodyScrollPane.getVerticalScrollBar().getValue();
             saveHorizontalScrollPosition = reportBodyScrollPane.getHorizontalScrollBar().getValue();
@@ -489,6 +495,23 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             } else {
                 showAliquotBars = true;
             }
+
+            // July 2019 add button upper left to access seawater assignment in support of USeries
+            showSeawaterAssignmentsButton = new ET_JButton("Assign SeawaterModels");
+            showSeawaterAssignmentsButton.setFont(ReduxConstants.sansSerif_10_Bold);
+            showSeawaterAssignmentsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    SeawaterModelAssignmentManager seawaterModelAssignmentManager
+                            = new SeawaterModelAssignmentManager(parentFrame, true, sample);
+                    seawaterModelAssignmentManager.setVisible(true);
+                }
+            });
+            if (reportFractions[1][0].contains("UTh")) {
+                if (sampleAnalysisType.compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_CARB.getName()) == 0) { 
+                    upperLeftCorner.add(showSeawaterAssignmentsButton, JLayeredPane.PALETTE_LAYER);
+                }
+            } 
 
             reSizeSortButtons();
 

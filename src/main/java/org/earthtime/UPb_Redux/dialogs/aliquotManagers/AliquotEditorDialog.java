@@ -4079,7 +4079,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                         toPlainString());
         fractionStaceyKramersCorrelationCoeffsText.get(row).setEnabled(hasStaceyKramersModel);
 
-        ((JTextComponent) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+        ((JTextComponent) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                 RoundingMode.HALF_UP).toPlainString());
         ((UnDoAbleDocument) ((JTextComponent) fractionPbBlankMassText.get(row)).getDocument()).undo.discardAllEdits();
         fractionPbBlankMassText.get(row).setEnabled(!isZircon);
@@ -4107,12 +4107,12 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         fractionTracerChoice.get(row).setEnabled(!(fraCorrU || fraCorrPb));
 
         ((JTextComponent) fractionTracerMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).getValue().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
         fractionTracerMassText.get(row).setEnabled(!(fraCorrU));
 
         ((JTextComponent) fractionMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName()).getValue().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
                 toPlainString());
 
         updateAlphaPbModelChooserForRow(tempFrac, ((UPbFraction) tempFrac).needsAlphaPbModel(), row);
@@ -4123,11 +4123,11 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         updateInitialPbModelChooserForRow(tempFrac, isZircon, row);
 
-        ((JTextField) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+        ((JTextField) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                 RoundingMode.HALF_UP).toPlainString());
         fractionPbBlankMassText.get(row).setEnabled(!isZircon);
 
-        ((JTextField) fractionUBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.uBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+        ((JTextField) fractionUBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.uBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                 RoundingMode.HALF_UP).toPlainString());
         fractionUBlankMassText.get(row).setEnabled(!(fraCorrU));
 
@@ -4147,36 +4147,36 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         fractionR18O_16OText.get(row).setEnabled(((UPbFraction) tempFrac).isAnOxide());
 
         ((JTextField) fractionRTh_UmagmaText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
                 toPlainString());
         fractionRTh_UmagmaText.get(row).setEnabled(true);
 
         ((JTextField) fractionAR231_235sampleText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
                 toPlainString());
         fractionAR231_235sampleText.get(row).setEnabled(true);
 
         //  uncertainties
         ((JTextField) fractionTracerMassOneSigmaText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).getOneSigmaAbs().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         ((JTextField) fractionUBlankMassOneSigmaText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.uBlankMassInGrams.getName()).getOneSigmaAbs().//
                 multiply(ReduxConstants.PicoGramsPerGram).
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
                 toPlainString());
 
         ((JTextField) fractionR238_235sOneSigmaText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()).getOneSigmaAbs().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         ((JTextField) fractionR238_235bOneSigmaText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.r238_235b.getName()).getOneSigmaAbs().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         ((JTextField) fractionPbBlankMassOneSigmaText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getOneSigmaAbs().
                 multiply(ReduxConstants.PicoGramsPerGram).
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
         fractionPbBlankMassOneSigmaText.get(row).setEnabled(!isZircon);
 
@@ -4186,11 +4186,11 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         fractionR18O_16OOneSigmaText.get(row).setEnabled(((UPbFraction) tempFrac).isAnOxide());
 
         ((JTextField) fractionRTh_UmagmaOneSigmaText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getOneSigmaAbs().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
         ((JTextField) fractionAr231_235sampleOneSigmaText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getOneSigmaAbs().
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
 
     }

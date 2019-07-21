@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 
@@ -56,7 +58,7 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         initializeModel();
     }
 
-    public void initializeModel() {
+    private void initializeModel() {
         SeaWaterDelta234UModelEntry row1 = new SeaWaterDelta234UModelEntry(0, 145, 1);
         SeaWaterDelta234UModelEntry row2 = new SeaWaterDelta234UModelEntry(500, 145, 1);
         SeaWaterDelta234UModelEntry row3 = new SeaWaterDelta234UModelEntry(1000, 145, 1);
@@ -88,11 +90,9 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         if (this == model) {
             return true;
         }
-        
-        return this.compareTo((SeaWaterInitialDelta234UTableModel)model) == 0;
+
+        return this.compareTo((SeaWaterInitialDelta234UTableModel) model) == 0;
     }
-    
-    
 
     public SeaWaterInitialDelta234UTableModel copyModel(boolean doAppendName) {
 
@@ -124,6 +124,11 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
 
     public String getNameAndVersion() {
         return makeNameAndVersion(modelName, versionNumber, minorVersionNumber);
+    }
+
+    @Override
+    public String toString() {
+        return getNameAndVersion();
     }
 
     private static String makeNameAndVersion(String name, int version, int minorVersionNumber) {
@@ -226,6 +231,40 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         return entryList;
     }
 
+    public double calculateAr234U_238Uisw(double ageInYears) {
+        LinearInterpolator linearInterpolator = new LinearInterpolator();
+        double[] dates = getArrayOfDates();
+        double[] deltas = getArrayOfDeltasAsRatios();
+        PolynomialSplineFunction psfSeaWater = linearInterpolator.interpolate(dates, deltas);
+
+        double retVal = 0;
+        try {
+            retVal = psfSeaWater.value(ageInYears);
+        } catch (Exception e) {
+//            System.out.println("calculateAr234U_238Uisw error with age = " + ageInYears);
+            retVal = 0;
+        }
+
+        return retVal;
+    }
+
+    public double calculateAr234U_238UiswUnct(double ageInYears) {
+        LinearInterpolator linearInterpolator = new LinearInterpolator();
+        double[] dates = getArrayOfDates();
+        double[] deltasUnct = getArrayOfDeltasAsRatioUncertainties();
+        PolynomialSplineFunction psfSeaWaterUnct = linearInterpolator.interpolate(dates, deltasUnct);
+
+        double retVal = 0;
+        try {
+            retVal = psfSeaWaterUnct.value(ageInYears);
+        } catch (Exception e) {
+//            System.out.println("calculateAr234U_238UiswUnct error with age = " + ageInYears);
+            retVal = 0;
+        }
+
+        return retVal;
+    }
+
     public double[] getArrayOfDatesInKa() {
         double[] datesArray = new double[entryList.size()];
         for (int i = 0; i < entryList.size(); i++) {
@@ -244,13 +283,22 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         return datesArray;
     }
 
-    public double[] getArrayOfDeltasAsRatios() {
+    private double[] getArrayOfDeltasAsRatios() {
         double[] deltasArray = new double[entryList.size()];
         for (int i = 0; i < entryList.size(); i++) {
             deltasArray[i] = entryList.get(i).delta234UPerMil / 1000.0 + 1.0;
         }
 
         return deltasArray;
+    }
+
+    private double[] getArrayOfDeltasAsRatioUncertainties() {
+        double[] deltasUnctArray = new double[entryList.size()];
+        for (int i = 0; i < entryList.size(); i++) {
+            deltasUnctArray[i] = entryList.get(i).oneSigmaAbsUnct / 1000.0;
+        }
+
+        return deltasUnctArray;
     }
 
     public double[] getArrayOfDeltas() {
@@ -260,6 +308,15 @@ public class SeaWaterInitialDelta234UTableModel extends AbstractTableModel imple
         }
 
         return deltasArray;
+    }
+
+    public double[] getArrayOfDeltasUnct() {
+        double[] deltasUnctArray = new double[entryList.size()];
+        for (int i = 0; i < entryList.size(); i++) {
+            deltasUnctArray[i] = entryList.get(i).oneSigmaAbsUnct;
+        }
+
+        return deltasUnctArray;
     }
 
     /**

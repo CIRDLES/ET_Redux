@@ -18,7 +18,6 @@
  *
  *
  */
-
 package org.earthtime.UPb_Redux.valueModels;
 
 import java.io.File;
@@ -40,70 +39,54 @@ import org.junit.Test;
  * @author patrickbrewer
  */
 public class SampleDateModelTest {
-    
-    
-    
+
     /////////////////////////
     ////Constructor Tests////
     /////////////////////////     
-    
-    
+    /**
+     * Test of SampleDateModel() method, of class SampleDateModel.
+     */
+    @Test
+    public void test_constructor_0() {
+        System.out.println("Testing SampleDateModel's SampleDateModel()");
+        //Tests if values are correct
+        SampleDateModel hi = new SampleDateModel();
+        assertEquals("NONE", hi.name);
+        assertEquals("", hi.getMethodName());
+        assertEquals("", hi.getDateName());
+        assertEquals(new BigDecimal("0"), hi.value);
+        assertEquals("NONE", hi.uncertaintyType);
+        assertEquals(new BigDecimal("0"), hi.oneSigma);
 
-    
-    
-    
-     /**
+    }
+
+    /**
      * Test of SampleDateModel() method, of class SampleDateModel.
      */
     @Test
-    public void test_constructor_0(){
-	System.out.println("Testing SampleDateModel's SampleDateModel()");
+    public void test_constructor_1() {
+        System.out.println("Testing SampleDateModel's SampleDateModel(String name,String methodName,String dateName,BigDecimal value,String uncertaintyType,BigDecimal oneSigma)");
         //Tests if values are correct
-        SampleDateModel hi=new SampleDateModel();
-        assertEquals("NONE",hi.name);
-        assertEquals("",hi.getMethodName());
-        assertEquals("",hi.getDateName());
-        assertEquals(new BigDecimal("0"),hi.value);
-        assertEquals("NONE",hi.uncertaintyType);
-        assertEquals(new BigDecimal("0"),hi.oneSigma);
-        
-        }          
-    
-    
-     /**
-     * Test of SampleDateModel() method, of class SampleDateModel.
-     */
-    @Test
-    public void test_constructor_1(){
-	System.out.println("Testing SampleDateModel's SampleDateModel(String name,String methodName,String dateName,BigDecimal value,String uncertaintyType,BigDecimal oneSigma)");
-        //Tests if values are correct
-        SampleDateModel hi=new SampleDateModel("hello","there","silly",new BigDecimal("430"),"ABS",new BigDecimal("51"));
-        assertEquals("hello",hi.name);
-        assertEquals("there",hi.getMethodName());
-        assertEquals("silly",hi.getDateName());
-        assertEquals(new BigDecimal("430"),hi.value);
-        assertEquals("ABS",hi.uncertaintyType);
-        assertEquals(new BigDecimal("51"),hi.oneSigma);        
-        }                
-        
-    
-    
-    
+        SampleDateModel hi = new SampleDateModel("hello", "there", "silly", new BigDecimal("430"), "ABS", new BigDecimal("51"));
+        assertEquals("hello", hi.name);
+        assertEquals("there", hi.getMethodName());
+        assertEquals("silly", hi.getDateName());
+        assertEquals(new BigDecimal("430"), hi.value);
+        assertEquals("ABS", hi.uncertaintyType);
+        assertEquals(new BigDecimal("51"), hi.oneSigma);
+    }
+
     ////////////////////
     ////Method Tests////
     ////////////////////         
-    
-    
-    
-    
     /**
      * Test of copy method, of class SampleDateModel.
-    */ 
+     */
     @Test
     public void test_Copy() {
         System.out.println("Testing SampleDateModel's copy()");
-        SampleDateModel instance=new SampleDateModel("hello","there","silly",new BigDecimal("430"),"ABS",new BigDecimal("51"));
-        
+        SampleDateModel instance = new SampleDateModel("hello", "there", "silly", new BigDecimal("430"), "ABS", new BigDecimal("51"));
+
         instance.setMeanSquaredWeightedDeviation(new BigDecimal("51238"));
         instance.setInternalTwoSigmaUnct(new BigDecimal("51238"));
         instance.setInternalTwoSigmaUnctWithTracerCalibrationUnct(new BigDecimal("51238"));
@@ -111,65 +94,64 @@ public class SampleDateModelTest {
         instance.setExplanation("ave!");
         instance.setComment("ave!");
         instance.setPreferred(true);
-        
+
         SampleDateModel result = instance.copy();
-        
-        assertEquals("hello",result.name);
-        assertEquals("there",result.getMethodName());
-        assertEquals("silly",result.getDateName());
-        assertEquals(new BigDecimal("430"),result.value);
-        assertEquals("ABS",result.uncertaintyType);
-        assertEquals(new BigDecimal("51"),result.oneSigma); 
-        assertEquals(new BigDecimal("51238"),result.getMeanSquaredWeightedDeviation()); 
-        assertEquals(new BigDecimal("51238"),result.getInternalTwoSigmaUnct()); 
-        assertEquals(new BigDecimal("51238"),result.getInternalTwoSigmaUnctWithTracerCalibrationUnct()); 
-        assertEquals(new BigDecimal("51238"),result.getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct()); 
-        assertEquals("ave!",result.getExplanation());
-        assertEquals("ave!",result.getComment());
-        assertEquals(true,result.isPreferred());        
-        
+
+        assertEquals("hello", result.name);
+        assertEquals("there", result.getMethodName());
+        assertEquals("silly", result.getDateName());
+        assertEquals(new BigDecimal("430"), result.value);
+        assertEquals("ABS", result.uncertaintyType);
+        assertEquals(new BigDecimal("51"), result.oneSigma);
+        assertEquals(new BigDecimal("51238"), result.getMeanSquaredWeightedDeviation());
+        assertEquals(new BigDecimal("51238"), result.getInternalTwoSigmaUnct());
+        assertEquals(new BigDecimal("51238"), result.getInternalTwoSigmaUnctWithTracerCalibrationUnct());
+        assertEquals(new BigDecimal("51238"), result.getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct());
+        assertEquals("ave!", result.getExplanation());
+        assertEquals("ave!", result.getComment());
+        assertEquals(true, result.isPreferred());
+
     }
 
-        /**
+    /**
      * Test of compareTo method, of class SampleDateModel.
      */
     @Test
     public void test_CompareTo() {
         System.out.println("Testing SampleDateModel's compareTo(SampleDateModel comparedTo)");
-        SampleDateModel instance0=new SampleDateModel("hello","there","silly",new BigDecimal("430"),"ABS",new BigDecimal("51"));
+        SampleDateModel instance0 = new SampleDateModel("hello", "there", "silly", new BigDecimal("430"), "ABS", new BigDecimal("51"));
         SampleDateModel instance = new SampleDateModel();
-        SampleDateModel instance2=new SampleDateModel("hello","there","silly",new BigDecimal("430"),"ABS",new BigDecimal("51"));
-        
+        SampleDateModel instance2 = new SampleDateModel("hello", "there", "silly", new BigDecimal("430"), "ABS", new BigDecimal("51"));
+
         int result = instance.compareTo(instance0);
-        assertEquals(6,result);
+        assertEquals(6, result);
 
         result = instance2.compareTo(instance0);
-        assertEquals(0,result);
-        
+        assertEquals(0, result);
+
         result = instance2.compareTo(instance);
-        assertEquals(-6,result);
-        
+        assertEquals(-6, result);
+
     }
 
-        /**
+    /**
      * Test of equals method, of class SampleDateModel.
-     */ 
+     */
     @Test
     public void test_Equals() {
         System.out.println("Testing SampleDateModel's equals(SampleDateModel equals)");
-        SampleDateModel instance0=new SampleDateModel("hello","there","silly",new BigDecimal("430"),"ABS",new BigDecimal("51"));
+        SampleDateModel instance0 = new SampleDateModel("hello", "there", "silly", new BigDecimal("430"), "ABS", new BigDecimal("51"));
         SampleDateModel instance = new SampleDateModel();
-        SampleDateModel instance2=new SampleDateModel("hello","there","silly",new BigDecimal("430"),"ABS",new BigDecimal("51"));
+        SampleDateModel instance2 = new SampleDateModel("hello", "there", "silly", new BigDecimal("430"), "ABS", new BigDecimal("51"));
 
-        
         boolean result = instance.equals(instance0);
         assertEquals(false, result);
 
-        result=instance0.equals(instance2);
-        assertEquals(true,result);
+        result = instance0.equals(instance2);
+        assertEquals(true, result);
     }
 
-        /**
+    /**
      * Test of hashCode method, of class SampleDateModel.
      */
     @Test
@@ -179,30 +161,28 @@ public class SampleDateModelTest {
         int result = instance.hashCode();
         assertEquals(0, result);
 
-        
     }
 
-        /**
+    /**
      * Test of toString method, of class SampleDateModel.
      */
     @Test
     public void test_ToString() {
         System.out.println("Testing SampleDateModel's toString()");
         SampleDateModel instance = new SampleDateModel();
-        SampleDateModel instance2=new SampleDateModel("hello","there","silly",new BigDecimal("430"),"ABS",new BigDecimal("51"));
-        
+        SampleDateModel instance2 = new SampleDateModel("hello", "there", "silly", new BigDecimal("430"), "ABS", new BigDecimal("51"));
+
         String expResult = "NONE";
         String result = instance.toString();
-        
-        
+
         assertEquals(expResult, result);
         result = instance2.toString();
-        
-        expResult="hello";
+
+        expResult = "hello";
         assertEquals(expResult, result);
     }
 
-        /**
+    /**
      * Test of getMeanSquaredWeightedDeviation method, of class SampleDateModel.
      */
     @Test
@@ -213,13 +193,13 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getMeanSquaredWeightedDeviation();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setMeanSquaredWeightedDeviation(expResult);
-        result=instance.getMeanSquaredWeightedDeviation();
+        result = instance.getMeanSquaredWeightedDeviation();
         assertEquals(expResult, result);
     }
 
-        /**
+    /**
      * Test of setMeanSquaredWeightedDeviation method, of class SampleDateModel.
      */
     @Test
@@ -230,14 +210,15 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getMeanSquaredWeightedDeviation();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setMeanSquaredWeightedDeviation(expResult);
-        result=instance.getMeanSquaredWeightedDeviation();
+        result = instance.getMeanSquaredWeightedDeviation();
         assertEquals(expResult, result);
     }
-    
-        /**
-     * Test of getInternalTwoSigmaUnctWithTracerCalibrationUnct method, of class SampleDateModel.
+
+    /**
+     * Test of getInternalTwoSigmaUnctWithTracerCalibrationUnct method, of class
+     * SampleDateModel.
      */
     @Test
     public void test_GetInternalTwoSigmaUnctWithTracerCalibrationUnct() {
@@ -247,14 +228,15 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getInternalTwoSigmaUnctWithTracerCalibrationUnct();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setInternalTwoSigmaUnctWithTracerCalibrationUnct(expResult);
-        result=instance.getInternalTwoSigmaUnctWithTracerCalibrationUnct();
+        result = instance.getInternalTwoSigmaUnctWithTracerCalibrationUnct();
         assertEquals(expResult, result);
     }
-    
-        /**
-     * Test of setInternalTwoSigmaUnctWithTracerCalibrationUnct method, of class SampleDateModel.
+
+    /**
+     * Test of setInternalTwoSigmaUnctWithTracerCalibrationUnct method, of class
+     * SampleDateModel.
      */
     @Test
     public void test_SetInternalTwoSigmaUnctWithTracerCalibrationUnct() {
@@ -264,15 +246,16 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getInternalTwoSigmaUnctWithTracerCalibrationUnct();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setInternalTwoSigmaUnctWithTracerCalibrationUnct(expResult);
-        result=instance.getInternalTwoSigmaUnctWithTracerCalibrationUnct();
-        assertEquals(expResult, result);  
+        result = instance.getInternalTwoSigmaUnctWithTracerCalibrationUnct();
+        assertEquals(expResult, result);
     }
-    
-        /**
-     * Test of getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct method, of class SampleDateModel.
-    */
+
+    /**
+     * Test of getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct
+     * method, of class SampleDateModel.
+     */
     @Test
     public void test_GetInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct() {
         System.out.println("Testing SampleDateModel's getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct()");
@@ -281,15 +264,16 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct(expResult);
-        result=instance.getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct();
-        assertEquals(expResult, result);  
-        
+        result = instance.getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct();
+        assertEquals(expResult, result);
+
     }
-    
-        /**
-     * Test of setInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct method, of class SampleDateModel.
+
+    /**
+     * Test of setInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct
+     * method, of class SampleDateModel.
      */
     @Test
     public void test_SetInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct() {
@@ -299,14 +283,14 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct(expResult);
-        result=instance.getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct();
-        assertEquals(expResult, result); 
-        
+        result = instance.getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct();
+        assertEquals(expResult, result);
+
     }
 
-        /**
+    /**
      * Test of getExplanation method, of class SampleDateModel.
      */
     @Test
@@ -317,13 +301,13 @@ public class SampleDateModelTest {
         String result = instance.getExplanation();
         assertEquals(expResult, result);
 
-        expResult="sieg";
+        expResult = "sieg";
         instance.setExplanation(expResult);
-        result=instance.getExplanation();
-        assertEquals(expResult, result);   
-    
+        result = instance.getExplanation();
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of setExplanation method, of class SampleDateModel.
      */
@@ -335,13 +319,13 @@ public class SampleDateModelTest {
         String result = instance.getExplanation();
         assertEquals(expResult, result);
 
-        expResult="sieg";
+        expResult = "sieg";
         instance.setExplanation(expResult);
-        result=instance.getExplanation();
-        assertEquals(expResult, result);   
-       
+        result = instance.getExplanation();
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of getComment method, of class SampleDateModel.
      */
@@ -353,13 +337,13 @@ public class SampleDateModelTest {
         String result = instance.getComment();
         assertEquals(expResult, result);
 
-        expResult="sieg";
+        expResult = "sieg";
         instance.setComment(expResult);
-        result=instance.getComment();
-        assertEquals(expResult, result);   
-       
+        result = instance.getComment();
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of setComment method, of class SampleDateModel.
      */
@@ -371,14 +355,14 @@ public class SampleDateModelTest {
         String result = instance.getComment();
         assertEquals(expResult, result);
 
-        expResult="sieg";
+        expResult = "sieg";
         instance.setComment(expResult);
-        result=instance.getComment();
-        assertEquals(expResult, result);   
-       
+        result = instance.getComment();
+        assertEquals(expResult, result);
+
     }
-    
-        /**
+
+    /**
      * Test of isPreferred method, of class SampleDateModel.
      */
     @Test
@@ -389,12 +373,12 @@ public class SampleDateModelTest {
         boolean result = instance.isPreferred();
         assertEquals(expResult, result);
 
-        expResult=true;
+        expResult = true;
         instance.setPreferred(expResult);
-        result=instance.isPreferred();
+        result = instance.isPreferred();
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of setPreferred method, of class SampleDateModel.
      */
@@ -406,12 +390,12 @@ public class SampleDateModelTest {
         boolean result = instance.isPreferred();
         assertEquals(expResult, result);
 
-        expResult=true;
+        expResult = true;
         instance.setPreferred(expResult);
-        result=instance.isPreferred();
-        assertEquals(expResult, result); 
+        result = instance.isPreferred();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of getInternalTwoSigmaUnct method, of class SampleDateModel.
      */
@@ -423,16 +407,16 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getInternalTwoSigmaUnct();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setInternalTwoSigmaUnct(expResult);
-        result=instance.getInternalTwoSigmaUnct();
-        assertEquals(expResult, result); 
-        
+        result = instance.getInternalTwoSigmaUnct();
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of setInternalTwoSigmaUnct method, of class SampleDateModel.
-    */
+     */
     @Test
     public void test_SetInternalTwoSigmaUnct() {
         System.out.println("Testing SampleDateModel's setInternalTwoSigmaUnct(BigDecimal internalTwoSigmaUnct)");
@@ -441,13 +425,13 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getInternalTwoSigmaUnct();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setInternalTwoSigmaUnct(expResult);
-        result=instance.getInternalTwoSigmaUnct();
-        assertEquals(expResult, result); 
-        
+        result = instance.getInternalTwoSigmaUnct();
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of getIncludedFractionIDsVector method, of class SampleDateModel.
      */
@@ -455,14 +439,14 @@ public class SampleDateModelTest {
     public void test_GetIncludedFractionIDsVector() {
         System.out.println("Testing SampleDateModel's getIncludedFractionIDsVector()");
         SampleDateModel instance = new SampleDateModel();
-        Vector<String> bob=new Vector<>(51);
+        Vector<String> bob = new Vector<>(51);
         bob.add("hello");
         instance.setIncludedFractionIDsVector(bob);
         Vector<String> result = instance.getIncludedFractionIDsVector();
         assertEquals("hello", result.get(0));
 
     }
-    
+
     /**
      * Test of setIncludedFractionIDsVector method, of class SampleDateModel.
      */
@@ -470,15 +454,15 @@ public class SampleDateModelTest {
     public void test_SetIncludedFractionIDsVector() {
         System.out.println("Testing SampleDateModel's setIncludedFractionIDsVector(Vector<String> includedFractionIDsVector)");
         SampleDateModel instance = new SampleDateModel();
-        Vector<String> bob=new Vector<>(51);
+        Vector<String> bob = new Vector<>(51);
         bob.add("hello");
         instance.setIncludedFractionIDsVector(bob);
         Vector<String> result = instance.getIncludedFractionIDsVector();
         assertEquals("hello", result.get(0));
-   
+
     }
 
-        /**
+    /**
      * Test of includesFractionByName method, of class SampleDateModel.
      */
     @Test
@@ -489,17 +473,17 @@ public class SampleDateModelTest {
         boolean expResult = false;
         boolean result = instance.includesFractionByName(fractionID);
         assertEquals(expResult, result);
-        
-        expResult=true;
-        Vector<String> bob=new Vector<>(51);
+
+        expResult = true;
+        Vector<String> bob = new Vector<>(51);
         bob.add("hello");
         instance.setIncludedFractionIDsVector(bob);
-        fractionID="hello";
+        fractionID = "hello";
         result = instance.includesFractionByName(fractionID);
-        assertEquals(expResult, result);    
-    
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of ToggleAliquotFractionByName method, of class SampleDateModel.
      */
@@ -509,19 +493,19 @@ public class SampleDateModelTest {
         System.out.println("Testing SampleDateModel's ToggleAliquotFractionByName(String fractionID)");
         String fractionID = "hello";
         SampleDateModel instance = new SampleDateModel();
-        
-        Vector<String> bob=new Vector<>(51);
+
+        Vector<String> bob = new Vector<>(51);
         bob.add("hello");
-        instance.setIncludedFractionIDsVector(bob);        
-        
-        assertEquals("[hello]",instance.getIncludedFractionIDsVector().toString());
-   
+        instance.setIncludedFractionIDsVector(bob);
+
+        assertEquals("[hello]", instance.getIncludedFractionIDsVector().toString());
+
         instance.ToggleAliquotFractionByName(fractionID);
 
-        assertEquals("[]",instance.getIncludedFractionIDsVector().toString());
-        
+        assertEquals("[]", instance.getIncludedFractionIDsVector().toString());
+
     }
-    
+
     /**
      * Test of ToggleSampleFractionByName method, of class SampleDateModel.
      */
@@ -531,21 +515,22 @@ public class SampleDateModelTest {
         System.out.println("Testing SampleDateModel's ToggleSampleFractionByName(String fractionID)");
         String fractionID = "hello";
         SampleDateModel instance = new SampleDateModel();
-        
-        Vector<String> bob=new Vector<>(51);
+
+        Vector<String> bob = new Vector<>(51);
         bob.add("hello");
-        instance.setIncludedFractionIDsVector(bob);        
-        
-        assertEquals("[hello]",instance.getIncludedFractionIDsVector().toString());
-   
+        instance.setIncludedFractionIDsVector(bob);
+
+        assertEquals("[hello]", instance.getIncludedFractionIDsVector().toString());
+
         instance.ToggleSampleFractionByName(fractionID);
 
-        assertEquals("[]",instance.getIncludedFractionIDsVector().toString());
-        
+        assertEquals("[]", instance.getIncludedFractionIDsVector().toString());
+
     }
-    
+
     /**
-     * Test of getInternalTwoSigmaUnctWithStandardRatioVarUnct method, of class SampleDateModel.
+     * Test of getInternalTwoSigmaUnctWithStandardRatioVarUnct method, of class
+     * SampleDateModel.
      */
     @Test
     public void test_GetInternalTwoSigmaUnctWithStandardRatioVarUnct() {
@@ -555,14 +540,15 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getInternalTwoSigmaUnctWithStandardRatioVarUnct();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setInternalTwoSigmaUnctWithStandardRatioVarUnct(expResult);
-        result=instance.getInternalTwoSigmaUnctWithStandardRatioVarUnct();
-        assertEquals(expResult, result); 
+        result = instance.getInternalTwoSigmaUnctWithStandardRatioVarUnct();
+        assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of setInternalTwoSigmaUnctWithStandardRatioVarUnct method, of class SampleDateModel.
+     * Test of setInternalTwoSigmaUnctWithStandardRatioVarUnct method, of class
+     * SampleDateModel.
      */
     @Test
     public void test_SetInternalTwoSigmaUnctWithStandardRatioVarUnct() {
@@ -572,12 +558,12 @@ public class SampleDateModelTest {
         BigDecimal result = instance.getInternalTwoSigmaUnctWithStandardRatioVarUnct();
         assertEquals(expResult, result);
 
-        expResult=new BigDecimal("51");
+        expResult = new BigDecimal("51");
         instance.setInternalTwoSigmaUnctWithStandardRatioVarUnct(expResult);
-        result=instance.getInternalTwoSigmaUnctWithStandardRatioVarUnct();
-        assertEquals(expResult, result); 
+        result = instance.getInternalTwoSigmaUnctWithStandardRatioVarUnct();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of getMethodName method, of class SampleDateModel.
      */
@@ -589,13 +575,13 @@ public class SampleDateModelTest {
         String result = instance.getMethodName();
         assertEquals(expResult, result);
 
-        expResult="sieg";
+        expResult = "sieg";
         instance.setMethodName(expResult);
-        result=instance.getMethodName();
-        assertEquals(expResult, result);   
-       
+        result = instance.getMethodName();
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of setMethodName method, of class SampleDateModel.
      */
@@ -607,13 +593,13 @@ public class SampleDateModelTest {
         String result = instance.getMethodName();
         assertEquals(expResult, result);
 
-        expResult="sieg";
+        expResult = "sieg";
         instance.setMethodName(expResult);
-        result=instance.getMethodName();
-        assertEquals(expResult, result);   
-       
+        result = instance.getMethodName();
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of showFractionIdWithDateAndUnct method, of class SampleDateModel.
      */
@@ -621,26 +607,24 @@ public class SampleDateModelTest {
     public void test_ShowFractionIdWithDateAndUnct() {
         System.out.println("Testing SampleDateModel's showFractionIdWithDateAndUnct(Fraction fraction, String dateUnit)");
         FractionI fraction = new UPbFraction();
-        
+
         String dateUnit = "";
         SampleDateModel instance = new SampleDateModel();
         String expResult = "NONE";
         String result = instance.showFractionIdWithDateAndUnct(fraction);
-        
-        
-        assertEquals(expResult, result);
-        
-        fraction = new UPbFraction("hello");
-        dateUnit = "hell";
-        expResult="hello";
-        
-        result = instance.showFractionIdWithDateAndUnct(fraction);
-        
+
         assertEquals(expResult, result);
 
-        
+        fraction = new UPbFraction("hello");
+        dateUnit = "hell";
+        expResult = "hello";
+
+        result = instance.showFractionIdWithDateAndUnct(fraction);
+
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of ShowCustomDateNode method, of class SampleDateModel.
      */
@@ -650,18 +634,17 @@ public class SampleDateModelTest {
         SampleDateModel instance = new SampleDateModel();
         String expResult = "date = 0 ± 0/0.00/0.00 Ma 2σ";
         String result = instance.ShowCustomDateNode();
-        
-        assertEquals(expResult, result);
-        
-        instance=new SampleDateModel("hello","there","silly",new BigDecimal("430"),"ABS",new BigDecimal("51"));        
-        result = instance.ShowCustomDateNode();
-        expResult="date = 0.00043 ± 0.00010/0.00/0.00 Ma 2σ";
-        
+
         assertEquals(expResult, result);
 
-        
+        instance = new SampleDateModel("hello", "there", "silly", new BigDecimal("430"), "ABS", new BigDecimal("51"));
+        result = instance.ShowCustomDateNode();
+        expResult = "date = 0.00043 ± 0.00010/0.00/0.00 Ma 2σ";
+
+        assertEquals(expResult, result);
+
     }
-    
+
     /**
      * Test of ShowCustomMSWDwithN method, of class SampleDateModel.
      */
@@ -671,49 +654,49 @@ public class SampleDateModelTest {
         SampleDateModel instance = new SampleDateModel();
         String expResult = "MSWD = 0, n = 0";
         String result = instance.ShowCustomMSWDwithN();
-        
+
         assertEquals(expResult, result);
-        
-        instance=new SampleDateModel("hello","there","silly",new BigDecimal("6666666"),"ABS",new BigDecimal("84984"));  
+
+        instance = new SampleDateModel("hello", "there", "silly", new BigDecimal("6666666"), "ABS", new BigDecimal("84984"));
         instance.setMeanSquaredWeightedDeviation(new BigDecimal("51"));
-        Vector<String> bob=new Vector<>(51);
+        Vector<String> bob = new Vector<>(51);
         bob.add("ave");
         instance.setIncludedFractionIDsVector(bob);
-        
+
         expResult = "MSWD = 51, n = 1";
-        
+
         result = instance.ShowCustomMSWDwithN();
-        
+
         assertEquals(expResult, result);
 
     }
-    
+
     /**
      * Test of ShowCustomMSWD method, of class SampleDateModel.
-    */
+     */
     @Test
     public void test_ShowCustomMSWD() {
         System.out.println("Testing SampleDateModel's ShowCustomMSWD()");
         SampleDateModel instance = new SampleDateModel();
         String expResult = "MSWD = 0";
         String result = instance.ShowCustomMSWD();
-        
+
         assertEquals(expResult, result);
-        
-        instance=new SampleDateModel("hello","there","silly",new BigDecimal("6666666"),"ABS",new BigDecimal("84984"));  
+
+        instance = new SampleDateModel("hello", "there", "silly", new BigDecimal("6666666"), "ABS", new BigDecimal("84984"));
         instance.setMeanSquaredWeightedDeviation(new BigDecimal("51"));
-        Vector<String> bob=new Vector<>(51);
+        Vector<String> bob = new Vector<>(51);
         bob.add("ave");
         instance.setIncludedFractionIDsVector(bob);
-        
+
         expResult = "MSWD = 51";
-        
+
         result = instance.ShowCustomMSWD();
-        
+
         assertEquals(expResult, result);
 
     }
-    
+
     /**
      * Test of ShowCustomN method, of class SampleDateModel.
      */
@@ -723,23 +706,23 @@ public class SampleDateModelTest {
         SampleDateModel instance = new SampleDateModel();
         String expResult = "n = 0";
         String result = instance.ShowCustomN();
-        
+
         assertEquals(expResult, result);
-        
-        instance=new SampleDateModel("hello","there","silly",new BigDecimal("6666666"),"ABS",new BigDecimal("84984"));  
+
+        instance = new SampleDateModel("hello", "there", "silly", new BigDecimal("6666666"), "ABS", new BigDecimal("84984"));
         instance.setMeanSquaredWeightedDeviation(new BigDecimal("51"));
-        Vector<String> bob=new Vector<>(51);
+        Vector<String> bob = new Vector<>(51);
         bob.add("ave");
         instance.setIncludedFractionIDsVector(bob);
-        
+
         expResult = "n = 1";
-        
+
         result = instance.ShowCustomN();
-        
+
         assertEquals(expResult, result);
 
     }
-    
+
     /**
      * Test of ShowCustomFractionCountNode method, of class SampleDateModel.
      */
@@ -749,24 +732,26 @@ public class SampleDateModelTest {
         SampleDateModel instance = new SampleDateModel();
         String expResult = "n = 0";
         String result = instance.ShowCustomFractionCountNode();
-        
+
         assertEquals(expResult, result);
-        
-        instance=new SampleDateModel("hello","there","silly",new BigDecimal("6666666"),"ABS",new BigDecimal("84984"));  
+
+        instance = new SampleDateModel("hello", "there", "silly", new BigDecimal("6666666"), "ABS", new BigDecimal("84984"));
         instance.setMeanSquaredWeightedDeviation(new BigDecimal("51"));
-        Vector<String> bob=new Vector<>(51);
+        Vector<String> bob = new Vector<>(51);
         bob.add("ave");
         instance.setIncludedFractionIDsVector(bob);
-        
+
         expResult = "n = 1";
-        
+
         result = instance.ShowCustomFractionCountNode();
-        
+
         assertEquals(expResult, result);
-        
+
     }
+
     /**
-     * Test of FormatValueAndTwoSigmaABSThreeWaysForPublication method, of class SampleDateModel.
+     * Test of FormatValueAndTwoSigmaABSThreeWaysForPublication method, of class
+     * SampleDateModel.
      */
     @Test
     public void test_FormatValueAndTwoSigmaABSThreeWaysForPublication() {
@@ -777,19 +762,20 @@ public class SampleDateModelTest {
         String expResult = "0 ± 0/0.00/0.00";
         String result = instance.FormatValueAndTwoSigmaABSThreeWaysForPublication(divideByPowerOfTen, uncertaintySigDigits);
         assertEquals(expResult, result);
-        
-        instance=new SampleDateModel("hello","there","silly",new BigDecimal("6666666"),"ABS",new BigDecimal("84984"));  
+
+        instance = new SampleDateModel("hello", "there", "silly", new BigDecimal("6666666"), "ABS", new BigDecimal("84984"));
         instance.setMeanSquaredWeightedDeviation(new BigDecimal("51"));
-        Vector<String> bob=new Vector<>(51);
+        Vector<String> bob = new Vector<>(51);
         bob.add("ave");
         instance.setIncludedFractionIDsVector(bob);
-        
+
         expResult = "6.67 ± 0.17/0.00/0.00";
-        
+
         result = instance.FormatValueAndTwoSigmaABSThreeWaysForPublication(divideByPowerOfTen, uncertaintySigDigits);
-        
-        assertEquals(expResult, result);    }
-    
+
+        assertEquals(expResult, result);
+    }
+
     /**
      * Test of getDateName method, of class SampleDateModel.
      */
@@ -801,12 +787,12 @@ public class SampleDateModelTest {
         String result = instance.getDateName();
         assertEquals(expResult, result);
 
-        expResult="sieg";
+        expResult = "sieg";
         instance.setDateName(expResult);
-        result=instance.getDateName();
-        assertEquals(expResult, result);   
+        result = instance.getDateName();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of setDateName method, of class SampleDateModel.
      */
@@ -818,12 +804,12 @@ public class SampleDateModelTest {
         String result = instance.getDateName();
         assertEquals(expResult, result);
 
-        expResult="sieg";
+        expResult = "sieg";
         instance.setDateName(expResult);
-        result=instance.getDateName();
-        assertEquals(expResult, result);   
+        result = instance.getDateName();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of getAliquot method, of class SampleDateModel.
      */
@@ -835,14 +821,14 @@ public class SampleDateModelTest {
         AliquotInterface result = instance.getAliquot();
         assertEquals(null, result);
 
-        expResult=null;
+        expResult = null;
         instance.setAliquot(expResult);
-        result=instance.getAliquot();
-        assertEquals(expResult, result); 
-        
+        result = instance.getAliquot();
+        assertEquals(expResult, result);
+
     }
-    
-        /**
+
+    /**
      * Test of setAliquot method, of class SampleDateModel.
      */
     @Test
@@ -853,12 +839,12 @@ public class SampleDateModelTest {
         AliquotInterface result = instance.getAliquot();
         assertEquals(null, result);
 
-        expResult=null;
+        expResult = null;
         instance.setAliquot(expResult);
-        result=instance.getAliquot();
-        assertEquals(expResult, result); 
+        result = instance.getAliquot();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of getYorkLineFit method, of class SampleDateModel.
      */
@@ -870,12 +856,12 @@ public class SampleDateModelTest {
         YorkLineFit result = instance.getYorkLineFit();
         assertEquals(null, result);
 
-        expResult=null;
+        expResult = null;
         instance.setYorkLineFit(expResult);
-        result=instance.getYorkLineFit();
-        assertEquals(expResult, result); 
+        result = instance.getYorkLineFit();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of setYorkLineFit method, of class SampleDateModel.
      */
@@ -887,12 +873,12 @@ public class SampleDateModelTest {
         YorkLineFit result = instance.getYorkLineFit();
         assertEquals(null, result);
 
-        expResult=null;
+        expResult = null;
         instance.setYorkLineFit(expResult);
-        result=instance.getYorkLineFit();
-        assertEquals(expResult, result); 
+        result = instance.getYorkLineFit();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of getSample method, of class SampleDateModel.
      */
@@ -904,12 +890,12 @@ public class SampleDateModelTest {
         SampleInterface result = instance.getSample();
         assertEquals(null, result);
 
-        expResult=null;
+        expResult = null;
         instance.setSample(expResult);
-        result=instance.getSample();
-        assertEquals(expResult, result); 
+        result = instance.getSample();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of setSample method, of class SampleDateModel.
      */
@@ -921,12 +907,12 @@ public class SampleDateModelTest {
         SampleInterface result = instance.getSample();
         assertEquals(null, result);
 
-        expResult=null;
+        expResult = null;
         instance.setSample(expResult);
-        result=instance.getSample();
-        assertEquals(expResult, result); 
+        result = instance.getSample();
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of isDisplayedAsGraph method, of class SampleDateModel.
      */
@@ -937,14 +923,14 @@ public class SampleDateModelTest {
         boolean expResult = false;
         boolean result = instance.isDisplayedAsGraph();
         assertEquals(expResult, result);
-        
-        expResult=true;
+
+        expResult = true;
         instance.setDisplayedAsGraph(expResult);
         result = instance.isDisplayedAsGraph();
         assertEquals(expResult, result);
-    
+
     }
-    
+
     /**
      * Test of setDisplayedAsGraph method, of class SampleDateModel.
      */
@@ -955,12 +941,13 @@ public class SampleDateModelTest {
         boolean expResult = false;
         boolean result = instance.isDisplayedAsGraph();
         assertEquals(expResult, result);
-        
-        expResult=true;
+
+        expResult = true;
         instance.setDisplayedAsGraph(expResult);
         result = instance.isDisplayedAsGraph();
         assertEquals(expResult, result);
     }
+
     /**
      * Test of getSampleAnalysisType method, of class SampleDateModel.
      */
@@ -971,13 +958,13 @@ public class SampleDateModelTest {
         SampleAnalysisTypesEnum expResult = SampleAnalysisTypesEnum.COMPILED;
         SampleAnalysisTypesEnum result = instance.getSampleAnalysisType();
         assertEquals(expResult, result);
-        
-        expResult=SampleAnalysisTypesEnum.GENERIC_UPB;
+
+        expResult = SampleAnalysisTypesEnum.GENERIC_UPB;
         instance.setSampleAnalysisType(expResult);
         result = instance.getSampleAnalysisType();
-        assertEquals(expResult, result);    
+        assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of setSampleAnalysisType method, of class SampleDateModel.
      */
@@ -988,22 +975,16 @@ public class SampleDateModelTest {
         SampleAnalysisTypesEnum expResult = SampleAnalysisTypesEnum.COMPILED;
         SampleAnalysisTypesEnum result = instance.getSampleAnalysisType();
         assertEquals(expResult, result);
-        
-        expResult=SampleAnalysisTypesEnum.GENERIC_UPB;
+
+        expResult = SampleAnalysisTypesEnum.GENERIC_UPB;
         instance.setSampleAnalysisType(expResult);
         result = instance.getSampleAnalysisType();
-        assertEquals(expResult, result);    
-    }    
-    
-    
-    
-    
-    
-    
+        assertEquals(expResult, result);
+    }
+
     ////////////////////////
     ////Unfinished Tests////
     //////////////////////// 
-    
     /*
      *
      *
@@ -1047,17 +1028,17 @@ public class SampleDateModelTest {
      *
      *
      *
-     */    
-
+     */
     /**
-     * Integration Test of class SampleDateModel
-     * Testing the writing and reading of a file
+     * Integration Test of class SampleDateModel Testing the writing and reading
+     * of a file
+     *
      * @throws Exception
      */
-    @Test    
+    @Test
     public void testSerialization() throws Exception {
 
-        try{
+        try {
             ValueModel valueModel
                     = new SampleDateModel("WM208_232", "WM208_232",//
                             "r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("123000"));
@@ -1069,24 +1050,24 @@ public class SampleDateModelTest {
             valueModel.serializeXMLObject(testFileName);
             //There's a Schema Problem
             //valueModel.readXMLObject(testFileName, true);
-            
-        }finally{
+
+        } finally {
             cleanFiles();
         }
     }
-    
-     /**
+
+    /**
      * Delete the files created previously
-     * @throws Exception 
+     *
+     * @throws Exception
      */
-    public void cleanFiles() throws Exception
-    {
+    public void cleanFiles() throws Exception {
         File file = new File("SampleDateModelTEST.xml"); //Get the file
-        if(!(file.delete())) //delete
+        if (!(file.delete())) //delete
         {
             //throw exception in case of error
             throw new Exception("Testing File 'SampleDateModelTEST.xml' couldn't be deleted");
         }
-    }        
-      
+    }
+
 }

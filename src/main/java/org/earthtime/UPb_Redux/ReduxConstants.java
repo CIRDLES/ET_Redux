@@ -177,7 +177,8 @@ final public class ReduxConstants {
     /**
      *
      */
-    static public int DEFAULT_MASS_DISPLAY_SCALE = 5;
+    static public int DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE = 5;
+    static public int DEFAULT_MASS_IN_MICRO_GRAMS_DISPLAY_SCALE = 3;
     /**
      *
      */

@@ -54,7 +54,7 @@ public abstract class DialogEditor extends JDialog {
     private final static Font myScienceFont = new Font("Calibri"//Arial"
             /*
              * "Monospaced"
-             */, Font.PLAIN, 13);
+             */, Font.PLAIN, 11);//july 2019 
 
     /**
      * Creates new form DialogEditor

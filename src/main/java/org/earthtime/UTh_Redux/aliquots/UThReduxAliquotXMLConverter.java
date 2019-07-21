@@ -26,28 +26,19 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import java.math.BigDecimal;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.fractions.AnalysisFraction;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.mineralStandardModels.MineralStandardModel;
 import org.earthtime.UPb_Redux.mineralStandardModels.MineralStandardModelXMLConverter;
-import org.earthtime.UPb_Redux.pbBlanks.PbBlank;
-import org.earthtime.UPb_Redux.pbBlanks.PbBlankXMLConverter;
-import org.earthtime.UPb_Redux.tracers.Tracer;
-import org.earthtime.UPb_Redux.tracers.TracerXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.physicalConstants.PhysicalConstants;
-import org.earthtime.physicalConstants.PhysicalConstantsXMLConverter;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModelXMLConverter;
-import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
-import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 
 /**
  *

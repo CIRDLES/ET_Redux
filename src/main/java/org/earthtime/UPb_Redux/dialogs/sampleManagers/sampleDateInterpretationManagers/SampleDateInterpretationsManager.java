@@ -1068,7 +1068,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // this standin aliquot for the whole sample makes weighted means graphs work
         // updated april 2016
         AliquotInterface standInAliquot
-                = sample.generateDefaultAliquot(1, sample.getSampleName(), ReduxLabData.getInstance().getDefaultPhysicalConstantsModel(), sample.isAnalyzed(), sample.getMySESARSampleMetadata());
+                = sample.generateDefaultAliquot(
+                        1, 
+                        sample.getSampleName(), 
+                        ReduxLabData.getInstance().getDefaultPhysicalConstantsModel(), 
+                        sample.isAnalyzed(), sample.getMySESARSampleMetadata(),
+                        sample.getSampleAnalysisType());
 //        standInAliquot.setAliquotName(sample.getSampleName());
 
         ((ReduxAliquotInterface) standInAliquot).setAliquotFractions(sample.getFractions());
