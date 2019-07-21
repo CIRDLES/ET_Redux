@@ -78,6 +78,7 @@ import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.evolution.seaWater.SeawaterModelAssignmentManager;
@@ -373,19 +374,21 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
     /**
      *
+     * @param sampleAnalysisType the value of sampleAnalysisType
      */
-    public void refreshPanel() {
-        preparePanel();
+    public void refreshPanel(String sampleAnalysisType) {
+        preparePanel(sampleAnalysisType);
         reSizeScrollPanes();
     }
 
     /**
+     * @param sampleAnalysisType
      *
      */
-    public void preparePanel() {
+    public void preparePanel(String sampleAnalysisType) {
 
-        int saveVerticalScrollPosition = 0;
-        int saveHorizontalScrollPosition = 0;
+        int saveVerticalScrollPosition;
+        int saveHorizontalScrollPosition;
         try {
             saveVerticalScrollPosition = reportBodyScrollPane.getVerticalScrollBar().getValue();
             saveHorizontalScrollPosition = reportBodyScrollPane.getHorizontalScrollBar().getValue();
@@ -499,16 +502,16 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             showSeawaterAssignmentsButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    SeawaterModelAssignmentManager seawaterModelAssignmentManager 
+                    SeawaterModelAssignmentManager seawaterModelAssignmentManager
                             = new SeawaterModelAssignmentManager(parentFrame, true, sample);
                     seawaterModelAssignmentManager.setVisible(true);
                 }
             });
             if (reportFractions[1][0].contains("UTh")) {
-                upperLeftCorner.add(showSeawaterAssignmentsButton, JLayeredPane.PALETTE_LAYER);
-            } else {
-                showAliquotBars = true;
-            }
+                if (sampleAnalysisType.compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_CARB.getName()) == 0) { 
+                    upperLeftCorner.add(showSeawaterAssignmentsButton, JLayeredPane.PALETTE_LAYER);
+                }
+            } 
 
             reSizeSortButtons();
 

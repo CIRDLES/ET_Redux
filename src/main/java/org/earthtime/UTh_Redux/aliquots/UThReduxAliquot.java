@@ -166,11 +166,6 @@ public class UThReduxAliquot implements //
         this.laboratoryName = ReduxLabData.getInstance().getLabName();
         this.analystName = ReduxLabData.getInstance().getAnalystName();
 
-//        this.automaticDataUpdateMode = false;
-//
-//        this.containingSampleDataFolder = null;
-//
-//        this.mySESARSampleMetadata = mySESARSampleMetadata;
         this.myReduxLabData = ReduxLabData.getInstance();
 
         this.sampleAnalysisType = sampleAnalysisType;

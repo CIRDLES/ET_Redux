@@ -111,10 +111,10 @@ public class TabbedReportViews extends JTabbedPane {
      */
     public void refreshTabs() {
         if (sample != null) {
-            ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).refreshPanel();
+            ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).refreshPanel(sample.getSampleAnalysisType());
             this.setTitleAt(0, "Active Fractions (" + Integer.toString(((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).getReportFractions().length - ReportSettingsInterface.FRACTION_DATA_START_ROW) + ")");
 
-            ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).refreshPanel();
+            ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).refreshPanel(sample.getSampleAnalysisType());
             this.setTitleAt(1, "Rejected Fractions (" + Integer.toString(((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).getReportFractions().length - ReportSettingsInterface.FRACTION_DATA_START_ROW) + ")");
         }
     }
