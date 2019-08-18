@@ -52,7 +52,7 @@ public class ReportSpecificationsUTh_Carb extends ReportSpecificationsAbstract {
             "", "false", "false", "2", "true", "Date BP (detrital Th-corr.)", "false", "false"
         },
         {"", "Open-System", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateOpenSys.getName(), "ABS",
-            "", "false", "false", "2", "true", "", "false", "false"
+            "FN-8", "false", "false", "2", "true", "", "false", "false"
         },
         //
         {"uncorrected", "delta234U", "initial", "", "getAnalysisMeasure", UThAnalysisMeasures.delta234Ui.getName(), "ABS",
@@ -210,5 +210,10 @@ public class ReportSpecificationsUTh_Carb extends ReportSpecificationsAbstract {
                 "Uncorrected, closed-system date calculated using the decay constants <lambda230>,\n<lambda234>, and <lambda238>.\nDates reported as Before Present (BP),"
                 + " where Present is the year 1950 CE.,\nand do not include uncertainties associated with decay constants.");
 
+        reportTableFootnotes.put(//
+                "FN-8", //
+                "Open system date calculated using the algorithm of Thompson (2003), with a production <234lossgain> of 234U\n"
+                + "of <pctLoss>%"
+                + " and the 230Th <230lossgain> is calculated from relative alpha decay energies.");
     }
 }
