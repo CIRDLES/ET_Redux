@@ -1,8 +1,3 @@
-```diff
-- Announcement: 
--     Jim Bowring is on sabbatical for 2018-2019 (Aug - Aug), focussing on ET_Redux and Squid3.  
--     Financial as well as intellectual contributions welcome!
-```
 
 URGENT 2018 - ET_Redux will not YET run on Java 1.9 or higher - find Java 1.8 [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
 ==
