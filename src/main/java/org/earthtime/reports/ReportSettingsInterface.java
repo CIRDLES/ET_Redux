@@ -973,6 +973,21 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                         long dateOfAnalysisMS = ((UThFraction) fractions.get(0)).getDateTimeMillisecondsOfAnalysis();
                         footNote = footNote.replace("<dateOfAnalysis>", makeFormattedDate(dateOfAnalysisMS));
                     }
+                    // Aug 2019
+                    BigDecimal pctLoss = ((UThFraction) fractions.get(0)).getPctLoss().getValue();
+                    // calculate constants f234 and f230 
+                    double f234 = 1.0 - pctLoss.doubleValue() / 100.0;
+                    double f230 = ((f234 - 1.0) * (4.754 * 234 / 4.184 / 230.0) + 1.0 + f234) / 2.0;
+
+                    if (footNote.contains("<pctLoss>")) {
+                        footNote = footNote.replace("<pctLoss>", pctLoss.toPlainString());
+                    }
+                    if (footNote.contains("<234lossgain>")) {
+                        footNote = footNote.replace("<234lossgain>", f234 < 1.0 ? "loss" : "gain");
+                    }
+                    if (footNote.contains("<230lossgain>")) {
+                        footNote = footNote.replace("<230lossgain>", f230 < 1.0 ? "loss" : "gain");
+                    }
 
                 }
 

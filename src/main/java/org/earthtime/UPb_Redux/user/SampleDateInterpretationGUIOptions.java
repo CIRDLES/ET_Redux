@@ -132,7 +132,7 @@ public class SampleDateInterpretationGUIOptions
         initializeUSeriesIsochronOptions();
     }
 
-    private void initializeUSeriesIsochronOptions(){
+    private void initializeUSeriesIsochronOptions() {
         uSeriesIsochronOptions = new HashMap<>();
 
         uSeriesIsochronOptions.put("showEquiline", "true");
@@ -143,7 +143,7 @@ public class SampleDateInterpretationGUIOptions
         uSeriesIsochronOptions.put("showRegressionUnct", "false");
         uSeriesIsochronOptions.put("showIsochrons", "true");
     }
-    
+
     private void initializeHeatMapOptions() {
         //heatMapOptions; see HeatMap class
         heatMapOptions = new HashMap<>();
@@ -163,7 +163,7 @@ public class SampleDateInterpretationGUIOptions
         probabilityChartOptions.put("chosenDateName", RadDates.age207_206r.getName());
         probabilityChartOptions.put("correctedForPbc", "false");
         probabilityChartOptions.put("showHistogram", "true");
-        
+
     }
 
     private Map<String, String> CreateAliquotOptionsMap(String aliquotName, int aliquotNumber) {

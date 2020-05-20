@@ -265,15 +265,14 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
                                 myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                                         .setOneSigma(oneSigmaAbs);
                             } else {
-                                // column 15 is ar232Th_238Ufc * 10^5 ACTIVITY RATIO
+                                // column 15 is ar232Th_238Ufc ACTIVITY RATIO
                                 ratioName = UThAnalysisMeasures.ar232Th_238Ufc.getName();
                                 myFraction.getLegacyActivityRatioByName(ratioName)//
-                                        .setValue(readDelimitedTextCell(myFractionData.get(15)).//
-                                                movePointLeft(5));
+                                        .setValue(readDelimitedTextCell(myFractionData.get(15)));
 
-                                // column 16 is ar232Th_238Ufc * 10^5 uncertainty ACTIVITY RATIO
+                                // column 16 is ar232Th_238Ufc uncertainty ACTIVITY RATIO
                                 // convert 2-sigma to 1-sigma
-                                oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).movePointLeft(5).
+                                oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).
                                         divide(new BigDecimal(2.0));
                                 myFraction.getLegacyActivityRatioByName(ratioName)//
                                         .setOneSigma(oneSigmaAbs);
