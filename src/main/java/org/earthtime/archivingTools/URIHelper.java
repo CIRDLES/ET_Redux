@@ -33,6 +33,7 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JOptionPane;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -62,6 +63,45 @@ public class URIHelper {
      * Creates a new instance of URIHelper
      */
     public URIHelper() {
+    }
+
+    /**
+     *
+     * @param fileURI
+     * @return
+     */
+    public static InputStream getInputStreamFromHttpsURI(String fileURI) {
+        URL url;
+        HttpsURLConnection urlConn = null;
+
+        InputStream retval = null;
+        try {
+
+            url = new URL(fileURI);
+
+            urlConn = (HttpsURLConnection) url.openConnection();
+
+            urlConn.setDoInput(true);
+            urlConn.setUseCaches(false);
+            // Feb 2021 started throwing 403 so used advice from
+            // https://stackoverflow.com/questions/13670692/403-forbidden-with-java-but-not-web-browser
+            urlConn.setRequestProperty(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+
+            // july 2019
+            urlConn.setConnectTimeout(10000);
+            urlConn.setReadTimeout(10000);
+
+            retval = urlConn.getInputStream();
+
+        } catch (IOException iOException) {
+//            JOptionPane.showMessageDialog(null,
+//                    new String[]{"Error reaching server: "//
+//                        + iOException.getMessage()});
+        }
+
+        return retval;
     }
 
     /**
@@ -137,7 +177,13 @@ public class URIHelper {
         Reader inReader = null;
 
         try {
-            if (filename.startsWith("http")) {
+            if (filename.startsWith("https")) {
+                try {
+                    inReader = new InputStreamReader(getInputStreamFromHttpsURI(filename));
+                    reader = new BufferedReader(inReader);
+                } catch (Exception e) {
+                }
+            } else if (filename.startsWith("http")) {
                 try {
                     inReader = new InputStreamReader(getInputStreamFromURI(filename));
                     reader = new BufferedReader(inReader);

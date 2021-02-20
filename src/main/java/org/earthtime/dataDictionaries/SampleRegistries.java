@@ -35,7 +35,7 @@ public enum SampleRegistries {
     /**
      *
      */
-    GeochronID( "GeochronID", "GCH", "http://www.geochron.org/igsnexists.php?igsn=");//    "http://www.geochronid.org/display.php?geochronid=" ),
+    GeochronID( "GeochronID", "GCH", "https://www.geochron.org/igsnexists.php?igsn=");//    "http://www.geochronid.org/display.php?geochronid=" ),
     
     
     //EARTHTIME_ID( "EARTHTIME-ID", "ERT", "" );

@@ -44,13 +44,13 @@ public class SampleRegistriesTest {
      */
     @Test
     public void test_constructor_0(){
-	System.out.println("Testing SampleRegistries's enumerations and getters.");
+	System.out.println("Testing SampleRegistries' enumerations and getters.");
         //Tests if values are correct for all enumerations, and tests the getters as well. You cannot instantiate new inumerations.
         
         SampleRegistries ave=SampleRegistries.GeochronID;
         assertEquals("GeochronID",ave.getName());
         assertEquals("GCH",ave.getCode());
-        assertEquals("http://www.geochron.org/igsnexists.php?igsn=",ave.getConnectionString());
+        assertEquals("https://www.geochron.org/igsnexists.php?igsn=",ave.getConnectionString());
         
         ave=SampleRegistries.SESAR;
         assertEquals("SESAR",ave.getName());
