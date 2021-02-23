@@ -3803,7 +3803,7 @@ private void reportResultsTableAsPDF_menuItemActionPerformed(java.awt.event.Acti
 }//GEN-LAST:event_reportResultsTableAsPDF_menuItemActionPerformed
 
 private void visitGeochronActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitGeochronActionPerformed
-    BrowserControl.displayURL("http://www.geochron.org/");
+    BrowserControl.displayURL("https://www.geochron.org/");
 }//GEN-LAST:event_visitGeochronActionPerformed
 
 private void newSampleCompilation_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newSampleCompilation_menuItemActionPerformed

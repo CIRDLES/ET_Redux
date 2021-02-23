@@ -34,7 +34,7 @@ public class GeochronRetrievalUtility {
 
     /**
      *
-     * http://www.geochron.org/post_to_search_service.html
+     * https://www.geochron.org/post_to_search_service.html
      *
      * @param sample
      * @param username
@@ -81,7 +81,7 @@ public class GeochronRetrievalUtility {
 
         String downloadURL
                 = 
-                "http://www.geochron.org/getxml.php?igsn="//
+                "https://www.geochron.org/getxml.php?igsn="//
                 + aliquotIGSN.toUpperCase().trim()//
                 + "&username="//
                 + userName//

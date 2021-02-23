@@ -110,7 +110,7 @@ public class GeochronUploaderUtility {
         InputStream response = null;
         try {
             response = ClientHttpRequest.post(//
-                    new URL("http://www.geochron.org/redux_service.php"),//
+                    new URL("https://www.geochron.org/redux_service.php"),//
                     "filetoupload",
                     uploadFile);
         } catch (IOException iOException) {

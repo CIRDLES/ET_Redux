@@ -48,7 +48,7 @@ public final class GeochronUploadImagesHelper {
         InputStream response = null;
         try {
             response = ClientHttpRequest.post(//
-                    new URL( "http://www.geochron.org/imageservice.php" ),//
+                    new URL( "https://www.geochron.org/imageservice.php" ),//
                     "username",
                     username,
                     "password",
