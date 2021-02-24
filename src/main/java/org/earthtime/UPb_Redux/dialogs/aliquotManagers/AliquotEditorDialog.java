@@ -904,7 +904,7 @@ public class AliquotEditorDialog extends DialogEditor {
 
         // read in the remote transform and save locally
         String tempXSLTcontents = URIHelper.getTextFromURI(
-                "http://www.geochron.org/upbgeochron.xslt");
+                "https://www.geochron.org/upbgeochron.xslt");
 
         // write this to a file
         String tempXSLT = "TempTransformer.xslt";
@@ -948,7 +948,7 @@ public class AliquotEditorDialog extends DialogEditor {
 
         content
                 = //
-                "<html><head>" + "<link rel=\"stylesheet\" type = \"text/css\" href = \"http://www.geochron.org/geo.css\"/>" + "</head>" //
+                "<html><head>" + "<link rel=\"stylesheet\" type = \"text/css\" href = \"https://www.geochron.org/geo.css\"/>" + "</head>" //
                 + content//
                 + "</html>";
 
@@ -1823,7 +1823,7 @@ public class AliquotEditorDialog extends DialogEditor {
 }//GEN-LAST:event_validateGeoPassID_buttonActionPerformed
 
     private void visitGeochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitGeochron_buttonActionPerformed
-        BrowserControl.displayURL("http://www.geochron.org/");
+        BrowserControl.displayURL("https://www.geochron.org/");
 }//GEN-LAST:event_visitGeochron_buttonActionPerformed
 
     private void saveAndUploadAliquotToGeochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndUploadAliquotToGeochron_buttonActionPerformed
@@ -4650,7 +4650,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
     /**
      *
-     * http://www.geochron.org/post_to_redux_service.html
+     * https://www.geochron.org/post_to_redux_service.html
      */
     public void uploadAliquotToGeochronZip() throws ETException {
 
@@ -5094,7 +5094,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();
 
         String connectionString
-                = "http://www.geochron.org/getxml.php?sampleigsn="//
+                = "https://www.geochron.org/getxml.php?sampleigsn="//
                 + aliquot.getSampleIGSN() //
                 + "&aliquotname=" //
                 + aliquot.getAliquotName()//
@@ -5124,7 +5124,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         String downloadURL
                 = //
-                "http://www.geochron.org/getxml.php?sampleigsn="//
+                "https://www.geochron.org/getxml.php?sampleigsn="//
                 + getMyAliquot().getSampleIGSN() //
                 + "&aliquotname=" //
                 + getMyAliquot().getAliquotName()//

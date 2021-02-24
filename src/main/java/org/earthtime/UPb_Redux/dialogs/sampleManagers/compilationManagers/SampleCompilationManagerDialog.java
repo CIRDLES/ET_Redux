@@ -628,7 +628,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 }//GEN-LAST:event_validateGeochronCredentials_buttonActionPerformed
 
     private void visitGeochron_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitGeochron_buttonActionPerformed
-        BrowserControl.displayURL("http://www.geochron.org/");
+        BrowserControl.displayURL("https://www.geochron.org/");
 }//GEN-LAST:event_visitGeochron_buttonActionPerformed
 
     private void sourceGeochron_jRadioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sourceGeochron_jRadioButtonActionPerformed
