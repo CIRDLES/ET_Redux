@@ -1029,7 +1029,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         // set properties of text boxes
         // top panel
-        fractionID_text.setDocument(new UnDoAbleDocument(fractionID_text, (editablePb && editableU)));
+        fractionID_text.setDocument(new UnDoAbleDocument(fractionID_text, (false)));
 
         fractionIsZircon_CheckBox.setEnabled(false);//april 2012 ! isCompiled() );
         fractionIsZircon_CheckBox.addActionListener(new ActionIsZirconListener(myFraction));
