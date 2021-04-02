@@ -37,9 +37,14 @@ public interface ReduxAliquotInterface {
     public Vector<ETFractionInterface> getAliquotFractions();
 
     public default Vector<ETFractionInterface> getAliquotFractionsSorted() {
-        if (getAliquotFractions() != null) {
-            Collections.sort(getAliquotFractions(), ETFractionInterface.FRACTION_ID_ORDER);
-        }
+        Vector<ETFractionInterface> myAliquotFractions = new Vector<>();
+
+        getAliquotFractions().stream().forEach((f) -> {
+            myAliquotFractions.add(f);
+        });
+
+        Collections.sort(myAliquotFractions, ETFractionInterface.FRACTION_ID_ORDER);
+        setAliquotFractions(myAliquotFractions);
         return getAliquotFractions();
     }
 
@@ -102,10 +107,10 @@ public interface ReduxAliquotInterface {
         });
 
         Vector<String> retVal = new Vector<>();
-        for (int i = 0; i < dateOrderedFractions.size(); i ++){
+        for (int i = 0; i < dateOrderedFractions.size(); i++) {
             retVal.add(dateOrderedFractions.get(i).getFractionID());
         }
-        
+
         return retVal;
     }
 
@@ -164,6 +169,6 @@ public interface ReduxAliquotInterface {
      * @return
      */
     public AnalysisImageInterface getAnalysisImageByType(AnalysisImageTypes imageType);
-    
+
     public String serializeXMLObject();
 }

@@ -721,8 +721,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         // populate rows
         Vector<ETFractionInterface> fractionsFromAliquot = ((UPbReduxAliquot) aliquot).getAliquotFractionsSorted();
         for (int row = 0; row < fractionsFromAliquot.size(); row++) {
-            ETFractionInterface tempFrac = ((UPbReduxAliquot) aliquot).getAliquotFractions().get(row);
-            int max = ((UPbReduxAliquot) aliquot).getAliquotFractions().size();
+            ETFractionInterface tempFrac = fractionsFromAliquot.get(row);
+            int max = fractionsFromAliquot.size();
             addFractionRow(aliquot, tempFrac, row, max);
         }
         System.out.println();
