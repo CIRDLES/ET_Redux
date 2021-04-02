@@ -1,9 +1,12 @@
 
-URGENT 2018 - ET_Redux will not YET run on Java 1.9 or higher - find Java 1.8 [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
-==
-Note: If you have Java 1.8 as well as more recent versions, 
-1) write a text file named ".java-version" (no extension) containing only "1.8" (no quotes) and save it into the same folder as you have saved the ET_Redux .jar file, and 
-2) open a terminal window and change directory (CD) to the same folder and then execute java -jar [ET_Redux version].jar
+**Note:**
+We encourage you to download
+and evaluate the latest release, the ".jar" file found <a href="https://github.com/CIRDLES/ET_Redux/releases" target="_blank">here</a>.  
+ET_Redux requires Oracle's <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html" target="_blank">Java 1.8</a>.  Java 1.9 and 1.10 are no longer supported and Java 1.11 through 1.17 involve major architectural changes that we have elected to avoid until 2024-2025.  You can read [here](https://en.wikipedia.org/wiki/Java_version_history) about the community's plans for Java.
+
+**UPDATE JAN 2021**
+[Liberica OpenJDK 8](https://bell-sw.com/pages/downloads/#/java-8-lts) also works: be sure to download the "full jre" or "full jdk".
+
 
 ET_Redux
 ========
