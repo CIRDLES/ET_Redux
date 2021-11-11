@@ -88,7 +88,7 @@ public class ETRedux {
 
         if (MAC_OS_X) {
             //http://www.developer.com/java/other/article.php/1577161
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("apple.laf.useScreenMenuBar", "false");
         }
 
         // removed feb 2014 to support linux

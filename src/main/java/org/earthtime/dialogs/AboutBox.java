@@ -142,7 +142,7 @@ public class AboutBox extends DialogEditor {
         jLabel4.setFont(new java.awt.Font("Helvetica", 1, 12)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("<html> Copyright 2006-2017 James F. Bowring and www.Earth-Time.org<br> <br>    Licensed under the Apache License, Version 2.0 (the \"License\");<br>    you may not use this file except in compliance with the License.<br>    You may obtain a copy of the License at<br> <br>        <a href=\"http://www.apache.org/licenses/LICENSE-2.0\" http://www.apache.org/licenses/LICENSE-2.0 </a><br> <br>    Unless required by applicable law or agreed to in writing, software<br>    distributed under the License is distributed on an \"AS IS\" BASIS,<br>    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,<br>    either express or implied.<br> <br>    See the License for the specific language governing permissions and<br>    limitations under the License. </html>");
+        jLabel4.setText("<html> Copyright 2006-2022 James F. Bowring and www.Earth-Time.org<br> <br>    Licensed under the Apache License, Version 2.0 (the \"License\");<br>    you may not use this file except in compliance with the License.<br>    You may obtain a copy of the License at<br> <br>        <a href=\"http://www.apache.org/licenses/LICENSE-2.0\" http://www.apache.org/licenses/LICENSE-2.0 </a><br> <br>    Unless required by applicable law or agreed to in writing, software<br>    distributed under the License is distributed on an \"AS IS\" BASIS,<br>    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,<br>    either express or implied.<br> <br>    See the License for the specific language governing permissions and<br>    limitations under the License. </html>");
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 208, 415, 225));
 
         releaseDate_text.setFont(new java.awt.Font("Helvetica", 3, 14)); // NOI18N
@@ -156,7 +156,7 @@ public class AboutBox extends DialogEditor {
         jLabel1.setFont(new java.awt.Font("Helvetica", 1, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("<html>Funding: <br><br>Development of ET_Redux is currently supported by NSF Award #0930223: Collaborative Research: Analytical Techniques and Software: Development of Cyber Infrastructure to Support Laser-Ablation ICP Mass Spectrometry  <br><br>Development is also supported by the College of Charleston Department of Computer Science through its Cyber Infrastructure Research and Development Lab for the Earth Sciences (CIRDLES).</html>");
+        jLabel1.setText("<html>Funding: <br><br>Development of ET_Redux is currently supported by NSF Award #0930223: Collaborative Research: Analytical Techniques and Software: Development of Cyber Infrastructure to Support Laser-Ablation ICP Mass Spectrometry  <br><br>Development is also supported by the College of Charleston Department of Computer Science through its Cyber Infrastructure Research and Development Lab for the Earth Sciences (CIRDLES.org).</html>");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(41, 439, 359, -1));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());

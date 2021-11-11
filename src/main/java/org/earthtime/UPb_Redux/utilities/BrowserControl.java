@@ -21,6 +21,8 @@
 package org.earthtime.UPb_Redux.utilities;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  *
@@ -28,34 +30,33 @@ import java.io.IOException;
  *
  *
  * A simple, static class to display a URL in the system browser.
-
-
  *
- * Under Unix, the system browser is hard-coded to be 'netscape'.
- * Netscape must be in your PATH for this to work.  This has been
- * tested with the following platforms: AIX, HP-UX and Solaris.
-
-
  *
- * Under Windows, this will bring up the default browser under windows,
- * usually either Netscape or Microsoft IE.  The default browser is
- * determined by the OS.  This has been tested under Windows 95/98/NT.
-
-
+ *
+ * Under Unix, the system browser is hard-coded to be 'netscape'. Netscape must
+ * be in your PATH for this to work. This has been tested with the following
+ * platforms: AIX, HP-UX and Solaris.
+ *
+ *
+ *
+ * Under Windows, this will bring up the default browser under windows, usually
+ * either Netscape or Microsoft IE. The default browser is determined by the OS.
+ * This has been tested under Windows 95/98/NT.
+ *
+ *
  *
  * Examples:
-
-
  *
-BrowserControl.displayURL("http://www.javaworld.com")
  *
-BrowserControl.displayURL("file://c:\\docs\\index.html")
  *
-BrowserContorl.displayURL("file:///user/joe/index.html");
+ * BrowserControl.displayURL("http://www.javaworld.com")
  *
-
- * Note - you must include the url type -- either "http://" or
- * "file://".
+ * BrowserControl.displayURL("file://c:\\docs\\index.html")
+ *
+ * BrowserContorl.displayURL("file:///user/joe/index.html");
+ *
+ *
+ * Note - you must include the url type -- either "http://" or "file://".
  */
 public class BrowserControl {
     // Used to identify the windows platform.
@@ -72,7 +73,7 @@ public class BrowserControl {
     private static final String MAC_ID = "mac os x";
 
     /**
-     * 
+     *
      * @param url
      */
     public static void displayURL(String url) {
@@ -107,8 +108,8 @@ public class BrowserControl {
     }
 
     /**
-     * Try to determine whether this application is running under Windows
-     * or some other platform by examing the "os.name" property.
+     * Try to determine whether this application is running under Windows or
+     * some other platform by examing the "os.name" property.
      *
      * @return true if this application is running under a Windows OS
      */
@@ -123,7 +124,7 @@ public class BrowserControl {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public static boolean isMacOS() {
@@ -138,9 +139,18 @@ public class BrowserControl {
 
     /**
      * Simple example.
-     * @param args 
+     *
+     * @param args
      */
     public static void main(String[] args) {
         displayURL("http://www.javaworld.com");
+    }
+
+    public static String urlEncode(String text) {
+        try {
+            return URLEncoder.encode(text, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

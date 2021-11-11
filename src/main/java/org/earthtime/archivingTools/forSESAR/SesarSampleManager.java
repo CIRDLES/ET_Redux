@@ -337,7 +337,7 @@ public class SesarSampleManager extends DialogEditor {
         getContentPane().setLayout(null);
 
         buttonBar_panel.setBackground(new java.awt.Color(235, 255, 255));
-        buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        buttonBar_panel.setBorder(javax.swing.BorderFactory.createLineBorder(null));
         buttonBar_panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         close_button.setBackground(new java.awt.Color(204, 204, 204));
@@ -357,7 +357,7 @@ public class SesarSampleManager extends DialogEditor {
         buttonBar_panel.setBounds(0, 300, 450, 28);
 
         sesarSampleDetailsLayeredPane.setBackground(new java.awt.Color(255, 255, 255));
-        sesarSampleDetailsLayeredPane.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        sesarSampleDetailsLayeredPane.setBorder(javax.swing.BorderFactory.createLineBorder(null));
         sesarSampleDetailsLayeredPane.setOpaque(true);
         getContentPane().add(sesarSampleDetailsLayeredPane);
         sesarSampleDetailsLayeredPane.setBounds(0, 0, 450, 300);

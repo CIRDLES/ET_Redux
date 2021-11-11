@@ -152,8 +152,6 @@ public class SampleMetaData implements XMLSerializationI {
 
         customizeXstream(xstream);
 
-        // http://x-stream.github.io/security.html
-        XStream.setupDefaultSecurity(xstream);
         // clear out existing permissions and set own ones
         xstream.addPermission(NoTypePermission.NONE);
         // allow some basics
