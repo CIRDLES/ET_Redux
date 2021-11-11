@@ -111,7 +111,6 @@ import org.earthtime.UPb_Redux.utilities.AnnouncementPane;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
-import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
 import org.earthtime.plots.evolution.TopsoilEvolutionPlot;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
@@ -352,7 +351,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         MAC_OS_X = lcOSName.startsWith("mac os x");
 
         if (MAC_OS_X) {
-            new MacOSAboutHandler(this);
+//            new MacOSAboutHandler(this);
         }
 
         /**
