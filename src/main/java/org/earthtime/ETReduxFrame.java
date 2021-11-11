@@ -109,6 +109,7 @@ import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromLAICPMS
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.AnnouncementPane;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
+import static org.earthtime.UPb_Redux.utilities.BrowserControl.urlEncode;
 import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.plots.evolution.TopsoilEvolutionPlot;
@@ -405,10 +406,16 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 visitCIRDLESbutton.setBounds(FRAME_WIDTH / 2 - 175, 130, 350, 25);
                 visitCIRDLESbutton.addActionListener(new ActionListenerForGotoCirdles());
                 announcementPane.add(visitCIRDLESbutton);
+                
+                JButton gitubIssuebutton = new ET_JButton("Create an Issue at GitHub.com");
+                gitubIssuebutton.setFont(ReduxConstants.sansSerif_12_Bold);
+                gitubIssuebutton.setBounds(FRAME_WIDTH / 2 - 175, 160, 350, 25);
+                gitubIssuebutton.addActionListener(new ActionListenerForCreateIssueAtGithub());
+                announcementPane.add(gitubIssuebutton);
 
                 JTextArea announce = new JTextArea(//
                         "ANNOUNCEMENT:         We are looking forward to a productive 2016. "//
-                        + "ET_Redux, for EARTHTIME Redux, will complete LA-CIP MS functionality for Laserchronbin preparation for additional isotope systems, such as U-series.  "//
+                        + "ET_Redux, for EARTHTIME Redux, will complete LA-CIP MS functionality for Laserchron in preparation for additional isotope systems, such as U-series.  "//
                         + "We are moving the project to a GitHub repository in the near future to make collaboration easier and more transparent.  "
                         + "We are seeking a new logo for ET_Redux and invite your submissions.");
                 announce.setFont(ReduxConstants.sansSerif_12_Bold);
@@ -459,6 +466,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         @Override
         public void actionPerformed(ActionEvent e) {
             BrowserControl.displayURL("https://github.com/CIRDLES/ET_Redux");// 25 Mar 2015 updated https://cirdles.org");
+        }
+    }
+    
+    private static class ActionListenerForCreateIssueAtGithub implements ActionListener {
+
+        public ActionListenerForCreateIssueAtGithub() {
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            contributeIssueOnGitHubAction();
         }
     }
 
@@ -1906,6 +1924,20 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         ExcelResultsTable.produceExcelResultsTable(//
                 theSample.getSampleName(), reportFractions, isNumeric);
     }
+    
+    public static void contributeIssueOnGitHubAction() {
+        String version = "ET_Redux Version: " + ETRedux.VERSION;
+        String javaVersion = "Java Version: " + System.getProperties().getProperty("java.version");
+        String operatingSystem = "OS: " + System.getProperties().getProperty("os.name") + " " + System.getProperties().getProperty("os.version");
+
+        StringBuilder issueBody = new StringBuilder();
+        issueBody.append(urlEncode(version + "\n"));
+        issueBody.append(urlEncode(javaVersion + "\n"));
+        issueBody.append(urlEncode(operatingSystem + "\n"));
+        issueBody.append(urlEncode("\nIssue details:\n"));
+
+        BrowserControl.displayURL("https://github.com/CIRDLES/ET_Redux/issues/new?body=" + issueBody);
+    }
 
     /**
      *
@@ -2160,6 +2192,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         changeLogMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
         credits_menuItem = new javax.swing.JMenuItem();
+        createGithubIssue = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EARTHTIME Redux");
@@ -2177,7 +2210,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
 
         buttonBar_panel.setBackground(new java.awt.Color(235, 255, 255));
-        buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        buttonBar_panel.setBorder(javax.swing.BorderFactory.createLineBorder(null));
         buttonBar_panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         saveAndQuit_button.setBackground(new java.awt.Color(204, 204, 204));
@@ -2382,12 +2415,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         project_menu.setText("Project");
         project_menu.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
-                project_menuMenuSelected(evt);
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
             public void menuDeselected(javax.swing.event.MenuEvent evt) {
             }
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                project_menuMenuSelected(evt);
             }
         });
 
@@ -2580,13 +2613,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         sampleFileMenu.setToolTipText("UPb Redux Sample files are saved as [sample name].redux.");
         sampleFileMenu.setActionCommand("Redux File");
         sampleFileMenu.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
-                sampleFileMenuMenuSelected(evt);
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
             public void menuDeselected(javax.swing.event.MenuEvent evt) {
                 sampleFileMenuMenuDeselected(evt);
             }
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                sampleFileMenuMenuSelected(evt);
             }
         });
         sampleFileMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -2783,12 +2816,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         labDataMenu.setText("Lab Data");
         labDataMenu.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
             public void menuDeselected(javax.swing.event.MenuEvent evt) {
                 labDataMenuMenuDeselected(evt);
             }
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
             }
         });
 
@@ -2900,12 +2933,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         reportMenu.setText("Reports");
         reportMenu.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
             public void menuDeselected(javax.swing.event.MenuEvent evt) {
                 reportMenuMenuDeselected(evt);
             }
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
             }
         });
 
@@ -3030,12 +3063,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         referencesMenu.setText("References");
         referencesMenu.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
             public void menuDeselected(javax.swing.event.MenuEvent evt) {
                 referencesMenuMenuDeselected(evt);
             }
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
             }
         });
 
@@ -3085,12 +3118,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         earthTimeWebSiteMenu.setText("Web Resources");
         earthTimeWebSiteMenu.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
             public void menuDeselected(javax.swing.event.MenuEvent evt) {
                 earthTimeWebSiteMenuMenuDeselected(evt);
             }
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
             }
         });
 
@@ -3221,18 +3254,18 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         mainMenuBar.add(toolsMenu);
 
         helpMenu.setText("Help");
-        helpMenu.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                helpMenuMouseClicked(evt);
-            }
-        });
         helpMenu.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
             public void menuDeselected(javax.swing.event.MenuEvent evt) {
                 helpMenuMenuDeselected(evt);
             }
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+            }
+        });
+        helpMenu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                helpMenuMouseClicked(evt);
             }
         });
 
@@ -3268,6 +3301,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         helpMenu.add(credits_menuItem);
+
+        createGithubIssue.setText("Create Github Issue");
+        createGithubIssue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createGithubIssueActionPerformed(evt);
+            }
+        });
+        helpMenu.add(createGithubIssue);
 
         mainMenuBar.add(helpMenu);
 
@@ -4499,6 +4540,10 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void createGithubIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createGithubIssueActionPerformed
+        contributeIssueOnGitHubAction();
+    }//GEN-LAST:event_createGithubIssueActionPerformed
+
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
     }
@@ -4521,6 +4566,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem changeLogMenuItem;
     private javax.swing.JMenuItem closeProjectFile_menuItem;
     private javax.swing.JMenuItem closeSampleFile;
+    private javax.swing.JMenuItem createGithubIssue;
     private javax.swing.JMenuItem credits_menuItem;
     private javax.swing.JMenuItem customizeSampleMetadata_menuItem;
     private javax.swing.JMenuItem deSelectAllFractions_menuItem;
