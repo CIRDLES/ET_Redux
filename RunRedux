@@ -2,4 +2,4 @@
 
 echo Running ET_Redux
 
-java -jar ./target/ET_Redux-3.6.60.jar
+java -jar ./target/ET_Redux-3.7.0.jar

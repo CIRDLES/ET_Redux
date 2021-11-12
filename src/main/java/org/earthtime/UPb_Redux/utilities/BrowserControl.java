@@ -20,8 +20,11 @@
  */
 package org.earthtime.UPb_Redux.utilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 
 /**
@@ -77,33 +80,23 @@ public class BrowserControl {
      * @param url
      */
     public static void displayURL(String url) {
-        boolean windows = isWindowsPlatform();
-        boolean macos = isMacOS();
-        String cmd = null;
-        String[] cmdArray = null;
-
         try {
-            if (windows) {
-                // Jim Bowring - remove "%20" if any
-                String temp[] = url.split("%20");
-                String urlNew = temp[0];
-                for (int i = 1; i < temp.length; i++) {
-                    urlNew += " " + temp[i];
-                }
-                cmd = WIN_PATH + " " + WIN_FLAG + " " + urlNew;
-                System.out.println("JIM  " + cmd + "  *****");
-                Process p = Runtime.getRuntime().exec(cmd);
+            URI oURL = null;
+            if (url.contains("http")) {
+                oURL = new URI(url);
             } else {
-
-                if (macos) {
-                    cmdArray = new String[]{"open", url};
-                    Process p = Runtime.getRuntime().exec(cmdArray);
-                }
+                // assume file
+                File file = new File(url);
+                oURL = file.toURI();
             }
-        } catch (IOException x) {
-            // couldn't exec browser
-            System.out.println("Could not invoke browser, command=" + cmd);
-            System.out.println("Caught: " + x);
+
+            if (!isLinuxOrUnixOperatingSystem()) {
+                java.awt.Desktop.getDesktop().browse(oURL);
+            } else {
+                Runtime.getRuntime().exec("xdg-open " + oURL);
+            }
+        } catch (URISyntaxException | IOException e) {
+            System.out.println("An error ocurred:\n" + e.getMessage());
         }
     }
 
@@ -121,6 +114,14 @@ public class BrowserControl {
             return false;
         }
 
+    }
+    
+     public static String getOperatingSystem() {
+        return System.getProperty("os.name");
+    }
+
+    public static boolean isLinuxOrUnixOperatingSystem() {
+        return getOperatingSystem().toLowerCase().matches(".*(nix|nux).*");
     }
 
     /**
