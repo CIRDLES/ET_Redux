@@ -7,6 +7,17 @@ and evaluate the latest release, the ".jar" file found <a href="https://github.c
 
 ET_Redux starting with v3.7.0 will run on any Java 8, 11, or 17, the long-term-support versions.  You can read [here](https://en.wikipedia.org/wiki/Java_version_history) about the community's plans for Java.
 
+**Note for Windows users**
+
+If you have issues with the size and scaling of ET_Redux (very small on high dpi screens), then:
+```text
+1. Find java.exe you are using.
+2. Right click -> Properties.
+3. Go to Compatibility tab.
+4. Check Override high DPI scaling behavior.
+5. Choose System for 'Scaling performed by:'
+```
+
 ET_Redux
 ========
 
