@@ -49,7 +49,11 @@ public abstract class ReportSpecificationsAbstract {
     public static final String[][] ReportCategory_Fraction2 = new String[][]{
         {"", "", "Fraction  ", "", "getFractionID", "", "",
             "", "true", "false", "0", "", "Fraction (customizable location)", "false", "false"
+        },
+        {"", "", "Notes  ", "", "getFractionNotes", "", "",
+            "", "false", "false", "0", "", "Notes", "false", "false"
         }
+           
     };
 
     /**
