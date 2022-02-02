@@ -1010,8 +1010,11 @@ public class AliquotEditorDialog extends DialogEditor {
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName())//
                     .setValue(new BigDecimal(((JTextComponent) fractionTracerMassText.get(row)).getText(), ReduxConstants.mathContext15));
 
+            // feb 2022 issue #206 fraction mass units switch to micrograms from grams
+//            fractionToSave.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName())//
+//                    .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText(), ReduxConstants.mathContext15));
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName())//
-                    .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText(), ReduxConstants.mathContext15));
+                .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText()).movePointLeft(6));
 
             try {
                 ValueModel alphaPb = ((UPbFraction) fractionToSave).getMyLabData().getNoneAlphaPbModel();
@@ -3043,8 +3046,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         // Fraction mass
         insertTableTextField(fractionMassText, max);
 
-        // Fraction Mass grams label
-        tempJL = new JLabel(" g");
+        // Fraction Mass micrograms label
+        tempJL = new JLabel("\u03BCg");
         tempJL.setForeground(Color.RED);
         tempJL.setFont(new Font("Monospaced", Font.BOLD, 10));
         fractionMassGRAMS.add(tempJL);
@@ -4111,8 +4114,13 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                         RoundingMode.HALF_UP).toPlainString());
         fractionTracerMassText.get(row).setEnabled(!(fraCorrU));
 
-        ((JTextComponent) fractionMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName()).getValue().
-                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
+        // feb 2022 issue #206 fraction mass units switch to micrograms from grams
+//        ((JTextComponent) fractionMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName()).getValue().
+//                setScale(ReduxConstants.DEFAULT_MASS_IN_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
+//                toPlainString());
+        ((JTextComponent) fractionMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName())
+                .getValue().movePointRight(6).
+                setScale(ReduxConstants.DEFAULT_MASS_IN_MICRO_GRAMS_DISPLAY_SCALE, RoundingMode.HALF_UP).//
                 toPlainString());
 
         updateAlphaPbModelChooserForRow(tempFrac, ((UPbFraction) tempFrac).needsAlphaPbModel(), row);

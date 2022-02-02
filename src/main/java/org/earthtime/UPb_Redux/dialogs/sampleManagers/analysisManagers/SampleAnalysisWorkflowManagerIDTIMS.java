@@ -855,7 +855,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         // Fraction mass
         insertTableTextFieldForDoubles(fractionMassText, max);
 
-        // Fraction Mass grams label
+        // Fraction Mass micrograms label
         tempJL = new JLabel("\u03BCg");
         tempJL.setForeground(Color.RED);
         tempJL.setFont(new Font("Monospaced", Font.BOLD, 10));
