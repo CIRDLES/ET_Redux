@@ -1914,11 +1914,23 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      * @param isNumeric
      */
     public void produceExcelReport(boolean isNumeric) {
-        String[][] reportFractions = SampleInterface.reportActiveFractionsByNumberStyle(theSample, isNumeric);
-        ReportAliquotFractionsView.sortReportColumn(//
+        
+        String[][] reportFractions;
+        
+        int tab = ((TabbedReportViews) getReportTableTabbedPane()).getSelectedIndex();      
+        if (tab == 0){
+            reportFractions = SampleInterface.reportActiveFractionsByNumberStyle(theSample, isNumeric);
+            ReportAliquotFractionsView.sortReportColumn(//
+                    reportFractions, //
+                    ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumn(),//
+                    ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumnDirection());
+        }else{
+            reportFractions = SampleInterface.reportRejectedFractionsByNumberStyle(theSample, isNumeric);
+            ReportAliquotFractionsView.sortReportColumn(//
                 reportFractions, //
-                ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumn(),//
-                ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumnDirection());
+                ((TabbedReportViews) getReportTableTabbedPane()).getRejectedFractionsSortedColumn(),//
+                ((TabbedReportViews) getReportTableTabbedPane()).getRejectedFractionsSortedColumnDirection());
+        }
 
         // generate excel report
         ExcelResultsTable.produceExcelResultsTable(//
@@ -1943,11 +1955,22 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      *
      */
     public void produceCSVReport() {
-        String[][] reportFractions = SampleInterface.reportActiveFractionsByNumberStyle(theSample, true);
-        ReportAliquotFractionsView.sortReportColumn(//
+        String[][] reportFractions;
+        
+        int tab = ((TabbedReportViews) getReportTableTabbedPane()).getSelectedIndex();      
+        if (tab == 0){
+            reportFractions = SampleInterface.reportActiveFractionsByNumberStyle(theSample, true);
+            ReportAliquotFractionsView.sortReportColumn(//
+                    reportFractions, //
+                    ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumn(),//
+                    ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumnDirection());
+        }else{
+            reportFractions = SampleInterface.reportRejectedFractionsByNumberStyle(theSample, true);
+            ReportAliquotFractionsView.sortReportColumn(//
                 reportFractions, //
-                ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumn(),//
-                ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumnDirection());
+                ((TabbedReportViews) getReportTableTabbedPane()).getRejectedFractionsSortedColumn(),//
+                ((TabbedReportViews) getReportTableTabbedPane()).getRejectedFractionsSortedColumnDirection());
+        }
 
         // generate csv report
         CsvResultsTable.produceCSVResultsTable(//

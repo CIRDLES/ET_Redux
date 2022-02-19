@@ -138,7 +138,11 @@ public class TabbedReportViews extends JTabbedPane {
      * @return
      */
     public int getActiveFractionsSortedColumn() {
-        return ((ReportAliquotFractionsView) getViewTabulatedAliquotActiveFractions()).sortedColumnNumber;
+        return ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).sortedColumnNumber;
+    }
+    
+    public int getRejectedFractionsSortedColumn() {
+        return ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).sortedColumnNumber;
     }
 
     /**
@@ -146,7 +150,11 @@ public class TabbedReportViews extends JTabbedPane {
      * @return
      */
     public int getActiveFractionsSortedColumnDirection() {
-        return ((ReportAliquotFractionsView) getViewTabulatedAliquotActiveFractions()).sortedColumnDirection;
+        return ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).sortedColumnDirection;
+    }
+    
+    public int getRejectedFractionsSortedColumnDirection() {
+        return ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).sortedColumnDirection;
     }
 
     /**
@@ -154,10 +162,18 @@ public class TabbedReportViews extends JTabbedPane {
      * @param fileNameForSVGPDF
      * @param outputPDF
      * @return
+     * @throws org.earthtime.exceptions.ETException
      */
     public File createReportSVGandPDF(String fileNameForSVGPDF, boolean outputPDF)
             throws ETException {
-        return ((ReportAliquotFractionsView) getViewTabulatedAliquotActiveFractions()).createReportSVGandPDF(fileNameForSVGPDF, outputPDF);
+        File returnedReport = null;
+        if (getSelectedIndex() == 0){
+            returnedReport = ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).createReportSVGandPDF(fileNameForSVGPDF, outputPDF);
+        } else {
+            returnedReport = ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).createReportSVGandPDF(fileNameForSVGPDF, outputPDF);
+        }
+        
+        return returnedReport;
     }
 
     /**
@@ -165,5 +181,9 @@ public class TabbedReportViews extends JTabbedPane {
      */
     public JLayeredPane getViewTabulatedAliquotActiveFractions() {
         return viewTabulatedAliquotActiveFractions;
+    }
+    
+    public JLayeredPane getViewTabulatedAliquotRejectedFractions() {
+        return viewTabulatedAliquotRejectedFractions;
     }
 }

@@ -138,7 +138,8 @@ public final class ExcelResultsTable {
             for (int row = firstDataRow - 1; row < reportFractions.length; row ++) {
 
                 // check whether fraction is included
-                if ( reportFractions[row][0].equalsIgnoreCase( "TRUE" ) ) {
+                // removed test Feb 2022 to allow rejected fractions per Nicole Rayner
+               // if ( reportFractions[row][0].equalsIgnoreCase( "TRUE" ) ) {
                     footNoteStartRow ++;
                     // for each aliquot
                     if (  ! reportFractions[row][1].equalsIgnoreCase( saveAliquotName ) ) {
@@ -169,7 +170,7 @@ public final class ExcelResultsTable {
                                         new jxl.write.Number(c - 2, row + reportRowAdvance, Double.valueOf(reportFractions[row][c]), cellFormat2);
                             } catch (NumberFormatException numberFormatException) {
                                 // case of non-number where there should be one
-                                System.out.println("CELL = " + reportFractions[row][c]);
+                               // System.out.println("CELL = " + reportFractions[row][c]);
                                 writableCell = //
                                         new jxl.write.Number(c - 2, row + reportRowAdvance, 0.0);
                             }
@@ -182,9 +183,9 @@ public final class ExcelResultsTable {
 
                     }
 
-                } else {
-                    reportRowAdvance --;
-                }
+              //  } else {
+               //     reportRowAdvance --;
+               // }
             }
 
             // set column widths based on isNumeric and/or first row of data

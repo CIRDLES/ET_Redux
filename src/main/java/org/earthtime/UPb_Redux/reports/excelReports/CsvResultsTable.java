@@ -117,7 +117,8 @@ public class CsvResultsTable {
             for (int row = firstDataRow - 1; row < reportFractions.length; row ++) {
 
                 // check whether fraction is included
-                if ( reportFractions[row][0].equalsIgnoreCase( "TRUE" ) ) {
+                // Feb 2022 removed test so can print rejected tab contents for Nicole Rayner
+              //  if ( reportFractions[row][0].equalsIgnoreCase( "TRUE" ) ) {
                     footNoteStartRow ++;
                     // for each aliquot
                     if (  ! reportFractions[row][1].equalsIgnoreCase( saveAliquotName ) ) {
@@ -134,9 +135,9 @@ public class CsvResultsTable {
 
                     outputWriter.write( "\n" );
 
-                } else {
-                    reportRowAdvance --;
-                }
+              //  } else {
+               //     reportRowAdvance --;
+              //  }
 
             }
 
