@@ -27,12 +27,14 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.utilities.VersionChecker;
 
 /**
  *
@@ -69,7 +71,7 @@ public class ETRedux {
         try (BufferedReader reader = Files.newBufferedReader(resourcePath, charset)) {
 
             String[] versionText = reader.readLine().split("=");
-            VERSION = versionText[1];
+            VERSION = versionText[1].trim();
 
             String[] versionDate = reader.readLine().split("=");
             RELEASE_DATE = versionDate[1];
@@ -79,6 +81,19 @@ public class ETRedux {
             System.err.format("IOException: %s%n", x);
         }
 
+        try {
+            boolean upToDate = VersionChecker.checkIfCurrentVersion(VERSION);
+            if (!upToDate){
+                JOptionPane.showMessageDialog(
+                    null,
+                    new String[]{"There is a newer version of ET_Redux at " + "https://github.com/CIRDLES/ET_Redux/releases/ " + "."},
+                    "ET Redux Announcement",
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+            
+        } catch (Exception exception) {
+        }
+ 
         // get redux persistent state file
         myState = ReduxPersistentState.getExistingPersistentState();
 
