@@ -2071,10 +2071,17 @@ public class UPbFraction extends Fraction implements
     }
 
     /**
-     *
+     * For producing single fraction files
      */
     public void toFileAllDataValues() {
-        File dataValuesFile = new File("ALL_VALUES_" + getFractionID() + ".txt");
+        toFileAllDataValues(".");
+    }
+    
+    /**
+     *
+     */
+    public void toFileAllDataValues(String folderPath) {
+        File dataValuesFile = new File(folderPath + File.separator + "ALL_VALUES_" + getFractionID() + ".txt");
         PrintWriter outputWriter = null;
         try {
             outputWriter = new PrintWriter(new FileWriter(dataValuesFile));
@@ -2362,9 +2369,11 @@ public class UPbFraction extends Fraction implements
         } catch (IOException iOException) {
         }
 
-        try {
-            BrowserControl.displayURL(dataValuesFile.getCanonicalPath());
-        } catch (IOException ex) {
+        if (folderPath.compareTo(".") == 0){
+            try {
+                BrowserControl.displayURL(dataValuesFile.getCanonicalPath());
+            } catch (IOException ex) {
+            }
         }
 
     }

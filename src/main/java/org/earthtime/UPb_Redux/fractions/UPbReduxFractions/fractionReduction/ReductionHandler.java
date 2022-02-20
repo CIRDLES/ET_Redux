@@ -851,10 +851,17 @@ public class ReductionHandler {
     }
 
     /**
+     * For producing single fraction files
+     */
+    public void toFileAllMatrices() {
+        toFileAllMatrices(".");
+    }
+    
+    /**
      *
      */
-    public void toFileAllMatrices () {
-        File matrixFile = new File( "MATRIX_FILE_" + fraction.getFractionID() + ".txt" );
+    public void toFileAllMatrices (String folderPath) {
+        File matrixFile = new File( folderPath + File.separator + "MATRIX_FILE_" + fraction.getFractionID() + ".txt" );
         PrintWriter matrixWriter = null;
 
         try {
@@ -969,11 +976,12 @@ public class ReductionHandler {
         } catch (IOException iOException) {
         }
 
-        try {
-            BrowserControl.displayURL( matrixFile.getCanonicalPath() );
-        } catch (IOException ex) {
+        if (folderPath.compareTo(".") == 0){
+            try {
+                BrowserControl.displayURL( matrixFile.getCanonicalPath() );
+            } catch (IOException ex) {
+            }
         }
-
     }
 
     /**

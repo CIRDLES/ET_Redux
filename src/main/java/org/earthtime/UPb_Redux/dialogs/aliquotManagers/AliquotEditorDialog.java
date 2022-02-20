@@ -76,6 +76,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationSubscribeInterface;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
@@ -1014,7 +1015,7 @@ public class AliquotEditorDialog extends DialogEditor {
 //            fractionToSave.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName())//
 //                    .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText(), ReduxConstants.mathContext15));
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName())//
-                .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText()).movePointLeft(6));
+                    .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText()).movePointLeft(6));
 
             try {
                 ValueModel alphaPb = ((UPbFraction) fractionToSave).getMyLabData().getNoneAlphaPbModel();
@@ -1237,6 +1238,7 @@ public class AliquotEditorDialog extends DialogEditor {
         restore_button = new ET_JButton();
         close_button = new ET_JButton();
         exportXMLAliquot_button = new ET_JButton();
+        writeAllDataAndUnctMatrices = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1756,7 +1758,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 restore_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(restore_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 2, 181, 25));
+        buttonsPanel.add(restore_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 2, 140, 25));
 
         close_button.setForeground(new java.awt.Color(255, 51, 0));
         close_button.setText("Close");
@@ -1778,9 +1780,20 @@ public class AliquotEditorDialog extends DialogEditor {
                 exportXMLAliquot_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(exportXMLAliquot_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 2, 338, 25));
+        buttonsPanel.add(exportXMLAliquot_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 2, 290, 25));
 
-        getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 700, -1, -1));
+        writeAllDataAndUnctMatrices.setForeground(new java.awt.Color(255, 51, 0));
+        writeAllDataAndUnctMatrices.setText("Write Data and Unct Matrices");
+        writeAllDataAndUnctMatrices.setMargin(new java.awt.Insets(2, 1, 2, 1));
+        writeAllDataAndUnctMatrices.setPreferredSize(new java.awt.Dimension(140, 23));
+        writeAllDataAndUnctMatrices.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                writeAllDataAndUnctMatricesActionPerformed(evt);
+            }
+        });
+        buttonsPanel.add(writeAllDataAndUnctMatrices, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 2, 240, 25));
+
+        getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 700, 1130, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1866,6 +1879,28 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private void useLabDefaults_buttonActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_useLabDefaults_buttonActionPerformed
         showLabDefaultFractionArchivingData((ETFractionInterface) fraction_Chooser.getSelectedItem());
     }//GEN-LAST:event_useLabDefaults_buttonActionPerformed
+
+    private void writeAllDataAndUnctMatricesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeAllDataAndUnctMatricesActionPerformed
+        String dialogTitle = "Save Aliquot Fraction Data and Unct Matrices to Folder";
+
+        File selectedFile;
+        String projectFolderPath;
+
+        projectFolderPath = sample.getReduxSampleFilePath();
+
+        selectedFile = FileHelper.AllPlatformGetFolder(
+                dialogTitle,
+                new File(projectFolderPath));
+
+        if (selectedFile != null) {
+            for (ETFractionInterface fraction : ((ReduxAliquotInterface) myAliquot).getAliquotFractions()) {
+                ((UPbFraction) fraction).toFileAllDataValues(selectedFile.getAbsolutePath());
+                ((UPbFraction) fraction).getReductionHandler().toFileAllMatrices(selectedFile.getAbsolutePath());
+            }
+        }
+
+
+    }//GEN-LAST:event_writeAllDataAndUnctMatricesActionPerformed
 
     private void selectImageFile(ETFractionInterface myFraction) throws BadLabDataException {
         String dialogTitle = "Select a fraction image: *.gif, *.jpeg";
@@ -2015,7 +2050,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             try {
                 String chosenTracerType
                         = ((TracerUPbModel) ((AbstractRatiosDataModel) ((UPbFraction) fraction).getMyLabData().//
-                        getATracerModel((String) fractionTracerChoice.get(row).getSelectedItem()))).getTracerType();
+                                getATracerModel((String) fractionTracerChoice.get(row).getSelectedItem()))).getTracerType();
 
                 updateAlphaPbModelChooserForRow(fraction, ((UPbFraction) fraction).needsAlphaPbModel(chosenTracerType), row);
                 updateAlphaUModelChooserForRow(fraction, ((UPbFraction) fraction).needsAlphaUModel(chosenTracerType), row);
@@ -3793,7 +3828,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         calibrationUnct206_238_text.setText(//
                 getMyAliquot().getCalibrationUnct206_238()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         calibrationUnct208_232_text.setText(getMyAliquot().getCalibrationUnct208_232()//
                 .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
@@ -3815,7 +3850,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     }
 
     protected void validateIGSNs() {
-        
+
         // April 2011 now using xxx.sampleID for sampleIGSN and need to split off
         aliquotIGSN_text.setText(getMyAliquot().getAlliquotIGSNnoRegistry());
 
@@ -4392,9 +4427,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         // sept 2016
         myAliquot.setAliquotIGSN(aliquotIGSN_text.getText().trim());
-               
+
         validateIGSNs();
-        
+
         SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println("**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT");
@@ -4583,6 +4618,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private javax.swing.JLabel userNameGeochron_label;
     private javax.swing.JButton validateGeoPassID_button;
     private javax.swing.JButton visitGeochron_button;
+    protected javax.swing.JButton writeAllDataAndUnctMatrices;
     private javax.swing.JLabel xMarkForValidAliquotIGSN_label;
     private javax.swing.JLabel xMarkForValidGeoPassID_label;
     private javax.swing.JLabel xMarkForValidSampleID_label;
@@ -5111,14 +5147,14 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 + "&password="//
                 + password//
                 + "&validateonly=yes";
-        
+
         GeochronValidationResults checkValid = GeochronValidationResults.errorNotFound;
-        
+
         try {
             checkValid = GeochronValidationResults.validateAliquot(connectionString);
         } catch (Exception e) {
         }
-        
+
         return checkValid;
     }
 
