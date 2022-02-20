@@ -29,6 +29,8 @@ tempDataForAliquotUploadzip
 *.dat
 STANDARDS_DATA_CHECK_FILES/
 
+!.currentVersion.txt
+
 # Resources
 !src/main/resources/**/*.xml
 !src/main/resources/**/listOfModelFiles.txt
